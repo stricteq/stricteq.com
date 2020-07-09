@@ -52,6 +52,7 @@
     }
   },
   "scripts": {
+    "audit": "npm audit --production | tee audit.log",
     "prestart": "if test \"$NODE_ENV\" = \"production\"; then npm run credits ; fi",
     "credits": "cp credits.txt.header credits.txt ; creditstxt >> credits.txt",
     "precommit": "npm run lint && npm run gotchas",
