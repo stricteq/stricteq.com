@@ -55,9 +55,12 @@ tape('discover handle', test => {
           await submitButton.click()
         })()
       ])
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })

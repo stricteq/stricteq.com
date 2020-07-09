@@ -30,10 +30,13 @@ tape('browse ' + path, test => {
       const h2 = await browser.$('h2')
       const title = await h2.getText()
       test.equal(title, 'Log In', '<h2>Log In</h2>')
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })
 
@@ -64,10 +67,13 @@ tape('sign in', test => {
       const submitButton = await browser.$('#loginForm button[type="submit"]')
       await submitButton.click()
       await verifyLogIn({ browser, port, test, handle, email })
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })
 
@@ -80,10 +86,13 @@ tape('sign in with bad credentials', test => {
       const error = await browser.$('p.error')
       const errorText = await error.getText()
       test.assert(errorText.includes('invalid'), 'invalid')
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })
 
@@ -124,9 +133,12 @@ tape('lockout', test => {
         const errorText = await error.getText()
         test.equal(errorText, message, message)
       }
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })

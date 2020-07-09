@@ -49,9 +49,12 @@ tape('change password', test => {
       await logout({ browser, port })
       await login({ browser, port, handle, password: newPassword })
       await verifyLogIn({ browser, test, port, handle, email })
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })

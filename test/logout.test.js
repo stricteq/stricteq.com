@@ -46,10 +46,13 @@ tape('log out', test => {
       const loginButton = await browser.$('#login')
       const buttonText = await loginButton.getText()
       test.equal(buttonText, 'Log In', 'Log In')
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })
 
@@ -104,9 +107,12 @@ tape('log in as ana, log in as bob', test => {
       await logout({ browser, port })
       await login({ browser, port, handle: bob.handle, password: bob.password })
       await verifyLogIn({ browser, port, test, handle: bob.handle, email: bob.email })
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })

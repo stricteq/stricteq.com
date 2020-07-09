@@ -38,9 +38,12 @@ tape('browse ' + path, test => {
       }))
       await login({ browser, port, handle, password })
       await verifyLogIn({ browser, test, port, email, handle })
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })

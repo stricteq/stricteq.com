@@ -76,9 +76,12 @@ tape('reset password', test => {
       const loginSubmitButton = await browser.$('#loginForm button[type="submit"]')
       await loginSubmitButton.click()
       await verifyLogIn({ browser, port, test, handle, email })
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })

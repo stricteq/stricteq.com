@@ -134,10 +134,13 @@ tape('project page', test => {
       const img = await browser.$('#customers li img')
       const alt = await img.getAttribute('alt')
       test.equal(alt, customerName, 'Gravatar on project page')
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   }, 8080)
 })
 
@@ -175,9 +178,12 @@ tape('project JSON', test => {
           })
           .end()
       })
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })

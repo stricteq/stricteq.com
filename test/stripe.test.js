@@ -42,9 +42,12 @@ tape('Stripe Connect', test => {
       const connect = await browser.$('#connect')
       const connectText = await connect.getText()
       test.equal(connectText, 'Connect Stripe Account', 'confirmed disconnected')
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   }, 8080)
 })

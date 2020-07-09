@@ -47,7 +47,7 @@ tape('change e-mail', test => {
               const p = await browser.$('p.message')
               const text = await p.getText()
               test.assert(text.includes('changed'), 'changed')
-            })().finally(resolve)
+            })().then(resolve).catch(reject)
           })
         }),
         (async () => {
@@ -55,10 +55,13 @@ tape('change e-mail', test => {
           await submit.click()
         })()
       ])
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })
 
@@ -94,9 +97,12 @@ tape('change e-mail to existing', test => {
       const error = await browser.$('.error')
       const errorText = await error.getText()
       test.assert(errorText.includes('already has'), 'already has')
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })

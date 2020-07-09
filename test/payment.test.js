@@ -90,10 +90,13 @@ tape('declined cards', test => {
         const watchWord = testNumbers[number]
         test.assert(errorText.includes(watchWord), `declined: ${watchWord}`)
       }
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   }, 8080)
 })
 
@@ -155,9 +158,12 @@ tape('3D Secure card', test => {
       await message.waitForExist({ timeout: 10000 })
       const messageText = await message.getText()
       test.assert(messageText.includes('Thank you', 'confirmation'))
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   }, 8080)
 })

@@ -32,10 +32,13 @@ tape('browse ' + path, test => {
       const h2 = await browser.$('h2')
       const title = await h2.getText()
       test.equal(title, 'Sign Up', '<h2>Sign Up</h2>')
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })
 
@@ -57,10 +60,13 @@ tape('sign up', test => {
       }))
       await login({ browser, port, handle, password })
       await verifyLogIn({ browser, port, test, handle, email })
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })
 
@@ -112,10 +118,13 @@ tape('sign up same handle', test => {
       const newRepeatInput = await browser.$('input[name="repeat"]')
       const repeatValue = await newRepeatInput.getValue()
       test.equal(repeatValue, '', 'empties password repeat')
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })
 
@@ -148,9 +157,12 @@ tape('sign up same email', test => {
       const p = await browser.$('.error')
       const errorText = await p.getText()
       test.assert(errorText.includes('e-mail'), 'e-mail')
-    })().finally(() => {
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
       test.end()
       done()
-    })
+    }
   })
 })
