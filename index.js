@@ -2463,6 +2463,7 @@ function redactedProject (project) {
       gravatar: gravatar.url(c.email, {
         size: 100,
         rating: 'pg',
+        default: 'identicon',
         protocol: 'https'
       })
     }
