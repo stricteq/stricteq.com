@@ -83,8 +83,11 @@ function simpleFiles (subdirectory, options) {
   const serialization = options.serialization
   const filePath = id => path.join(process.env.DIRECTORY, subdirectory, id + '.json')
   return {
+    create: (id, value, callback) => {
+      lock(filePath(id), unlock => writeWithoutLocking(id, value, 'wx', unlock(callback)))
+    },
     write: (id, value, callback) => {
-      lock(filePath(id), unlock => writeWithoutLocking(id, value, unlock(callback)))
+      lock(filePath(id), unlock => writeWithoutLocking(id, value, 'w', unlock(callback)))
     },
     writeWithoutLocking,
     read: (id, callback) => {
@@ -149,13 +152,13 @@ function simpleFiles (subdirectory, options) {
     filePath
   }
 
-  function writeWithoutLocking (id, value, callback) {
+  function writeWithoutLocking (id, value, flag, callback) {
     const file = filePath(id)
     const directory = path.dirname(file)
     fs.mkdir(directory, { recursive: true }, error => {
       /* istanbul ignore if */
       if (error) return callback(error)
-      writeFile({ file, data: value, serialization }, callback)
+      writeFile({ file, data: value, serialization, flag }, callback)
     })
   }
 

@@ -423,7 +423,7 @@ function serveSignUp (request, response) {
           if (error) return done(error)
           runSeries([
             done => {
-              storage.account.write(handle, {
+              storage.account.create(handle, {
                 handle,
                 email,
                 passwordHash,
@@ -440,7 +440,16 @@ function serveSignUp (request, response) {
                   connectNonce: randomNonce()
                 },
                 locked: false
-              }, done)
+              }, (error, success) => {
+                if (error) return done(error)
+                if (!success) {
+                  const error = new Error('handle taken')
+                  error.handle = handle
+                  error.statusCode = 400
+                  return done(error)
+                }
+                done()
+              })
             },
             done => {
               const data = { handle }
@@ -448,19 +457,13 @@ function serveSignUp (request, response) {
                 if (error) return done(error)
                 if (!updated) {
                   data.orderIDs = []
-                  return storage.email.write(email, data, done)
+                  return storage.email.create(email, data, done)
                 }
                 done()
               })
             }
           ], (error, success) => {
             if (error) return done(error)
-            if (!success) {
-              const error = new Error('handle taken')
-              error.handle = handle
-              error.statusCode = 400
-              return done(error)
-            }
             request.log.info('recorded account')
             done()
           })
@@ -470,7 +473,7 @@ function serveSignUp (request, response) {
       // Create an e-mail confirmation token.
       done => {
         const token = uuid.v4()
-        storage.token.write(token, {
+        storage.token.create(token, {
           action: 'confirm e-mail',
           created: new Date().toISOString(),
           handle,
@@ -655,18 +658,7 @@ function serveCreate (request, response) {
     const slug = `${handle}/${project}`
     const created = new Date().toISOString()
     runSeries([
-      done => {
-        storage.project.exists(slug, (error, exists) => {
-          if (error) return done(error)
-          if (exists) {
-            const error = new Error('project nmame taken')
-            error.statusCode = 400
-            return done(error)
-          }
-          done()
-        })
-      },
-      done => storage.project.write(slug, {
+      done => storage.project.create(slug, {
         project,
         handle,
         urls: [url],
@@ -676,7 +668,15 @@ function serveCreate (request, response) {
         badges: {},
         category,
         created
-      }, done),
+      }, (error, success) => {
+        if (error) return done(error)
+        if (!success) {
+          const error = new Error('project nmame taken')
+          error.statusCode = 400
+          return done(error)
+        }
+        done()
+      }),
       done => storage.account.update(handle, (data, done) => {
         data.projects.push({ project, created })
         done()
@@ -853,7 +853,7 @@ function serveLogIn (request, response) {
 
     function createSession (done) {
       sessionID = uuid.v4()
-      storage.session.write(sessionID, {
+      storage.session.create(sessionID, {
         id: sessionID,
         handle,
         created: new Date().toISOString()
@@ -1154,7 +1154,7 @@ function serveEMail (request, response) {
         return done(error)
       }
       const token = uuid.v4()
-      storage.token.write(token, {
+      storage.token.create(token, {
         action: 'change e-mail',
         created: new Date().toISOString(),
         handle,
@@ -1530,7 +1530,7 @@ function serveReset (request, response) {
         return done(invalid)
       }
       const token = uuid.v4()
-      storage.token.write(token, {
+      storage.token.create(token, {
         action: 'reset password',
         created: new Date().toISOString(),
         handle
@@ -1611,7 +1611,7 @@ function serveConfirm (request, response) {
           },
           done => storage.account.update(handle, { email }, done),
           done => storage.email.delete(oldEMail, done),
-          done => storage.email.write(email, handle, done)
+          done => storage.email.update(email, { handle }, done)
         ], error => {
           if (error) return serve500(request, response, error)
           const title = 'E-Mail Change'
@@ -1698,7 +1698,7 @@ function serveConnected (request, response) {
       done => storage.account.update(account.handle, {
         stripe: { connected: true, token }
       }, done),
-      done => storage.stripeID.write(token.stripe_user_id, {
+      done => storage.stripeID.create(token.stripe_user_id, {
         handle: account.handle,
         date: new Date().toISOString()
       }, done),
@@ -2296,7 +2296,7 @@ function serveBuy (request, response) {
       // Create an order.
       done => {
         orderID = uuid.v4()
-        storage.order.write(orderID, {
+        storage.order.create(orderID, {
           orderID,
           date,
           handle,

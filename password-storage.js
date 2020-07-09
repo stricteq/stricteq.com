@@ -63,7 +63,7 @@ exports.verify = (handle, password, callback) => {
                   return callback(error)
                 }
                 account.passwordHash = newHash.toString('hex')
-                storage.account.writeWithoutLocking(handle, account, error => {
+                storage.account.writeWithoutLocking(handle, account, 'w', error => {
                   if (error) return callback(error)
                   callback(null, account)
                 })
