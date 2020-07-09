@@ -1,4 +1,4 @@
-const connectStripe = require('./connect')
+const connectStripe = require('./connect-stripe')
 const createProject = require('./create-project')
 const login = require('./login')
 const logout = require('./logout')
@@ -114,6 +114,7 @@ tape('3D Secure card', test => {
       await connectStripe({ browser, port })
       // Confirm connected.
       const disconnect = await browser.$('#disconnect')
+      await disconnect.waitForExist({ timeout: 5000 })
       const disconnectText = await disconnect.getText()
       test.equal(disconnectText, 'Disconnect Stripe Account', 'connected')
       await createProject({ browser, port, project, url, price, category })
@@ -151,7 +152,7 @@ tape('3D Secure card', test => {
       const submit = await browser.$('#buyForm button[type=submit]')
       await submit.click()
       const message = await browser.$('.message')
-      await message.waitForExist()
+      await message.waitForExist({ timeout: 10000 })
       const messageText = await message.getText()
       test.assert(messageText.includes('Thank you', 'confirmation'))
     })().finally(() => {

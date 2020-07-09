@@ -80,7 +80,7 @@ tape('sign in with bad credentials', test => {
       const error = await browser.$('p.error')
       const errorText = await error.getText()
       test.assert(errorText.includes('invalid'), 'invalid')
-    })().finall(() => {
+    })().finally(() => {
       test.end()
       done()
     })
