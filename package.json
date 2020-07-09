@@ -58,7 +58,7 @@
     "coverage": "nyc --reporter=lcov --reporter=text npm run test",
     "deps": "depcheck",
     "fix": "standard --fix",
-    "gotchas": "! git grep tape.only test && ! git grep console.log test && ! git grep console.error test",
+    "gotchas": "! git grep tape.only test && ! git grep console.log test && ! git grep console.error test && ! git grep saveScreenshot test",
     "licenses": "licensee --errors-only",
     "lint": "standard",
     "test": "NODE_ENV=test tape test/*.test.js"

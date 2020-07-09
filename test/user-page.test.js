@@ -149,7 +149,6 @@ tape('user page licenses', test => {
 
       // Browse to Bob's user page.
       await browser.navigateTo(`http://localhost:${port}/~${bob.handle}`)
-      await browser.saveScreenshot('../test.png')
       const anchor = await browser.$('.licenses a')
       const href = await anchor.getAttribute('href')
       test.equal(href, `/~${ana.handle}/${project}`)
