@@ -88,6 +88,14 @@ simple({
   mime: 'text/plain; charset=UTF-8'
 })
 
+simple({
+  method: 'GET',
+  path: '/robots.txt',
+  status: 200,
+  mime: 'text/plain; charset=UTF-8',
+  content: 'Disallow: /'
+})
+
 function simple ({
   auth,
   method = 'GET',

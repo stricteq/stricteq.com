@@ -150,6 +150,8 @@ const icons = []
 const staticFiles = [
   'styles.css',
   'credits.txt',
+  // TODO: Relaxe robots.txt.
+  'robots.txt',
   'buy.js'
 ]
 
