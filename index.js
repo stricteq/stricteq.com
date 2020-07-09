@@ -2022,7 +2022,6 @@ function serveBadges (request, response) {
 }
 
 // /~{handle}/{project}
-// TODO: Don't show buy page on your own project pages.
 function serveProjectPage (request, response) {
   const { handle, project } = request.parameters
   const slug = `${handle}/${project}`
@@ -2087,7 +2086,13 @@ function serveProjectPage (request, response) {
         </tr>
       </table>
       ${
-        data.account.stripe.connected
+        (
+          data.account.stripe.connected &&
+          (
+            !request.account ||
+            request.account.handle !== data.account.handle
+          )
+        )
           ? buyForm({
             csrf: csrf.inputs({
               action: '/buy',
