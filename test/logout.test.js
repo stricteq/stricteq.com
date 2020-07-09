@@ -31,14 +31,7 @@ tape('log out', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => {
-        signup({
-          browser, port, name, location, handle, password, email
-        }, error => {
-          if (error) return reject(error)
-          resolve()
-        })
-      })
+      await signup({ browser, port, name, location, handle, password, email })
       await login({ browser, port, handle, password })
       await verifyLogIn({ browser, port, test, handle, email })
       await click(browser, '#logout')
@@ -74,33 +67,23 @@ tape('log in as ana, log in as bob', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => {
-        signup({
-          browser,
-          port,
-          name: ana.name,
-          location: ana.location,
-          handle: ana.handle,
-          password: ana.password,
-          email: ana.email
-        }, error => {
-          if (error) return reject(error)
-          resolve()
-        })
+      await signup({
+        browser,
+        port,
+        name: ana.name,
+        location: ana.location,
+        handle: ana.handle,
+        password: ana.password,
+        email: ana.email
       })
-      await new Promise((resolve, reject) => {
-        signup({
-          browser,
-          port,
-          name: bob.name,
-          location: bob.location,
-          handle: bob.handle,
-          password: bob.password,
-          email: bob.email
-        }, error => {
-          if (error) return reject(error)
-          resolve()
-        })
+      await signup({
+        browser,
+        port,
+        name: bob.name,
+        location: bob.location,
+        handle: bob.handle,
+        password: bob.password,
+        email: bob.email
       })
       await login({ browser, port, handle: ana.handle, password: ana.password })
       await verifyLogIn({ browser, port, test, handle: ana.handle, email: ana.email })

@@ -40,12 +40,9 @@ tape('declined cards', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => signup({
+      await signup({
         browser, port, name, location, handle, password, email
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      })
       await login({ browser, port, handle, password })
       await connectStripe({ browser, port })
       // Confirm connected.
@@ -104,12 +101,9 @@ tape('3D Secure card', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => signup({
+      await signup({
         browser, port, name, location, handle, password, email
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      })
       await login({ browser, port, handle, password })
       await connectStripe({ browser, port })
       // Confirm connected.

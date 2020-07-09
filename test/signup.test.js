@@ -3,7 +3,7 @@ const click = require('./click')
 const http = require('http')
 const login = require('./login')
 const server = require('./server')
-const signup = require('util').promisify(require('./signup'))
+const signup = require('./signup')
 const tape = require('tape')
 const verifyLogIn = require('./verify-login')
 const webdriver = require('./webdriver')
@@ -51,12 +51,7 @@ tape('sign up', test => {
     (async () => {
       const browser = await webdriver()
       await browser.navigateTo('http://localhost:' + port)
-      await new Promise((resolve, reject) => signup({
-        browser, port, name, location, email, handle, password
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      await signup({ browser, port, name, location, email, handle, password })
       await login({ browser, port, handle, password })
       await verifyLogIn({ browser, port, test, handle, email })
     })().then(finish).catch(finish)
@@ -80,12 +75,7 @@ tape('sign up same handle', test => {
     (async () => {
       const browser = await webdriver()
       // Sign up using the handle.
-      await new Promise((resolve, reject) => signup({
-        browser, port, name, location, handle, password, email: firstEMail
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      await signup({ browser, port, name, location, handle, password, email: firstEMail })
 
       // Try to sign up again with the same handle.
       await browser.navigateTo('http://localhost:' + port)
@@ -137,12 +127,8 @@ tape('sign up same email', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => signup({
-        browser, port, name, location, handle: firstHandle, password, email
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      await signup({ browser, port, name, location, handle: firstHandle, password, email })
+
       // Try to sign up again with the same e-mail.
       await browser.navigateTo('http://localhost:' + port)
       await click(browser, 'a=Sign Up')

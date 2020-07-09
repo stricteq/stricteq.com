@@ -4,6 +4,7 @@ const createProject = require('./create-project')
 const http = require('http')
 const login = require('./login')
 const logout = require('./logout')
+const mail = require('../mail')
 const server = require('./server')
 const signup = require('./signup')
 const simpleConcat = require('simple-concat')
@@ -25,12 +26,7 @@ tape('user page', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => signup({
-        browser, port, name, location, handle, password, email
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      await signup({ browser, port, name, location, handle, password, email })
 
       // Browse user page.
       await browser.navigateTo(`http://localhost:${port}/~${handle}`)
@@ -76,13 +72,7 @@ tape('user page licenses', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => signup(
-        Object.assign({}, ana, { browser, port }),
-        error => {
-          if (error) reject(error)
-          resolve()
-        }
-      ))
+      await signup(Object.assign({}, ana, { browser, port }))
       await login({ browser, port, handle: ana.handle, password: ana.password })
 
       await connectStripe({ browser, port })
@@ -96,13 +86,7 @@ tape('user page licenses', test => {
       await logout({ browser, port })
 
       // As Bob...
-      await new Promise((resolve, reject) => signup(
-        Object.assign({}, bob, { browser, port }),
-        error => {
-          if (error) reject(error)
-          resolve()
-        }
-      ))
+      await signup(Object.assign({}, bob, { browser, port }))
       await login({ browser, port, handle: bob.handle, password: bob.password })
 
       // Buy a license.
@@ -156,17 +140,17 @@ tape('user page licenses', test => {
       // Accept terms.
       await click(browser, '#buyForm input[name=terms]')
 
-      await click(browser, '#buyForm button[type=submit]')
+      await Promise.all([
+        new Promise((resolve, reject) => mail.events.once('sent', resolve)),
+        click(browser, '#buyForm button[type=submit]')
+      ])
 
-      const message = await browser.$('.message')
-      await message.waitForExist({ timeout: 10000 })
-      const messageText = await message.getText()
-      test.assert(messageText.includes('Thank you', 'confirmation'))
       await timeout(5000)
 
       // Browse to Bob's user page.
       await browser.navigateTo(`http://localhost:${port}/~${bob.handle}`)
-      const anchor = await browser.$('main .licenses a')
+      await browser.saveScreenshot('../test.png')
+      const anchor = await browser.$('.licenses a')
       const href = await anchor.getAttribute('href')
       test.equal(href, `/~${ana.handle}/${project}`)
     })().then(finish).catch(finish)
@@ -188,12 +172,7 @@ tape('user JSON', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => signup({
-        browser, port, name, location, handle, password, email
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      await signup({ browser, port, name, location, handle, password, email })
       // Create project.
       await login({ browser, port, handle, password })
       await click(browser, '=Account')

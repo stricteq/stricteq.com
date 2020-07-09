@@ -30,12 +30,7 @@ tape('browse ' + path, test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => signup({
-        browser, port, name, location, handle, password, email
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      await signup({ browser, port, name, location, handle, password, email })
       await login({ browser, port, handle, password })
       await verifyLogIn({ browser, test, port, email, handle })
     })().then(finish).catch(finish)

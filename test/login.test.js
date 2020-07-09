@@ -50,14 +50,7 @@ tape('sign in', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => {
-        signup({
-          browser, port, name, location, handle, password, email
-        }, error => {
-          if (error) return reject(error)
-          resolve()
-        })
-      })
+      await signup({ browser, port, name, location, handle, password, email })
       await browser.navigateTo('http://localhost:' + port)
       await click(browser, '#login')
       await addValue(browser, '#loginForm input[name="handle"]', handle)
@@ -102,14 +95,7 @@ tape('lockout', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => {
-        signup({
-          browser, port, name, location, handle, password, email
-        }, error => {
-          if (error) return reject(error)
-          resolve()
-        })
-      })
+      await signup({ browser, port, name, location, handle, password, email })
       await loginWithPassword('invalid', 'invalid handle or password')
       await loginWithPassword('invalid', 'invalid handle or password')
       await loginWithPassword('invalid', 'invalid handle or password')

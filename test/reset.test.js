@@ -30,12 +30,7 @@ tape('reset password', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => signup({
-        browser, port, name, location, handle, password, email
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      await signup({ browser, port, name, location, handle, password, email })
       await browser.navigateTo('http://localhost:' + port)
       await click(browser, '#login')
       await click(browser, 'a=Reset Password')

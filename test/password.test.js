@@ -19,12 +19,9 @@ tape('change password', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => signup({
+      await signup({
         browser, port, name, location, handle, password: oldPassword, email
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      })
       await browser.navigateTo('http://localhost:' + port)
       await login({ browser, port, handle, password: oldPassword })
       // Navigate to password-change page.

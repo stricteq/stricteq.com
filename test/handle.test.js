@@ -31,12 +31,7 @@ tape('discover handle', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => signup({
-        browser, port, name, location, handle, password, email
-      }, error => {
-        if (error) reject(error)
-        resolve()
-      }))
+      await signup({ browser, port, name, location, handle, password, email })
       await Promise.all([
         new Promise((resolve, reject) => {
           mail.once('sent', options => {

@@ -19,14 +19,7 @@ tape('change e-mail', test => {
     (async () => {
       const browser = await webdriver()
       // Sign up.
-      await new Promise((resolve, reject) => {
-        signup({
-          browser, port, name, location, handle, password, email: oldEMail
-        }, error => {
-          if (error) return reject(error)
-          resolve()
-        })
-      })
+      await signup({ browser, port, name, location, handle, password, email: oldEMail })
       await login({ browser, port, handle, password })
       await verifyLogIn({ browser, port, test, handle, email: oldEMail })
       // Navigate to password-change page.
@@ -71,14 +64,7 @@ tape('change e-mail to existing', test => {
   server((port, done) => {
     (async () => {
       const browser = await webdriver()
-      await new Promise((resolve, reject) => {
-        signup({
-          browser, port, name, location, handle, password, email
-        }, error => {
-          if (error) return reject(error)
-          resolve()
-        })
-      })
+      await signup({ browser, port, name, location, handle, password, email })
       await login({ browser, port, handle, password })
       await verifyLogIn({ browser, port, test, handle, email })
       // Navigate to password-change page.
