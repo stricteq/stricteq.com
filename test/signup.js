@@ -1,4 +1,5 @@
 const assert = require('assert')
+const click = require('./click')
 const mail = require('../mail').events
 
 module.exports = ({
@@ -18,8 +19,7 @@ module.exports = ({
   assert(typeof password === 'string')
   assert(typeof email === 'string')
   browser.navigateTo('http://localhost:' + port)
-    .then(() => browser.$('a=Sign Up'))
-    .then(a => a.click())
+    .then(() => click(browser, 'a=Sign Up'))
     .then(() => browser.$('#signupForm input[name="name"]'))
     .then(input => input.addValue(name))
     .then(() => browser.$('#signupForm input[name="location"]'))
@@ -32,8 +32,7 @@ module.exports = ({
     .then(input => input.addValue(password))
     .then(() => browser.$('#signupForm input[name="repeat"]'))
     .then(input => input.addValue(password))
-    .then(() => browser.$('#signupForm button[type="submit"]'))
-    .then(submit => submit.click())
+    .then(() => click(browser, '#signupForm button[type="submit"]'))
     .catch(callback)
   mail.once('sent', options => {
     if (!options.subject.includes('Confirm')) {

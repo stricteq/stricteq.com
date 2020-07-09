@@ -1,3 +1,5 @@
+const addValue = require('./add-value')
+const click = require('./click')
 const connectStripe = require('./connect-stripe')
 const createProject = require('./create-project')
 const login = require('./login')
@@ -57,12 +59,9 @@ tape('declined cards', test => {
         const groups = number.match(/.{2}/g)
         await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
         // Fill in customer details.
-        const nameInput = await browser.$('#buyForm input[name=name]')
-        await nameInput.addValue(customerName)
-        const emailInput = await browser.$('#buyForm input[name=email]')
-        await emailInput.addValue(customerEMail)
-        const locationInput = await browser.$('#buyForm input[name=location]')
-        await locationInput.addValue(customerLocation)
+        await addValue(browser, '#buyForm input[name=name]', customerName)
+        await addValue(browser, '#buyForm input[name=email]', customerEMail)
+        await addValue(browser, '#buyForm input[name=location]', customerLocation)
         // Enter credit card information.
         const iframe = await browser.$('iframe')
         await browser.switchToFrame(iframe)
@@ -79,11 +78,9 @@ tape('declined cards', test => {
         await postal.setValue('12345')
         await browser.switchToParentFrame()
         // Accept terms.
-        const terms = await browser.$('#buyForm input[name=terms]')
-        await terms.click()
+        await click(browser, '#buyForm input[name=terms]')
         // Click the buy button.
-        const submit = await browser.$('#buyForm button[type=submit]')
-        await submit.click()
+        await click(browser, '#buyForm button[type=submit]')
         const error = await browser.$('.error')
         await error.waitForExist({ timeout: 10000 })
         const errorText = await error.getText()
@@ -127,12 +124,9 @@ tape('3D Secure card', test => {
       const groups = number.match(/.{2}/g)
       await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
       // Fill in customer details.
-      const nameInput = await browser.$('#buyForm input[name=name]')
-      await nameInput.addValue(customerName)
-      const emailInput = await browser.$('#buyForm input[name=email]')
-      await emailInput.addValue(customerEMail)
-      const locationInput = await browser.$('#buyForm input[name=location]')
-      await locationInput.addValue(customerLocation)
+      await addValue(browser, '#buyForm input[name=name]', customerName)
+      await addValue(browser, '#buyForm input[name=email]', customerEMail)
+      await addValue(browser, '#buyForm input[name=location]', customerLocation)
       // Enter credit card information.
       const iframe = await browser.$('iframe')
       await browser.switchToFrame(iframe)
@@ -149,11 +143,9 @@ tape('3D Secure card', test => {
       await postal.setValue('12345')
       await browser.switchToParentFrame()
       // Accept terms.
-      const terms = await browser.$('#buyForm input[name=terms]')
-      await terms.click()
+      await click(browser, '#buyForm input[name=terms]')
       // Click the buy button.
-      const submit = await browser.$('#buyForm button[type=submit]')
-      await submit.click()
+      await click(browser, '#buyForm button[type=submit]')
       const message = await browser.$('.message')
       await message.waitForExist({ timeout: 10000 })
       const messageText = await message.getText()

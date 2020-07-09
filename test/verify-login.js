@@ -1,4 +1,5 @@
 const assert = require('assert')
+const click = require('./click')
 
 module.exports = options => {
   assert(options.browser)
@@ -14,8 +15,7 @@ module.exports = options => {
   return browser.navigateTo('http://localhost:' + port)
     .then(() => browser.$('a=Account'))
     .then(a => a.waitForExist())
-    .then(() => browser.$('a=Account'))
-    .then(a => a.click())
+    .then(() => click(browser, 'a=Account'))
     .then(() => browser.$('.handle'))
     .then(element => element.getText())
     .then(text => test.equal(text, handle, '/account shows handle'))

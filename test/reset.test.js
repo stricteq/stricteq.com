@@ -1,3 +1,4 @@
+const click = require('./click')
 const http = require('http')
 const mail = require('../mail')
 const server = require('./server')
@@ -36,10 +37,8 @@ tape('reset password', test => {
         resolve()
       }))
       await browser.navigateTo('http://localhost:' + port)
-      const loginButton = await browser.$('#login')
-      await loginButton.click()
-      const resetButton = await browser.$('a=Reset Password')
-      await resetButton.click()
+      await click(browser, '#login')
+      await click(browser, 'a=Reset Password')
       const handleInput = await browser.$('#resetForm input[name="handle"]')
       await handleInput.addValue(handle)
       let url
@@ -52,10 +51,7 @@ tape('reset password', test => {
             resolve()
           })
         }),
-        (async () => {
-          const submitReset = await browser.$('#resetForm button[type="submit"]')
-          await submitReset.click()
-        })()
+        click(browser, '#resetForm button[type="submit"]')
       ])
       await browser.navigateTo(url)
       // Fill reset form.
@@ -63,18 +59,15 @@ tape('reset password', test => {
       await passwordInput.addValue(password)
       const repeatInput = await browser.$('#passwordForm input[name="repeat"]')
       await repeatInput.addValue(password)
-      const submitButton = await browser.$('#passwordForm button[type="submit"]')
-      await submitButton.click()
+      await click(browser, '#passwordForm button[type="submit"]')
       // Navigate to log-in form.
-      const loginButtonAgain = await browser.$('#login')
-      await loginButtonAgain.click()
+      await click(browser, '#login')
       // Fill log-in form.
       const loginHandleInput = await browser.$('#loginForm input[name="handle"]')
       await loginHandleInput.addValue(handle)
       const loginPasswordInput = await browser.$('#loginForm input[name="password"]')
       await loginPasswordInput.addValue(password)
-      const loginSubmitButton = await browser.$('#loginForm button[type="submit"]')
-      await loginSubmitButton.click()
+      await click(browser, '#loginForm button[type="submit"]')
       await verifyLogIn({ browser, port, test, handle, email })
     })().then(finish).catch(finish)
 

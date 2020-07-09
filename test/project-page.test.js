@@ -1,3 +1,4 @@
+const click = require('./click')
 const connectStripe = require('./connect-stripe')
 const createProject = require('./create-project')
 const http = require('http')
@@ -92,8 +93,7 @@ tape('project page', test => {
       await postInput.setValue('12345')
       await browser.switchToParentFrame()
       // Accept terms.
-      const termsCheckbox = await browser.$('#buyForm input[name=terms]')
-      await termsCheckbox.click()
+      await click(browser, '#buyForm input[name=terms]')
       await Promise.all([
         // Listen for customer e-mail.
         new Promise((resolve, reject) => {
@@ -122,8 +122,7 @@ tape('project page', test => {
         }),
         (async () => {
           // Click the buy button.
-          const submitButton = await browser.$('#buyForm button[type=submit]')
-          await submitButton.click()
+          await click(browser, '#buyForm button[type=submit]')
           const p = await browser.$('.message')
           await p.waitForExist({ timeout: 10000 })
           const message = await p.getText()

@@ -1,4 +1,6 @@
+const addValue = require('./add-value')
 const assert = require('assert')
+const click = require('./click')
 
 module.exports = (options, callback) => {
   assert(options.browser)
@@ -10,13 +12,9 @@ module.exports = (options, callback) => {
   const handle = options.handle
   const password = options.password
   return browser.navigateTo('http://localhost:' + port)
-    .then(() => browser.$('#login'))
-    .then(a => a.click())
-    .then(() => browser.$('#loginForm input[name="handle"]'))
-    .then(input => input.addValue(handle))
-    .then(() => browser.$('#loginForm input[name="password"]'))
-    .then(input => input.addValue(password))
-    .then(() => browser.$('#loginForm button[type="submit"]'))
-    .then(submit => submit.click())
+    .then(() => click(browser, '#login'))
+    .then(() => addValue(browser, '#loginForm input[name="handle"]', handle))
+    .then(() => addValue(browser, '#loginForm input[name="password"]', password))
+    .then(() => click(browser, '#loginForm button[type="submit"]'))
     .catch(callback)
 }

@@ -1,3 +1,4 @@
+const click = require('./click')
 const connectStripe = require('./connect-stripe')
 const createProject = require('./create-project')
 const http = require('http')
@@ -153,11 +154,9 @@ tape('user page licenses', test => {
       await browser.switchToParentFrame()
 
       // Accept terms.
-      const termsBox = await browser.$('#buyForm input[name=terms]')
-      await termsBox.click()
+      await click(browser, '#buyForm input[name=terms]')
 
-      const submitButton = await browser.$('#buyForm button[type=submit]')
-      await submitButton.click()
+      await click(browser, '#buyForm button[type=submit]')
 
       const message = await browser.$('.message')
       await message.waitForExist({ timeout: 10000 })
@@ -197,16 +196,13 @@ tape('user JSON', test => {
       }))
       // Create project.
       await login({ browser, port, handle, password })
-      const accountLink = await browser.$('=Account')
-      await accountLink.click()
-      const createInput = await browser.$('=Create Project')
-      await createInput.click()
+      await click(browser, '=Account')
+      await click(browser, '=Create Project')
       const projectInput = await browser.$('#createForm input[name="project"]')
       await projectInput.addValue(project)
       const urlInput = await browser.$('#createForm input[name="url"]')
       await urlInput.addValue('http://example.com')
-      const submitButton = await browser.$('#createForm button[type="submit"]')
-      await submitButton.click()
+      await click(browser, '#createForm button[type="submit"]')
     })()
       .then(() => {
         http.request({

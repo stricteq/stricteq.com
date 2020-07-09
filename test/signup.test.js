@@ -27,8 +27,7 @@ tape('browse ' + path, test => {
     (async () => {
       const browser = await webdriver()
       await browser.navigateTo('http://localhost:' + port)
-      const signUpButton = await browser.$('a=Sign Up')
-      await signUpButton.click()
+      await click(browser, 'a=Sign Up')
       const h2 = await browser.$('h2')
       const title = await h2.getText()
       test.equal(title, 'Sign Up', '<h2>Sign Up</h2>')

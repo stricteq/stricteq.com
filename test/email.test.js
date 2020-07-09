@@ -1,6 +1,8 @@
+const addValue = require('./add-value')
+const click = require('./click')
+const login = require('./login')
 const mail = require('../mail').events
 const server = require('./server')
-const login = require('./login')
 const signup = require('./signup')
 const tape = require('tape')
 const verifyLogIn = require('./verify-login')
@@ -29,10 +31,8 @@ tape('change e-mail', test => {
       await verifyLogIn({ browser, port, test, handle, email: oldEMail })
       // Navigate to password-change page.
       await browser.navigateTo('http://localhost:' + port)
-      const account = await browser.$('a=Account')
-      await account.click()
-      const change = await browser.$('a=Change E-Mail')
-      await change.click()
+      await click(browser, 'a=Account')
+      await click(browser, 'a=Change E-Mail')
       // Submit password-change form.
       const emailInput = await browser.$('#emailForm input[name="email"]')
       await emailInput.addValue(newEMail)
@@ -50,10 +50,7 @@ tape('change e-mail', test => {
             })().then(resolve).catch(reject)
           })
         }),
-        (async () => {
-          const submit = await browser.$('#emailForm button[type="submit"]')
-          await submit.click()
-        })()
+        click(browser, '#emailForm button[type="submit"]')
       ])
     })().then(finish).catch(finish)
 
@@ -85,15 +82,11 @@ tape('change e-mail to existing', test => {
       await login({ browser, port, handle, password })
       await verifyLogIn({ browser, port, test, handle, email })
       // Navigate to password-change page.
-      const account = await browser.$('a=Account')
-      await account.click()
-      const change = await browser.$('a=Change E-Mail')
-      await change.click()
+      await click(browser, 'a=Account')
+      await click(browser, 'a=Change E-Mail')
       // Submit password-change form.
-      const emailInput = await browser.$('#emailForm input[name="email"]')
-      await emailInput.setValue(email)
-      const submit = await browser.$('#emailForm button[type="submit"]')
-      await submit.click()
+      await addValue(browser, '#emailForm input[name="email"]', email)
+      await click(browser, '#emailForm button[type="submit"]')
       const error = await browser.$('.error')
       const errorText = await error.getText()
       test.assert(errorText.includes('already has'), 'already has')

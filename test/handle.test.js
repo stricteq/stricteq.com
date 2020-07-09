@@ -1,3 +1,5 @@
+const addValue = require('./add-value')
+const click = require('./click')
 const http = require('http')
 const mail = require('../mail').events
 const server = require('./server')
@@ -45,14 +47,10 @@ tape('discover handle', test => {
         }),
         (async () => {
           await browser.navigateTo('http://localhost:' + port)
-          const loginLink = await browser.$('#login')
-          await loginLink.click()
-          const forgotLink = await browser.$('a=Forgot Handle')
-          await forgotLink.click()
-          const emailInput = await browser.$('#handleForm input[name="email"]')
-          await emailInput.addValue(email)
-          const submitButton = await browser.$('#handleForm button[type="submit"]')
-          await submitButton.click()
+          await click(browser, '#login')
+          await click(browser, 'a=Forgot Handle')
+          await addValue(browser, '#handleForm input[name="email"]', email)
+          await click(browser, '#handleForm button[type="submit"]')
         })()
       ])
     })().then(finish).catch(finish)
