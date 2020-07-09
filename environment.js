@@ -1,42 +1,15 @@
 // Environment Variable Parsing and Validation
 
 const variables = [
-  {
-    name: 'PUBLIC_KEY',
-    required: true
-  },
-  {
-    name: 'PRIVATE_KEY',
-    required: true
-  },
-  {
-    name: 'BASE_HREF',
-    required: true
-  },
-  {
-    name: 'CSRF_KEY',
-    required: true
-  },
-  {
-    name: 'DIRECTORY',
-    required: true
-  },
-  {
-    name: 'MINIMUM_COMMISSION',
-    required: true
-  },
-  {
-    name: 'STRIPE_CLIENT_ID',
-    required: true
-  },
-  {
-    name: 'STRIPE_SECRET_KEY',
-    required: true
-  },
-  {
-    name: 'STRIPE_PUBLISHABLE_KEY',
-    required: true
-  }
+  { name: 'PUBLIC_KEY', required: true },
+  { name: 'PRIVATE_KEY', required: true },
+  { name: 'BASE_HREF', required: true },
+  { name: 'CSRF_KEY', required: true },
+  { name: 'DIRECTORY', required: true },
+  { name: 'MINIMUM_COMMISSION', required: true },
+  { name: 'STRIPE_CLIENT_ID', required: true },
+  { name: 'STRIPE_SECRET_KEY', required: true },
+  { name: 'STRIPE_PUBLISHABLE_KEY', required: true }
 ]
 
 module.exports = () => {

@@ -1,8 +1,8 @@
-const assert = require('assert')
-const sodium = require('sodium-native')
-
 // Wrap an implementation of Ed25519 in our own API,
 // which expects and returns hex-encoded strings.
+
+const assert = require('assert')
+const sodium = require('sodium-native')
 
 module.exports = { keys, sign, verify }
 
@@ -16,7 +16,7 @@ function keys () {
   }
 }
 
-function sign (message, publicKey, privateKey) {
+function sign (message /* Buffer or string */, publicKey, privateKey) {
   assert(typeof publicKey === 'string')
   assert(typeof privateKey === 'string')
   var signature = Buffer.alloc(64)

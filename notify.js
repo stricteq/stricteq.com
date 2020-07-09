@@ -7,9 +7,6 @@ const markdown = require('./markdown')
 const storage = require('./storage')
 
 exports.confirmEMail = ({ to, handle, url }, callback) => {
-  const text = `
-  `.trim()
-  const html = markdown(text)
   send({
     to,
     subject: `Confirm ${constants.website} Account`,
@@ -17,9 +14,7 @@ exports.confirmEMail = ({ to, handle, url }, callback) => {
 Follow this link to confirm your ${constants.website} account:
 
 <${url}>
-    `.trim(),
-    text,
-    html
+    `.trim()
   }, callback)
 }
 
