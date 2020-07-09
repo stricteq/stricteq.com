@@ -1,4 +1,4 @@
-# theta
+# stricteq
 
 next evolution of [License Zero](https://licensezero.com)
 
