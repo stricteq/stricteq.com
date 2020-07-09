@@ -1875,7 +1875,7 @@ function serveUserPage (request, response) {
       }</ul>
       <table>
         ${data.name && row('Name', data.name)}
-        ${data.location && row('Location', data.location)}
+        ${data.location && row('Location', iso3166ToEnglish(data.location))}
         ${data.urls.length > 0 && html`
         <tr>
           <th>URLs</th>
@@ -2378,7 +2378,7 @@ Handle: ${handle}
 Project: ${project}
 
 Name: ${name}
-Location: ${location}
+Location: ${iso3166ToEnglish(location)}
 E-Mail: ${email}
 
 Order: ${orderID}
@@ -2434,6 +2434,11 @@ Payment Intent: ${paymentIntent.id}
 </html>
     `)
   }
+}
+
+function iso3166ToEnglish (code) {
+  const parsed = iso31662.subdivision(code)
+  return parsed.name + ', ' + parsed.country
 }
 
 function badgesList (project) {
