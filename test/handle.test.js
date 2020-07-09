@@ -27,38 +27,37 @@ tape('GET ' + path, test => {
 
 tape('discover handle', test => {
   server((port, done) => {
-    let browser
-    webdriver()
-      .then(loaded => { browser = loaded })
-      .then(() => {
-        return new Promise((resolve, reject) => signup({
-          browser, port, name, location, handle, password, email
-        }, error => {
-          if (error) reject(error)
+    (async () => {
+      const browser = await webdriver()
+      await new Promise((resolve, reject) => signup({
+        browser, port, name, location, handle, password, email
+      }, error => {
+        if (error) reject(error)
+        resolve()
+      }))
+      await Promise.all([
+        new Promise((resolve, reject) => {
           mail.once('sent', options => {
             test.equal(options.to, email, 'sent mail')
             test.assert(options.text.includes(handle), 'mailed handle')
-            finish()
+            resolve()
           })
-          resolve()
-        }))
-      })
-      .then(() => browser.navigateTo('http://localhost:' + port))
-      .then(() => browser.$('#login'))
-      .then(a => a.click())
-      .then(() => browser.$('a=Forgot Handle'))
-      .then(a => a.click())
-      .then(() => browser.$('#handleForm input[name="email"]'))
-      .then(input => input.addValue(email))
-      .then(() => browser.$('#handleForm button[type="submit"]'))
-      .then(submit => submit.click())
-      .catch(error => {
-        test.fail(error, 'catch')
-        finish()
-      })
-    function finish () {
+        }),
+        (async () => {
+          await browser.navigateTo('http://localhost:' + port)
+          const loginLink = await browser.$('#login')
+          await loginLink.click()
+          const forgotLink = await browser.$('a=Forgot Handle')
+          await forgotLink.click()
+          const emailInput = await browser.$('#handleForm input[name="email"]')
+          await emailInput.addValue(email)
+          const submitButton = await browser.$('#handleForm button[type="submit"]')
+          await submitButton.click()
+        })()
+      ])
+    })().finally(() => {
       test.end()
       done()
-    }
+    })
   })
 })

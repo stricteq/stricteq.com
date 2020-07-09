@@ -28,27 +28,19 @@ tape('browse ' + path, test => {
   const password = 'ana password'
   const email = 'ana@example.com'
   server((port, done) => {
-    let browser
-    webdriver()
-      .then(loaded => { browser = loaded })
-      .then(() => {
-        return new Promise((resolve, reject) => signup({
-          browser, port, name, location, handle, password, email
-        }, error => {
-          if (error) reject(error)
-          resolve()
-        }))
-      })
-      .then(() => login({ browser, port, handle, password }))
-      .then(() => verifyLogIn({ browser, test, port, email, handle }))
-      .then(() => finish())
-      .catch(error => {
-        test.fail(error, 'catch')
-        finish()
-      })
-    function finish () {
+    (async () => {
+      const browser = await webdriver()
+      await new Promise((resolve, reject) => signup({
+        browser, port, name, location, handle, password, email
+      }, error => {
+        if (error) reject(error)
+        resolve()
+      }))
+      await login({ browser, port, handle, password })
+      await verifyLogIn({ browser, test, port, email, handle })
+    })().finally(() => {
       test.end()
       done()
-    }
+    })
   })
 })

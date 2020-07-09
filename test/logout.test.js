@@ -28,34 +28,28 @@ tape('log out', test => {
   const password = 'test password'
   const email = 'ana@example.com'
   server((port, done) => {
-    let browser
-    webdriver()
-      .then(loaded => { browser = loaded })
-      .then(() => new Promise((resolve, reject) => {
+    (async () => {
+      const browser = await webdriver()
+      await new Promise((resolve, reject) => {
         signup({
           browser, port, name, location, handle, password, email
         }, error => {
           if (error) return reject(error)
           resolve()
         })
-      }))
-      .then(() => login({ browser, port, handle, password }))
-      .then(() => verifyLogIn({ browser, port, test, handle, email }))
-      .then(() => browser.$('#logout'))
-      .then(element => element.click())
-      .then(() => browser.navigateTo('http://localhost:' + port))
-      .then(() => browser.$('#login'))
-      .then(h2 => h2.getText())
-      .then(text => test.equal(text, 'Log In', 'Log In'))
-      .then(finish)
-      .catch(error => {
-        test.fail(error)
-        finish()
       })
-    function finish () {
+      await login({ browser, port, handle, password })
+      await verifyLogIn({ browser, port, test, handle, email })
+      const logoutButton = await browser.$('#logout')
+      await logoutButton.click()
+      await browser.navigateTo('http://localhost:' + port)
+      const loginButton = await browser.$('#login')
+      const buttonText = await loginButton.getText()
+      test.equal(buttonText, 'Log In', 'Log In')
+    })().finally(() => {
       test.end()
       done()
-    }
+    })
   })
 })
 
@@ -75,10 +69,9 @@ tape('log in as ana, log in as bob', test => {
     email: 'bob@example.com'
   }
   server((port, done) => {
-    let browser
-    webdriver()
-      .then(loaded => { browser = loaded })
-      .then(() => new Promise((resolve, reject) => {
+    (async () => {
+      const browser = await webdriver()
+      await new Promise((resolve, reject) => {
         signup({
           browser,
           port,
@@ -91,8 +84,8 @@ tape('log in as ana, log in as bob', test => {
           if (error) return reject(error)
           resolve()
         })
-      }))
-      .then(() => new Promise((resolve, reject) => {
+      })
+      await new Promise((resolve, reject) => {
         signup({
           browser,
           port,
@@ -105,28 +98,15 @@ tape('log in as ana, log in as bob', test => {
           if (error) return reject(error)
           resolve()
         })
-      }))
-      .then(() => login({
-        browser, port, handle: ana.handle, password: ana.password
-      }))
-      .then(() => verifyLogIn({
-        browser, port, test, handle: ana.handle, email: ana.email
-      }))
-      .then(() => logout({ browser, port }))
-      .then(() => login({
-        browser, port, handle: bob.handle, password: bob.password
-      }))
-      .then(() => verifyLogIn({
-        browser, port, test, handle: bob.handle, email: bob.email
-      }))
-      .then(finish)
-      .catch(error => {
-        test.fail(error)
-        finish()
       })
-    function finish () {
+      await login({ browser, port, handle: ana.handle, password: ana.password })
+      await verifyLogIn({ browser, port, test, handle: ana.handle, email: ana.email })
+      await logout({ browser, port })
+      await login({ browser, port, handle: bob.handle, password: bob.password })
+      await verifyLogIn({ browser, port, test, handle: bob.handle, email: bob.email })
+    })().finally(() => {
       test.end()
       done()
-    }
+    })
   })
 })

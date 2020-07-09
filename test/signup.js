@@ -45,3 +45,12 @@ module.exports = ({
       .catch(callback)
   })
 }
+// TODO: Test admin notification of signup.
+/*
+mail.once('sent', options => {
+  test.equal(options.subject, 'Sign Up', 'admin notification')
+  test.assert(options.text.includes(handle), 'includes handle')
+  test.assert(options.text.includes(email), 'includes email')
+  resolve()
+})
+*/

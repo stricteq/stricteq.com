@@ -1,3 +1,4 @@
+const click = require('./click')
 const connectStripe = require('./connect-stripe')
 const login = require('./login')
 const server = require('./server')
@@ -13,49 +14,37 @@ tape('Stripe Connect', test => {
   const password = 'test password'
   const email = 'tester@example.com'
   server((port, done) => {
-    let browser
-    webdriver()
-      .then(loaded => { browser = loaded })
-      .then(() => new Promise((resolve, reject) => {
+    (async () => {
+      const browser = await webdriver()
+      await new Promise((resolve, reject) => {
         signup({
           browser, port, name, location, handle, password, email
         }, error => {
           if (error) return reject(error)
           resolve()
         })
-      }))
-      .then(() => login({ browser, port, handle, password }))
-      // Navigate to account page.
-      .then(() => browser.$('#account'))
-      .then(account => account.click())
-      .then(() => connectStripe({ browser, port }))
-      // Confirm connected.
-      .then(() => browser.$('#disconnect'))
-      .then(disconnect => disconnect.getText())
-      .then(text => test.equal(text, 'Disconnect Stripe Account', 'connected'))
-      // Disconnect.
-      .then(() => browser.$('#disconnect'))
-      .then(disconnect => disconnect.click())
-      .then(() => browser.$('h2'))
-      .then(h2 => h2.getText())
-      .then(text => test.equal(text, 'Disconnected Stripe Account', 'disconnected'))
-      .then(() => timeout(5000))
-      // Navigate back to account page.
-      .then(() => browser.$('#account'))
-      .then(account => account.click())
-      // Confirm disconnected.
-      .then(() => browser.$('#connect'))
-      .then(connect => connect.getText())
-      .then(text => test.equal(text, 'Connect Stripe Account', 'confirmed disconnected'))
-      // Finish.
-      .then(() => finish())
-      .catch(error => {
-        test.fail(error, 'catch')
-        finish()
       })
-    function finish () {
+      await login({ browser, port, handle, password })
+      await connectStripe({ browser, port })
+      // Confirm connected.
+      const disconnect = await browser.$('#disconnect')
+      const text = await disconnect.getText()
+      test.equal(text, 'Disconnect Stripe Account', 'connected')
+      // Disconnect.
+      await click(browser, '#disconnect')
+      const h2 = await browser.$('h2')
+      const h2Text = await h2.getText()
+      test.equal(h2Text, 'Disconnected Stripe Account', 'disconnected')
+      await timeout(5000)
+      // Navigate back to account page.
+      await click(browser, '#account')
+      // Confirm disconnected.
+      const connect = await browser.$('#connect')
+      const connectText = await connect.getText()
+      test.equal(connectText, 'Connect Stripe Account', 'confirmed disconnected')
+    })().finally(() => {
       test.end()
       done()
-    }
+    })
   }, 8080)
 })

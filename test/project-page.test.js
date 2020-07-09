@@ -2,6 +2,7 @@ const connectStripe = require('./connect-stripe')
 const createProject = require('./create-project')
 const http = require('http')
 const login = require('./login')
+const logout = require('./logout')
 const mail = require('../mail')
 const server = require('./server')
 const signup = require('./signup')
@@ -25,154 +26,134 @@ tape('project page', test => {
   const customerEMail = 'jon@exaple.com'
   const customerLocation = 'US-CA'
   server((port, done) => {
-    let browser, cardNumber
-    webdriver()
-      .then(loaded => { browser = loaded })
-      .then(() => {
-        return new Promise((resolve, reject) => signup({
-          browser, port, name, location, handle, password, email
-        }, error => {
-          if (error) reject(error)
-          resolve()
-        }))
-      })
-      .then(() => login({ browser, port, handle, password }))
-      .then(() => connectStripe({ browser, port }))
+    (async () => {
+      const browser = await webdriver()
+      await new Promise((resolve, reject) => signup({
+        browser, port, name, location, handle, password, email
+      }, error => {
+        if (error) reject(error)
+        resolve()
+      }))
+      await login({ browser, port, handle, password })
+      await connectStripe({ browser, port })
       // Confirm connected.
-      .then(() => browser.$('#disconnect'))
-      .then(disconnect => disconnect.getText())
-      .then(text => test.equal(text, 'Disconnect Stripe Account', 'connected'))
+      const disconnectButton = await browser.$('#disconnect')
+      await disconnectButton.waitForExist()
+      const disconnectText = await disconnectButton.getText()
+      test.equal(disconnectText, 'Disconnect Stripe Account', 'connected')
       // Create project.
-      .then(() => createProject({ browser, port, project, url, price, category }))
-      .then(() => browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`))
-      .then(() => browser.$('h2'))
-      .then(h2 => h2.getText())
-      .then(text => test.equal(text, project, 'project page'))
-      .then(() => browser.$(`a[href="${url}"]`))
-      .then(link => link.waitForExist())
-      .then(() => test.pass('URL'))
-      .then(() => browser.$('#price'))
-      .then(price => price.getText())
-      .then(text => test.equal(text, `$${price}`, 'price'))
-      .then(() => browser.$('#category'))
-      .then(price => price.getText())
-      .then(text => test.equal(text, category, 'category'))
+      await createProject({ browser, port, project, url, price, category })
+      await logout({ browser, port })
+      await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
+      const h2 = await browser.$('h2')
+      const h2Text = await h2.getText()
+      test.equal(h2Text, project, 'project page')
+      const projectLink = await browser.$(`a[href="${url}"]`)
+      await projectLink.waitForExist()
+      test.pass('URL')
+      const priceElement = await browser.$('#price')
+      const priceText = await priceElement.getText()
+      test.equal(priceText, `$${price}`, 'price')
+      const categoryElement = await browser.$('#category')
+      const categoryPrice = await categoryElement.getText()
+      test.equal(categoryPrice, category, 'category')
       // Buy a license.
       // Fill in customer details.
-      .then(() => browser.$('#buyForm input[name=name]'))
-      .then(name => name.addValue(customerName))
-      .then(() => browser.$('#buyForm input[name=email]'))
-      .then(email => email.addValue(customerEMail))
-      .then(() => browser.$('#buyForm input[name=location]'))
-      .then(email => email.addValue(customerLocation))
+      const nameInput = await browser.$('#buyForm input[name=name]')
+      await nameInput.addValue(customerName)
+      const emailInput = await browser.$('#buyForm input[name=email]')
+      await emailInput.addValue(customerEMail)
+      const locationInput = await browser.$('#buyForm input[name=location]')
+      await locationInput.addValue(customerLocation)
       // Enter credit card information.
-      .then(() => browser.$('iframe'))
-      .then((frame) => browser.switchToFrame(frame))
-      .then(() => browser.$('input[name="cardnumber"]'))
-      .then((input) => { cardNumber = input })
-      .then(() => cardNumber.addValue('42'))
-      .then(() => timeout(200))
-      .then(() => cardNumber.addValue('42'))
-      .then(() => timeout(200))
-      .then(() => cardNumber.addValue('42'))
-      .then(() => timeout(200))
-      .then(() => cardNumber.addValue('42'))
-      .then(() => timeout(200))
-      .then(() => cardNumber.addValue('42'))
-      .then(() => timeout(200))
-      .then(() => cardNumber.addValue('42'))
-      .then(() => timeout(200))
-      .then(() => cardNumber.addValue('42'))
-      .then(() => timeout(200))
-      .then(() => cardNumber.addValue('42'))
-      .then(() => browser.$('input[name="exp-date"]'))
-      .then((input) => input.setValue('10 / 31'))
-      .then(() => browser.$('input[name="cvc"]'))
-      .then((input) => input.setValue('123'))
-      .then(() => browser.$('input[name="postal"]'))
-      .then((input) => input.setValue('12345'))
-      .then(() => browser.switchToParentFrame())
+      const frame = await browser.$('iframe')
+      await browser.switchToFrame(frame)
+      const cardInput = await browser.$('input[name="cardnumber"]')
+      await cardInput.addValue('42')
+      await timeout(200)
+      await cardInput.addValue('42')
+      await timeout(200)
+      await cardInput.addValue('42')
+      await timeout(200)
+      await cardInput.addValue('42')
+      await timeout(200)
+      await cardInput.addValue('42')
+      await timeout(200)
+      await cardInput.addValue('42')
+      await timeout(200)
+      await cardInput.addValue('42')
+      await timeout(200)
+      await cardInput.addValue('42')
+      const expirationInput = await browser.$('input[name="exp-date"]')
+      await expirationInput.setValue('10 / 31')
+      const cvcInput = await browser.$('input[name="cvc"]')
+      await cvcInput.setValue('123')
+      const postInput = await browser.$('input[name="postal"]')
+      await postInput.setValue('12345')
+      await browser.switchToParentFrame()
       // Accept terms.
-      .then(() => browser.$('#buyForm input[name=terms]'))
-      .then(terms => terms.click())
-      // Listen for customer e-mail.
-      .then(() => {
-        mail.events.on('sent', options => {
-          if (options.to !== customerEMail) return
-          test.equal(options.to, customerEMail, 'e-mail TO customer')
-          test.equal(options.cc, email, 'e-mail CC developer')
-          test.assert(
-            options.text.includes(`$${price}`),
-            'e-mail includes price'
-          )
-          test.assert(
-            options.attachments.length > 0,
-            'e-mail has attachment'
-          )
-          test.assert(
-            /Order ID: `[a-f0-9-]+`/.test(options.text),
-            'e-mail has order ID'
-          )
-          test.assert(
-            /Signature: `[a-f0-9]+`/.test(options.text),
-            'e-mail has signature'
-          )
-          readyToFinish()
-        })
-      })
-      // Click the buy button.
-      .then(() => browser.$('#buyForm button[type=submit]'))
-      .then(submit => submit.click())
-      .then(() => browser.$('.message'))
-      .then(message => message.waitForExist({ timeout: 10000 }))
-      .then(() => browser.$('.message'))
-      .then(message => message.getText())
-      .then(text => test.assert(text.includes('Thank you', 'confirmation')))
-      .then(() => readyToFinish())
-      .catch(error => {
-        failed = true
-        test.fail(error, 'catch')
-        finish()
-      })
-
-    let failed = false
-    let count = 0
-
-    function readyToFinish () {
-      if (failed) return
-      if (++count === 2) {
-        browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
-          .then(() => browser.$('#customers li img'))
-          .then(li => li.getAttribute('alt'))
-          .then(alt => test.equal(alt, customerName, 'Gravatar on project page'))
-          .then(finish)
-          .catch(finish)
-      }
-    }
-
-    function finish () {
+      const termsCheckbox = await browser.$('#buyForm input[name=terms]')
+      await termsCheckbox.click()
+      await Promise.all([
+        // Listen for customer e-mail.
+        new Promise((resolve, reject) => {
+          mail.events.on('sent', options => {
+            if (options.to !== customerEMail) return
+            test.equal(options.to, customerEMail, 'e-mail TO customer')
+            test.equal(options.cc, email, 'e-mail CC developer')
+            test.assert(
+              options.text.includes(`$${price}`),
+              'e-mail includes price'
+            )
+            test.assert(
+              options.attachments.length > 0,
+              'e-mail has attachment'
+            )
+            test.assert(
+              /Order ID: `[a-f0-9-]+`/.test(options.text),
+              'e-mail has order ID'
+            )
+            test.assert(
+              /Signature: `[a-f0-9]+`/.test(options.text),
+              'e-mail has signature'
+            )
+            resolve()
+          })
+        }),
+        (async () => {
+          // Click the buy button.
+          const submitButton = await browser.$('#buyForm button[type=submit]')
+          await submitButton.click()
+          const p = await browser.$('.message')
+          await p.waitForExist({ timeout: 10000 })
+          const message = await p.getText()
+          test.assert(message.includes('Thank you', 'confirmation'))
+        })()
+      ])
+      await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
+      const img = await browser.$('#customers li img')
+      const alt = await img.getAttribute('alt')
+      test.equal(alt, customerName, 'Gravatar on project page')
+    })().finally(() => {
       test.end()
       done()
-    }
+    })
   }, 8080)
 })
 
 tape('project JSON', test => {
   server((port, done) => {
-    let browser
-    webdriver()
-      .then(loaded => { browser = loaded })
-      .then(() => {
-        return new Promise((resolve, reject) => signup({
-          browser, port, name, location, handle, password, email
-        }, error => {
-          if (error) reject(error)
-          resolve()
-        }))
-      })
-      .then(() => login({ browser, port, handle, password }))
-      .then(() => createProject({ browser, port, project, url, price, category }))
-      .then(() => {
+    (async () => {
+      const browser = await webdriver()
+      await new Promise((resolve, reject) => signup({
+        browser, port, name, location, handle, password, email
+      }, error => {
+        if (error) reject(error)
+        resolve()
+      }))
+      await login({ browser, port, handle, password })
+      await createProject({ browser, port, project, url, price, category })
+      await new Promise((resolve, reject) => {
         http.request({
           port,
           path: `/~${handle}/${project}`,
@@ -189,18 +170,14 @@ tape('project JSON', test => {
               test.deepEqual(parsed.urls, [url], '.urls')
               test.equal(typeof parsed.created, 'string', '.created')
               test.equal(typeof parsed.account, 'object', '.account')
-              finish()
+              resolve()
             })
           })
           .end()
       })
-      .catch(error => {
-        test.fail(error, 'catch')
-        finish()
-      })
-    function finish () {
+    })().finally(() => {
       test.end()
       done()
-    }
+    })
   })
 })

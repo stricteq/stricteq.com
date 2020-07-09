@@ -47,13 +47,10 @@ tape('user page', test => {
       const link = await projects.$(`=${project}`)
       await link.waitForExist()
       test.pass('project link on user page')
-    })()
-      .then(finish)
-      .catch(finish)
-    function finish () {
+    })().finally(() => {
       test.end()
       done()
-    }
+    })
   })
 })
 
@@ -170,13 +167,10 @@ tape('user page licenses', test => {
       const anchor = await browser.$('main .licenses a')
       const href = await anchor.getAttribute('href')
       test.equal(href, `/~${ana.handle}/${project}`)
-    })()
-      .then(finish)
-      .catch(finish)
-    function finish () {
+    })().finally(() => {
       test.end()
       done()
-    }
+    })
   }, 8080)
 })
 
