@@ -1,3 +1,4 @@
+const connectStripe = require('./connect-stripe')
 const createProject = require('./create-project')
 const http = require('http')
 const login = require('./login')
@@ -36,13 +37,7 @@ tape('project page', test => {
         }))
       })
       .then(() => login({ browser, port, handle, password }))
-      // Connect.
-      .then(() => browser.$('#account'))
-      .then(account => account.click())
-      .then(() => browser.$('#connect'))
-      .then(connect => connect.click())
-      .then(() => browser.$('=Skip this account form'))
-      .then((element) => element.click())
+      .then(() => connectStripe({ browser, port }))
       // Confirm connected.
       .then(() => browser.$('#disconnect'))
       .then(disconnect => disconnect.getText())

@@ -1,3 +1,4 @@
+const connectStripe = require('./connect-stripe')
 const createProject = require('./create-project')
 const http = require('http')
 const login = require('./login')
@@ -83,13 +84,7 @@ tape('user page licenses', test => {
       ))
       await login({ browser, port, handle: ana.handle, password: ana.password })
 
-      // Connect.
-      const accountLink = await browser.$('#account')
-      await accountLink.click()
-      const connectLink = await browser.$('#connect')
-      await connectLink.click()
-      const skipLink = await browser.$('=Skip this account form')
-      await skipLink.click()
+      await connectStripe({ browser, port })
 
       // Confirm connected.
       const disconnect = await browser.$('#disconnect')

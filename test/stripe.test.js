@@ -1,3 +1,4 @@
+const connectStripe = require('./connect-stripe')
 const login = require('./login')
 const server = require('./server')
 const signup = require('./signup')
@@ -27,11 +28,7 @@ tape('Stripe Connect', test => {
       // Navigate to account page.
       .then(() => browser.$('#account'))
       .then(account => account.click())
-      // Connect.
-      .then(() => browser.$('#connect'))
-      .then(connect => connect.click())
-      .then(() => browser.$('=Skip this account form'))
-      .then((element) => element.click())
+      .then(() => connectStripe({ browser, port }))
       // Confirm connected.
       .then(() => browser.$('#disconnect'))
       .then(disconnect => disconnect.getText())
