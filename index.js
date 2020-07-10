@@ -2546,7 +2546,7 @@ function serveStripeWebhook (request, response) {
         request.log.error('no orderID metadata')
         return response.end()
       }
-      request.log.info({ orderID }, 'order ID')
+      request.log.info({ orderID }, 'payment succeeded')
       const date = new Date().toISOString()
       return storage.order.read(orderID, (error, order) => {
         if (error) {
@@ -2659,18 +2659,9 @@ function serveStripeWebhook (request, response) {
 
           // E-mail customer.
           done => {
-            let cc = null
-            if (error) {
-              // Eat errors.
-              request.log.error(error, 'account read')
-            } else if (!account) {
-              request.log.error({ handle }, 'no account found')
-            } else {
-              cc = account.email
-            }
             notify.license({
               to: order.email,
-              cc,
+              cc: account.email,
               bcc: process.env.ADMIN_EMAIL,
               handle,
               project,
