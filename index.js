@@ -238,6 +238,18 @@ const meta = html`
 
 const header = `<header role=banner><h1>${constants.website}</h1></header>`
 
+const footer = `
+<footer role=contentinfo>
+  <p>
+    Icons by <a href=https://fontawesome.com>Font Awesome</a>
+    under <a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.
+  </p>
+  <a href=/terms/service>Terms of Service</a>
+  <a href=/terms/agency>Agency Terms</a>
+  <a href=/terms/privacy>Privacy</a>
+</footer>
+`
+
 function nav (request) {
   const account = request.account
   const handle = account && account.handle
@@ -306,6 +318,7 @@ function serveHomepage (request, response) {
         `)}
       </ol>
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -344,6 +357,7 @@ function serveTerms (request, response, slug) {
       <h1>${escapeHTML(title)}</h1>
       ${markdown(markup)}
     </main>
+    ${footer}
   </body>
 </html>
       `)
@@ -535,6 +549,7 @@ function serveSignUp (request, response) {
       <h2>Success</h2>
       <p class=message>Check your e-mail for a link to confirm your new account.</p>
     </main>
+    ${footer}
   </body>
 </html>
   `)
@@ -602,6 +617,7 @@ function serveSignUp (request, response) {
         <button type=submit>${title}</button>
       </form>
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -756,6 +772,7 @@ function serveCreate (request, response) {
         <button type=submit>${title}</button>
       </form>
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -814,6 +831,7 @@ function serveLogIn (request, response) {
       <a href=/handle>Forgot Handle</a>
       <a href=/reset>Reset Password</a>
     </main>
+    ${footer}
   </body>
 </html>
     `
@@ -970,6 +988,7 @@ function serveAccount (request, response) {
       <a class=button href=/password>Change Password</a>
       <a class=button href=/email>Change E-Mail</a>
     </main>
+    ${footer}
   </body>
 </html>
   `)
@@ -1047,6 +1066,7 @@ function serveHandle (request, response) {
         <button type=submit>Send Handle</button>
       </form>
     </main>
+    ${footer}
   </body>
 </html>
     `
@@ -1068,6 +1088,7 @@ function serveHandle (request, response) {
       <h2>${title}</h2>
       <p class=message>If the e-mail you entered corresponds to an account, an e-mail was just sent to it.</p>
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -1126,6 +1147,7 @@ function serveEMail (request, response) {
         <button type=submit>${title}</button>
       </form>
     </main>
+    ${footer}
   </body>
 </html>
     `
@@ -1147,6 +1169,7 @@ function serveEMail (request, response) {
       <h2>Change E-Mail</h2>
       <p class=message>Confirmation e-mail sent.</p>
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -1234,6 +1257,7 @@ function getAuthenticated (request, response) {
         <button type=submit>${title}</button>
       </form>
     </main>
+    ${footer}
   </body>
 </html>
   `)
@@ -1287,6 +1311,7 @@ function getWithToken (request, response) {
         <button type=submit>${title}</button>
       </form>
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -1311,6 +1336,7 @@ function invalidToken (request, response) {
       <h2>${title}</h2>
       <p class=message>The link you followed is invalid or expired.</p>
     </main>
+    ${footer}
   </body>
 </html>
   `)
@@ -1355,6 +1381,7 @@ function postPassword (request, response) {
       <h2>${title}</h2>
       <p class=message>Password changed.</p>
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -1525,6 +1552,7 @@ function serveReset (request, response) {
         <button type=submit>Send E-Mail</button>
       </form>
     </main>
+    ${footer}
   </body>
 </html>
     `
@@ -1571,6 +1599,7 @@ function serveReset (request, response) {
       <h2>Reset Password</h2>
       <p class=message>An e-mail has been sent.</p>
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -1640,6 +1669,7 @@ function serveConfirm (request, response) {
       <h2>${title}</h2>
       <p class=message>The e-mail address for your account was successfully changed.</p>
     </main>
+    ${footer}
   </body>
 </html>
           `)
@@ -1749,6 +1779,7 @@ function serveConnected (request, response) {
       <p>Stripe reported an error connecting your account:</p>
       <blockqute><p>${escapeHTML(message)}</p></blockqute>
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -1816,19 +1847,13 @@ function serveDisconnect (request, response) {
       <h2>Disconnected Stripe Account</h2>
       <p class=message>Stripe has been told to disconnect your account. The change should take effect shortly.</p>
     </main>
+    ${footer}
   </body>
 </html>
       `)
     })
   }
 }
-
-const fontAwesomeCredit = `
-<p>
-  Icons by <a href=https://fontawesome.com>Font Awesome</a>
-  under <a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.
-</p>
-`
 
 // /~{handle}
 function serveUserPage (request, response) {
@@ -1913,9 +1938,7 @@ function serveUserPage (request, response) {
         `)
       }</ul>
     </main>
-    <footer role=contentinfo>
-      ${fontAwesomeCredit}
-    </footer>
+    ${footer}
   </body>
 </html>
     `)
@@ -2020,12 +2043,7 @@ function serveBadges (request, response) {
       ${urlLink('https://gitlab.com/kemitchell')}
       ${urlLink('https://twitter.com/licensezero')}
     </main>
-    <footer role=contentinfo>
-      <p>
-        Icons by <a href=https://fontawesome.com>Font Awesome</a>
-        under <a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.
-      </p>
-    </footer>
+    ${footer}
   </body>
 </html>
   `)
@@ -2117,6 +2135,7 @@ function serveProjectPage (request, response) {
           : '<p>Licenses are not available for sale at this time.</p>'
       }
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -2424,6 +2443,7 @@ Payment Intent: ${paymentIntent.id}
       <h2>Success</h2>
       <p class=message>Thank you for buying a license! As soon as your payment clears, you will receive an e-mail with your license and receipt.</p>
     </main>
+    ${footer}
   </body>
 </html>
   `)
@@ -2445,6 +2465,7 @@ Payment Intent: ${paymentIntent.id}
       <h2>${title}</h2>
       ${buyForm(data)}
     </main>
+    ${footer}
   </body>
 </html>
     `)
@@ -2983,6 +3004,7 @@ function serve404 (request, response) {
     <main>
       <h2>Not Found</h2>
     </main>
+    ${footer}
   </body>
 </html>
   `)
@@ -3003,6 +3025,7 @@ function serve500 (request, response, error) {
     <main>
       <h1>Internal Error</h1>
     </main>
+    ${footer}
   </body>
 </html>
   `)
