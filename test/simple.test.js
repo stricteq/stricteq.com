@@ -46,6 +46,20 @@ simple({
 })
 
 simple({
+  path: '/terms/agency',
+  status: 200,
+  mime: 'text/html',
+  content: 'Agency Terms'
+})
+
+simple({
+  path: '/terms/privacy',
+  status: 200,
+  mime: 'text/html',
+  content: 'Privacy'
+})
+
+simple({
   path: '/buy.js',
   status: 200,
   mime: 'application/javascript; charset=UTF-8',

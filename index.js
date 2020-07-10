@@ -171,6 +171,12 @@ module.exports = (request, response) => {
   if (pathname === '/terms/service') {
     return serveTerms(request, response, 'service')
   }
+  if (pathname === '/terms/agency') {
+    return serveTerms(request, response, 'agency')
+  }
+  if (pathname === '/terms/privacy') {
+    return serveTerms(request, response, 'privacy')
+  }
   // Static Files
   const basename = path.basename(pathname)
   if (staticFiles.includes(basename)) {
@@ -311,6 +317,8 @@ function serveFile (request, response, file) {
 }
 
 const termsTitles = {
+  agency: 'Agency Terms',
+  privacy: 'Privacy Notice',
   service: 'Terms of Service'
 }
 
