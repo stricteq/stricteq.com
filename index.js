@@ -240,13 +240,21 @@ const header = `<header role=banner><h1>${constants.website}</h1></header>`
 
 const footer = `
 <footer role=contentinfo>
-  <p>
-    Icons by <a href=https://fontawesome.com>Font Awesome</a>
-    under <a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.
-  </p>
-  <a href=/terms/service>Terms of Service</a>
-  <a href=/terms/agency>Agency Terms</a>
-  <a href=/terms/privacy>Privacy</a>
+  <section>
+    <p>
+      Icons by <a href=https://fontawesome.com>Font Awesome</a>
+      under <a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.
+    </p>
+    <p>Built on <a href=/credits.txt>open software</a>. </p>
+    <p>Source code <a href=https://github.com/stricteq/stricteq.com>on GitHub</a>.</p>
+  </section>
+  <section>
+    <ul>
+      <li><a href=/terms/service>Terms of Service</a></li>
+      <li><a href=/terms/agency>Agency Terms</a></li>
+      <li><a href=/terms/privacy>Privacy</a></li>
+    </ul>
+  </section>
 </footer>
 `
 

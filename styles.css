@@ -66,3 +66,9 @@ a[href] .logo {
   margin-right: 0.5ex;
   vertical-align: bottom;
 }
+
+footer[role=contentinfo] ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
