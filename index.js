@@ -2715,21 +2715,22 @@ function serveStripeWebhook (request, response) {
           done => storage.order.update(orderID, {
             fulfilled: new Date().toISOString(),
             paymentIntent: intent
-          }, done)
+          }, (error, success) => {
+            if (error) return done(error)
+            if (!success) {
+              request.log.error({ orderID }, 'failed updating order')
+            }
+            done()
+          })
         ], error => {
           if (error) {
+            request.log.error(error)
             response.statusCode = 500
             return response.end()
           }
           response.end()
         })
       })
-
-    // Handle payment failure.
-    } else if (type === 'payment_intent.payment_failed') {
-      const intent = event.data.object
-      request.log.info({ intent }, 'failed')
-      // TODO: Handle payment failure.
     }
 
     response.statusCode = 400
