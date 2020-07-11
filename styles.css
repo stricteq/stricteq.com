@@ -67,6 +67,10 @@ a[href] .logo {
   vertical-align: bottom;
 }
 
+footer[role=contentinfo] {
+  text-align: right;
+}
+
 footer[role=contentinfo] ul {
   list-style-type: none;
   margin: 0;
