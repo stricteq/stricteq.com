@@ -1,10 +1,10 @@
 // Expiration Policies
 
-exports.csrfToken = s => expired({ s, lifetime: days(7) })
-exports.accountLock = s => expired({ s, lifetime: days(1) })
-exports.changeEMailToken = s => expired({ s, lifetime: hours(1) })
-exports.confirmEMailToken = s => expired({ s, lifetime: days(1) })
-exports.resetPasswordToken = s => expired({ s, lifetime: hours(1) })
+exports.csrfToken = s => expired(s, days(7))
+exports.accountLock = s => expired(s, days(1))
+exports.changeEMailToken = s => expired(s, hours(1))
+exports.confirmEMailToken = s => expired(s, days(1))
+exports.resetPasswordToken = s => expired(s, hours(1))
 
 const actionToExpiration = {
   'confirm e-mail': exports.confirmEMailToken,
@@ -26,7 +26,7 @@ function hours (hours) {
   return hours * 60 * 60 * 1000
 }
 
-function expired ({ dateString, lifetime }) {
+function expired (dateString, lifetime) {
   const now = Date.now()
   const date = Date.parse(dateString)
   return (now - date) > lifetime // days * 24 * 60 * 60 * 1000
