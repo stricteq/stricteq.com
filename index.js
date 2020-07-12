@@ -916,35 +916,11 @@ function serveLogOut (request, response) {
   if (request.method !== 'POST') {
     return serve405(request, response)
   }
-  const body = {}
-  const fields = ['csrftoken', 'csrfnonce']
-  request.pipe(
-    new Busboy({
-      headers: request.headers,
-      limits: {
-        fieldNameSize: Math.max(fields.map(n => n.length)),
-        fields: 2,
-        parts: 1
-      }
-    })
-      .on('field', function (name, value, truncated, encoding, mime) {
-        if (fields.includes(name)) body[name] = value
-      })
-      .once('finish', onceParsed)
-  )
-
-  function onceParsed () {
-    csrf.verify({
-      action: '/logout',
-      sessionID: request.session.id,
-      token: body.csrftoken,
-      nonce: body.csrfnonce
-    }, error => {
-      if (error) return redirect()
-      clearCookie(response)
-      redirect()
-    })
-  }
+  parseAndValidatePostBody({ action: '/logout', request }, error => {
+    if (error) return redirect()
+    clearCookie(response)
+    redirect()
+  })
 
   function redirect () {
     response.statusCode = 303
@@ -1351,15 +1327,36 @@ function invalidToken (request, response) {
 }
 
 function postPassword (request, response) {
-  let handle
-  const body = {}
-  const fieldNames = [
-    'password', 'repeat', 'token', 'old',
-    'csrftoken', 'csrfnonce'
-  ]
+  let handle, body
   runSeries([
-    readPostBody,
-    validateInputs,
+    done => parseAndValidatePostBody({
+      action: '/password',
+      request,
+      fields: {
+        password: {
+          displayName: 'password',
+          validate: passwords.valid
+        },
+        repeat: {
+          displayName: 'password repeat',
+          validate: (value, body) => value === body.password
+        },
+        token: {
+          displayName: 'token',
+          optional: true,
+          validate: value => UUID_RE.test(value)
+        },
+        old: {
+          displayName: 'old password',
+          optional: true,
+          validate: passwords.valid
+        }
+      }
+    }, (error, result) => {
+      if (error) return done(error)
+      body = result
+      done()
+    }),
     checkOldPassword,
     changePassword,
     sendEMail
@@ -1394,57 +1391,6 @@ function postPassword (request, response) {
 </html>
     `)
   })
-
-  function readPostBody (done) {
-    request.pipe(
-      new Busboy({
-        headers: request.headers,
-        limits: {
-          fieldNameSize: Math.max(fieldNames.map(x => x.length)),
-          fields: fieldNames.length,
-          parts: 1
-        }
-      })
-        .on('field', function (name, value, truncated, encoding, mime) {
-          if (fieldNames.includes(name)) body[name] = value
-        })
-        .once('finish', done)
-    )
-  }
-
-  function validateInputs (done) {
-    let error
-    const token = body.token
-    if (token && !UUID_RE.test(token)) {
-      error = new Error('invalid token')
-      error.fieldName = 'token'
-      return done(error)
-    }
-    const password = body.password
-    const repeat = body.repeat
-    if (password !== repeat) {
-      error = new Error('passwords did not match')
-      error.fieldName = 'repeat'
-      return done(error)
-    }
-    if (!passwords.valid(password)) {
-      error = new Error('invalid password')
-      error.fieldName = 'password'
-      return done(error)
-    }
-    const old = body.old
-    if (!token && !old) {
-      error = new Error('missing old password')
-      error.fieldName = 'old'
-      return done(error)
-    }
-    csrf.verify({
-      action: '/password',
-      sessionID: request.session.id,
-      token: body.csrftoken,
-      nonce: body.csrfnonce
-    }, done)
-  }
 
   function checkOldPassword (done) {
     const token = body.token
@@ -1800,41 +1746,16 @@ function serveDisconnect (request, response) {
   const account = request.account
   if (!account) return serve302(request, response, '/login')
 
-  const body = {}
-  const fields = ['csrftoken', 'csrfnonce']
-  request.pipe(
-    new Busboy({
-      headers: request.headers,
-      limits: {
-        fieldNameSize: Math.max(fields.map(n => n.length)),
-        fields: 2,
-        parts: 1
-      }
-    })
-      .on('field', function (name, value, truncated, encoding, mime) {
-        if (fields.includes(name)) body[name] = value
-      })
-      .once('finish', onceParsed)
-  )
-
-  function onceParsed () {
-    runSeries([
-      done => csrf.verify({
-        action: '/disconnect',
-        sessionID: request.session.id,
-        token: body.csrftoken,
-        nonce: body.csrfnonce
-      }, done),
-      // Deauthorize Stripe connection.
-      done => stripe.oauth.deauthorize({
-        client_id: environment.STRIPE_CLIENT_ID,
-        stripe_user_id: account.stripe.token.stripe_user_id
-      }, done)
+  parseAndValidatePostBody({ action: '/disconnect', request }, (error, body) => {
+    if (error) return serve500(request, response, error)
+    stripe.oauth.deauthorize({
+      client_id: environment.STRIPE_CLIENT_ID,
+      stripe_user_id: account.stripe.token.stripe_user_id
+    }, error => {
       // Note that this route does _not_ handle updating the
       // account record or otherwise process deauthorization.
       // Instead, the application waits for Stripe to
       // post confirmation to its webhook.
-    ], error => {
       if (error) {
         request.log.error(error)
         response.statusCode = 500
@@ -1860,7 +1781,7 @@ function serveDisconnect (request, response) {
 </html>
       `)
     })
-  }
+  })
 }
 
 // /~{handle}
@@ -2920,11 +2841,15 @@ function formRoute ({
   function post (request, response) {
     if (onPost) onPost(request, response)
 
-    const body = {}
-    let fromProcess
+    let body, fromProcess
     runSeries([
-      parse,
-      validate,
+      done => parseAndValidatePostBody({
+        action, request, fields, fieldSizeLimit
+      }, (error, parsed) => {
+        if (error) return done(error)
+        body = parsed
+        done()
+      }),
       process
     ], error => {
       if (error) {
@@ -2938,54 +2863,6 @@ function formRoute ({
       onSuccess(request, response, body, fromProcess)
     })
 
-    function parse (done) {
-      request.pipe(
-        new Busboy({
-          headers: request.headers,
-          limits: {
-            fieldNameSize: Math.max(
-              fieldNames
-                .concat('csrftoken', 'csrfnonce')
-                .map(n => n.length)
-            ),
-            fields: fieldNames.length + 2,
-            fieldSizeLimit,
-            parts: 1
-          }
-        })
-          .on('field', function (name, value, truncated, encoding, mime) {
-            if (name === 'csrftoken' || name === 'csrfnonce') {
-              body[name] = value
-              return
-            }
-            const description = fields[name]
-            if (!description) return
-            body[name] = description.filter
-              ? description.filter(value)
-              : value
-          })
-          .once('finish', done)
-      )
-    }
-
-    function validate (done) {
-      for (let index = 0; index < fieldNames.length; index++) {
-        const fieldName = fieldNames[index]
-        const description = fields[fieldName]
-        const valid = description.validate(body[fieldName], body)
-        if (valid) continue
-        const error = new Error('invalid ' + description.displayName)
-        error.statusCode = 401
-        return done(error)
-      }
-      csrf.verify({
-        action,
-        sessionID: request.session.id,
-        token: body.csrftoken,
-        nonce: body.csrfnonce
-      }, done)
-    }
-
     function process (done) {
       processBody(request, body, (error, result) => {
         if (error) return done(error)
@@ -2993,6 +2870,72 @@ function formRoute ({
         done()
       })
     }
+  }
+}
+
+function parseAndValidatePostBody ({
+  action,
+  request,
+  fields = {},
+  fieldSizeLimit = 512000
+}, callback) {
+  const fieldNames = Object.keys(fields)
+  const body = {}
+
+  runSeries([parse, validate], error => {
+    if (error) return callback(error)
+    callback(null, body)
+  })
+
+  function parse (done) {
+    request.pipe(
+      new Busboy({
+        headers: request.headers,
+        limits: {
+          fieldNameSize: Math.max(
+            fieldNames
+              .concat('csrftoken', 'csrfnonce')
+              .map(n => n.length)
+          ),
+          fields: fieldNames.length + 2,
+          fieldSizeLimit,
+          parts: 1
+        }
+      })
+        .on('field', function (name, value, truncated, encoding, mime) {
+          if (name === 'csrftoken' || name === 'csrfnonce') {
+            body[name] = value
+            return
+          }
+          const description = fields[name]
+          if (!description) return
+          if (description.optional && value === '') return
+          body[name] = description.filter
+            ? description.filter(value)
+            : value
+        })
+        .once('finish', done)
+    )
+  }
+
+  function validate (done) {
+    for (let index = 0; index < fieldNames.length; index++) {
+      const fieldName = fieldNames[index]
+      const description = fields[fieldName]
+      const value = body[fieldName]
+      if (description.optional && value === undefined) continue
+      const valid = description.validate(value, body)
+      if (valid) continue
+      const error = new Error('invalid ' + description.displayName)
+      error.statusCode = 401
+      return done(error)
+    }
+    csrf.verify({
+      action,
+      sessionID: request.session.id,
+      token: body.csrftoken,
+      nonce: body.csrfnonce
+    }, done)
   }
 }
 
