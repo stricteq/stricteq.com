@@ -402,25 +402,31 @@ function serveSignUp (request, response) {
 
   const fields = {
     name: {
+      displayName: 'name',
       filter: e => e.trim(),
       validate: e => e.length >= 3
     },
     location: {
+      displayName: 'location',
       filter: e => e.toUpperCase().trim(),
       validate: code => locations.includes(code)
     },
     email: {
+      displayName: 'e-mail address',
       filter: e => e.toLowerCase().trim(),
       validate: e => EMAIL_RE.test(e)
     },
     handle: {
+      displayName: 'handle',
       filter: e => e.toLowerCase().trim(),
       validate: handles.validate
     },
     password: {
+      display: 'password',
       validate: passwords.validate
     },
     repeat: {
+      display: 'password repeat',
       validate: (value, body) => value === body.password
     }
   }
@@ -657,10 +663,12 @@ function serveCreate (request, response) {
 
   const fields = {
     project: {
+      display: 'project name',
       filter: e => e.toLowerCase().trim(),
       validate: projects.validate
     },
     url: {
+      displayName: 'URL',
       filter: e => e.trim(),
       validate: e => e.length < 128 && URLRegEx({
         exact: true,
@@ -668,10 +676,12 @@ function serveCreate (request, response) {
       }).test(e)
     },
     price: {
+      displayName: 'price',
       filter: e => parseInt(e),
       validate: e => !isNaN(e) && e >= MINIMUM_PRICE
     },
     category: {
+      displayName: 'category',
       filter: e => e.toLowerCase().trim(),
       validate: e => projectCategories.includes(e)
     }
@@ -792,6 +802,7 @@ function serveLogIn (request, response) {
 
   const fields = {
     handle: {
+      displayName: 'handle',
       filter: e => e.toLowerCase().trim(),
       validate: x => x.length !== 0
     },
@@ -1008,6 +1019,7 @@ function serveHandle (request, response) {
 
   const fields = {
     email: {
+      displayName: 'e-mail address',
       filter: e => e.toLowerCase().trim(),
       validate: e => EMAIL_RE.test(e)
     }
@@ -1096,6 +1108,7 @@ function serveEMail (request, response) {
 
   const fields = {
     email: {
+      displayName: 'e-mail address',
       filter: e => e.toLowerCase().trim(),
       validate: e => EMAIL_RE.test(e)
     }
@@ -1463,6 +1476,7 @@ function serveReset (request, response) {
 
   const fields = {
     handle: {
+      displayName: 'handle',
       validate: handles.validate
     }
   }
@@ -2181,28 +2195,35 @@ function serveBuy (request, response) {
 
   const fields = {
     handle: {
+      displayName: 'handle',
       filter: e => e.toLowerCase().trim(),
       validate: handles.validate
     },
     project: {
+      displayName: 'project',
       filter: e => e.toLowerCase().trim(),
       validate: projects.validate
     },
     name: {
+      displayName: 'name',
       filter: e => e.trim(),
       validate: s => s.length > 3
     },
     email: {
+      displayName: 'e-mail address',
       filter: e => e.toLowerCase().trim(),
       validate: e => EMAIL_RE.test(e)
     },
     location: {
+      displayName: 'location',
       validate: code => locations.includes(code)
     },
     terms: {
+      displayName: 'terms checkbox',
       validate: e => e === 'accepted'
     },
     token: {
+      displayName: 'payment token',
       validate: e => typeof e === 'string' && e.startsWith('tok_')
     }
   }
