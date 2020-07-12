@@ -67,7 +67,7 @@ const handles = (() => {
   const re = new RegExp(`^${pattern}$`)
   return {
     pattern,
-    valid: (string) => re.test(string),
+    validate: (string) => re.test(string),
     html: 'Handles must be ' +
       'made of the characters ‘a’ through ‘z’ ' +
       'and the digits ‘0’ through ‘9’. ' +
@@ -82,7 +82,7 @@ const projects = (() => {
   const re = new RegExp(`^${pattern}$`)
   return {
     pattern,
-    valid: (string) => re.test(string),
+    validate: (string) => re.test(string),
     html: 'Project names must be ' +
       'made of the characters ‘a’ through ‘z’ ' +
       'and the digits ‘0’ through ‘9’. ' +
@@ -386,7 +386,7 @@ const passwords = (() => {
   const re = new RegExp(`^${pattern}$`)
   return {
     pattern,
-    valid: (string) => {
+    validate: (string) => {
       if (!re.test(string)) return false
       const length = string.length
       return length >= min && length <= max
@@ -415,10 +415,10 @@ function serveSignUp (request, response) {
     },
     handle: {
       filter: e => e.toLowerCase().trim(),
-      validate: handles.valid
+      validate: handles.validate
     },
     password: {
-      validate: passwords.valid
+      validate: passwords.validate
     },
     repeat: {
       validate: (value, body) => value === body.password
@@ -658,7 +658,7 @@ function serveCreate (request, response) {
   const fields = {
     project: {
       filter: e => e.toLowerCase().trim(),
-      validate: projects.valid
+      validate: projects.validate
     },
     url: {
       filter: e => e.trim(),
@@ -1335,7 +1335,7 @@ function postPassword (request, response) {
       fields: {
         password: {
           displayName: 'password',
-          validate: passwords.valid
+          validate: passwords.validate
         },
         repeat: {
           displayName: 'password repeat',
@@ -1349,7 +1349,7 @@ function postPassword (request, response) {
         old: {
           displayName: 'old password',
           optional: true,
-          validate: passwords.valid
+          validate: passwords.validate
         }
       }
     }, (error, result) => {
@@ -1463,7 +1463,7 @@ function serveReset (request, response) {
 
   const fields = {
     handle: {
-      validate: handles.valid
+      validate: handles.validate
     }
   }
 
@@ -2182,11 +2182,11 @@ function serveBuy (request, response) {
   const fields = {
     handle: {
       filter: e => e.toLowerCase().trim(),
-      validate: handles.valid
+      validate: handles.validate
     },
     project: {
       filter: e => e.toLowerCase().trim(),
-      validate: projects.valid
+      validate: projects.validate
     },
     name: {
       filter: e => e.trim(),
