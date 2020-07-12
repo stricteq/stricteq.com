@@ -67,7 +67,7 @@ const handles = (() => {
   const re = new RegExp(`^${pattern}$`)
   return {
     pattern,
-    validate: (string) => re.test(string),
+    validate: string => re.test(string),
     html: 'Handles must be ' +
       'made of the characters ‘a’ through ‘z’ ' +
       'and the digits ‘0’ through ‘9’. ' +
@@ -82,7 +82,7 @@ const projects = (() => {
   const re = new RegExp(`^${pattern}$`)
   return {
     pattern,
-    validate: (string) => re.test(string),
+    validate: string => re.test(string),
     html: 'Project names must be ' +
       'made of the characters ‘a’ through ‘z’ ' +
       'and the digits ‘0’ through ‘9’. ' +
@@ -386,7 +386,7 @@ const passwords = (() => {
   const re = new RegExp(`^${pattern}$`)
   return {
     pattern,
-    validate: (string) => {
+    validate: string => {
       if (!re.test(string)) return false
       const length = string.length
       return length >= min && length <= max
@@ -792,7 +792,7 @@ function serveLogIn (request, response) {
 
   const fields = {
     handle: {
-      filter: (e) => e.toLowerCase().trim(),
+      filter: e => e.toLowerCase().trim(),
       validate: x => x.length !== 0
     },
     password: {
@@ -876,7 +876,7 @@ function serveLogIn (request, response) {
           }
           return storage.account.update(
             handle, { failures },
-            (updateError) => {
+            updateError => {
               if (updateError) return done(updateError)
               done(verifyError)
             }
@@ -1008,8 +1008,8 @@ function serveHandle (request, response) {
 
   const fields = {
     email: {
-      filter: (e) => e.toLowerCase().trim(),
-      validate: (e) => EMAIL_RE.test(e)
+      filter: e => e.toLowerCase().trim(),
+      validate: e => EMAIL_RE.test(e)
     }
   }
 
@@ -1096,8 +1096,8 @@ function serveEMail (request, response) {
 
   const fields = {
     email: {
-      filter: (e) => e.toLowerCase().trim(),
-      validate: (e) => EMAIL_RE.test(e)
+      filter: e => e.toLowerCase().trim(),
+      validate: e => EMAIL_RE.test(e)
     }
   }
 
@@ -1701,7 +1701,7 @@ function serveConnected (request, response) {
         if (error) request.log.error(error, 'E-Mail Error')
         done()
       })
-    ], (error) => {
+    ], error => {
       if (error) {
         request.log.info(error, 'Connect error')
         return fail(error)
