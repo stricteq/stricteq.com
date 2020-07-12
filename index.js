@@ -2930,10 +2930,11 @@ function parseAndValidatePostBody ({
           }
           const description = fields[name]
           if (!description) return
-          if (description.optional && value === '') return
-          body[name] = description.filter
+          const filteredValue = description.filter
             ? description.filter(value)
             : value
+          if (description.optional && filteredValue === '') return
+          body[name] = filteredValue
         })
         .once('finish', done)
     )
