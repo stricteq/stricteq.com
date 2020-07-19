@@ -95,12 +95,14 @@ simple({
   mime: 'application/octet-stream'
 })
 
+/*
 simple({
   method: 'GET',
   path: '/credits.txt',
   status: 200,
   mime: 'text/plain; charset=UTF-8'
 })
+*/
 
 simple({
   method: 'GET',
