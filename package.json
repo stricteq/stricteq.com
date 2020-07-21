@@ -3,7 +3,7 @@
   "dependencies": {
     "busboy": "^0.3.1",
     "commonform-commonmark": "^6.0.0",
-    "commonform-docx": "^5.2.0",
+    "commonform-docx": "^5.3.0",
     "commonmark": "^0.29.1",
     "cookie": "^0.4.1",
     "do-not-cache": "^1.0.1",
