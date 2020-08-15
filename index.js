@@ -53,6 +53,7 @@ routes.set('/create', serveCreate) // create projects
 routes.set('/account', serveAccount) // account pages
 routes.set('/handle', serveHandle) // remind of handles
 routes.set('/email', serveEMail) // change account e-mail
+routes.set('/affiliations', serveAffiliations) // change account affiliations
 // TODO: Add route for users to claim additional e-mail addresses.
 routes.set('/password', servePassword) // change passwords
 routes.set('/reset', serveReset) // reset passwords
@@ -470,6 +471,7 @@ function serveSignUp (request, response) {
                 urls: [],
                 badges: {},
                 projects: [],
+                affiliations: '',
                 created: new Date().toISOString(),
                 confirmed: false,
                 failures: 0,
@@ -967,6 +969,10 @@ function serveAccount (request, response) {
           <td class=email>${escapeHTML(account.email)}</td>
         </tr>
         <tr>
+          <th>Affiliations</th>
+          <td class=affiliations>${escapeHTML(account.affiliations)}</td>
+        </tr>
+        <tr>
           <th>Signed Up</th>
           <td class=signedup>${escapeHTML(new Date(account.created).toISOString())}</td>
         </tr>
@@ -982,6 +988,7 @@ function serveAccount (request, response) {
       <a class=button href=/create>Create Project</a>
       <a class=button href=/password>Change Password</a>
       <a class=button href=/email>Change E-Mail</a>
+      <a class=button href=/affiliations>Change Affiliations</a>
     </main>
     ${footer}
   </body>
@@ -1135,7 +1142,7 @@ function serveEMail (request, response) {
     ${header}
     ${nav(request)}
     <main role=main>
-      <h2>Change E-Mail</h2>
+      <h2>${title}</h2>
       <form id=emailForm method=post>
         ${data.error}
         ${data.csrf}
@@ -1163,7 +1170,7 @@ function serveEMail (request, response) {
     ${header}
     ${nav(request)}
     <main role=main>
-      <h2>Change E-Mail</h2>
+      <h2>${title}</h2>
       <p class=message>Confirmation e-mail sent.</p>
     </main>
     ${footer}
@@ -1198,6 +1205,72 @@ function serveEMail (request, response) {
         }, done)
       })
     })
+  }
+}
+
+function serveAffiliations (request, response) {
+  const title = 'Change Affiliations'
+
+  const fields = {
+    affiliations: {
+      displayName: 'affiliations',
+      filter: e => e.trim(),
+      validate: e => e.length < 256
+    }
+  }
+
+  formRoute({
+    action: '/affiliations',
+    requireAuthentication: true,
+    form,
+    fields,
+    processBody,
+    onSuccess
+  })(request, response)
+
+  function form (request, data) {
+    return html`
+<!doctype html>
+<html lang=en-US>
+  <head>
+    ${meta}
+    <title>${title}</title>
+  </head>
+  <body>
+    ${header}
+    ${nav(request)}
+    <main role=main>
+      <h2>${title}</h2>
+      <form id=affiliationsForm method=post>
+        ${data.error}
+        ${data.csrf}
+        <p>
+          <label for=affiliations>Affiliations</label>
+          <input
+              name=affiliations
+              type=text
+              value="${escapeHTML(data.affiliations)}">
+        </p>
+        ${data.affiliations.error}
+        <button type=submit>${title}</button>
+      </form>
+    </main>
+    ${footer}
+  </body>
+</html>
+    `
+  }
+
+  function onSuccess (request, response, body) {
+    response.statusCode = 303
+    response.setHeader('Location', '/account')
+    response.end()
+  }
+
+  function processBody (request, body, done) {
+    const handle = request.account.handle
+    const affiliations = body.affiliations
+    storage.account.update(handle, { affiliations }, done)
   }
 }
 
@@ -2024,6 +2097,8 @@ function serveProjectPage (request, response) {
         <img
             src="${c.gravatar}"
             alt="${escapeHTML(c.name)}">
+        <span class=name>${escapeHTML(c.name)}</span>
+        ${c.affiliations && `<span class=affiliations>${escapeHTML(c.affiliations)}</span>`}
       </li>
       `)}
     </ol>
