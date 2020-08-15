@@ -1208,6 +1208,16 @@ function serveEMail (request, response) {
   }
 }
 
+const affiliations = (() => {
+  const pattern = '.{3,256}'
+  const re = new RegExp(`^${pattern}$`)
+  return {
+    pattern,
+    validate: string => re.test(string),
+    html: 'Affiliations are lists of companies and other organizations you belong to, up to 256 characters long.'
+  }
+})()
+
 function serveAffiliations (request, response) {
   const title = 'Change Affiliations'
 
@@ -1215,7 +1225,7 @@ function serveAffiliations (request, response) {
     affiliations: {
       displayName: 'affiliations',
       filter: e => e.trim(),
-      validate: e => e.length < 256
+      validate: affiliations.validate
     }
   }
 
@@ -1249,9 +1259,12 @@ function serveAffiliations (request, response) {
           <input
               name=affiliations
               type=text
-              value="${escapeHTML(data.affiliations)}">
+              pattern="^${affiliations.pattern}$"
+              value="${escapeHTML(data.affiliations) || ''}"
+              required>
         </p>
         ${data.affiliations.error}
+        <p>${affiliations.html}</p>
         <button type=submit>${title}</button>
       </form>
     </main>
