@@ -283,6 +283,7 @@ const footer = `
   <a href=/terms/service>Terms of Service</a>
   <a href=/terms/agency>Agency Terms</a>
   <a href=/terms/privacy>Privacy</a>
+  <a href=mailto:support@stricteq.com>E-Mail Support</a>
   </section>
 </footer>
 `
