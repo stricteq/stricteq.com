@@ -1949,7 +1949,7 @@ function serveDisconnect (request, response) {
   <body>
     ${header}
     ${nav(request)}
-    <main>
+    <main role=main>
       <h2>Disconnected Stripe Account</h2>
       <p class=message>Stripe has been told to disconnect your account. The change should take effect shortly.</p>
     </main>
@@ -2004,7 +2004,7 @@ function serveUserPage (request, response) {
   <body>
     ${header}
     ${nav(request)}
-    <main>
+    <main role=main>
       <img
           class=avatar
           src="${gravatar.url(data.email, { size: 200, rating: 'pg', protocol: 'https' })}">
@@ -2137,7 +2137,7 @@ function serveBadges (request, response) {
   <body>
     ${header}
     ${nav(request)}
-    <main>
+    <main role=main>
       <h2>User Badges</h2>
       <ul class=badges>${
         accountBadges.map(badge => `<li>${badgeImage(badge)}</li>`)
@@ -2194,7 +2194,7 @@ function serveProjectPage (request, response) {
       </li>
       `)}
     </ol>
-    <main>
+    <main role=main>
       <h2>${data.project}</h2>
       ${badgesList(data)}
       <table>
@@ -3195,7 +3195,7 @@ function serve404 (request, response) {
   <body>
     ${header}
     ${nav(request)}
-    <main>
+    <main role=main>
       <h2>Not Found</h2>
     </main>
     ${footer}
@@ -3216,7 +3216,7 @@ function serve500 (request, response, error) {
     <title>Internal Error</title>
   </head>
   <body>
-    <main>
+    <main role=main>
       <h1>Internal Error</h1>
     </main>
     ${footer}
