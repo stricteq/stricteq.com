@@ -6,7 +6,7 @@ This privacy notice describes the policies of stricteq.com, a website operated b
 
 # Changes to this Notice
 
-You can find the latest version of this notice at <https://stricteq.com/terms/privacy>, and compare previous versions of this notice at <https://github.com/stricteq/stricteq.com/blob/main/terms/privacy.md>.  Artless Devices may change this notice at any time.
+You can find the latest version of this notice at <https://stricteq.com/privacy>, and compare previous versions of this notice at <https://github.com/stricteq/stricteq.com/blob/main/terms/privacy.md>.  Artless Devices may change this notice at any time.
 
 # Collecting and Sharing
 

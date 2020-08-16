@@ -174,19 +174,19 @@ module.exports = (request, response) => {
     })
   }
   // Terms
-  if (pathname === '/terms/service') {
+  if (pathname === '/service') {
     return serveTerms(request, response, 'service')
   }
-  if (pathname === '/terms/agency') {
+  if (pathname === '/agency') {
     return serveTerms(request, response, 'agency')
   }
-  if (pathname === '/terms/privacy') {
+  if (pathname === '/privacy') {
     return serveTerms(request, response, 'privacy')
   }
-  if (pathname === '/terms/free') {
+  if (pathname === '/free') {
     return serveTerms(request, response, 'free')
   }
-  if (pathname === '/terms/paid') {
+  if (pathname === '/paid') {
     return serveTerms(request, response, 'paid')
   }
   if (pathname === '/deal') {
@@ -275,9 +275,9 @@ const header = `
 const footer = `
 <footer role=contentinfo>
   <a class=spaced href=https://artlessdevices.com>Company</a>
-  <a class=spaced href=/terms/service>Terms of Service</a>
-  <a class=spaced href=/terms/agency>Agency Terms</a>
-  <a class=spaced href=/terms/privacy>Privacy</a>
+  <a class=spaced href=/service>Terms of Service</a>
+  <a class=spaced href=/agency>Agency Terms</a>
+  <a class=spaced href=/privacy>Privacy</a>
   <a class=spaced href=mailto:support@stricteq.com>Support</a>
   <a class=spaced href=https://twitter.com/${constants.twitter}>Twitter</a>
   <p>Built on <a href=/credits.txt>open code</a>. Source <a href=https://github.com/stricteq/stricteq.com>on GitHub</a>.</p>
@@ -2332,7 +2332,7 @@ function buyForm (data) {
     <label>
       <input name=terms type=checkbox value=accepted required>
       Check this box to accept the
-      <a href=/terms/service target=_blank>terms of service</a>.
+      <a href=/service target=_blank>terms of service</a>.
     </label>
     ${data.terms.error}
   </fieldset>

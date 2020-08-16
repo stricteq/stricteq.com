@@ -7,6 +7,6 @@ To use software listed on stricteq.com to make money or for work, you need to bu
 
 Otherwise, you can use and share the software for free.
 
-The legal terms for paid licenses are at <https://stricteq.com/terms/paid>.
+The legal terms for paid licenses are at <https://stricteq.com/paid>.
 
-The legal terms for free licenses are at <https://stricteq.com/terms/free>.
+The legal terms for free licenses are at <https://stricteq.com/free>.

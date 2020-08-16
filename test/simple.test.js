@@ -39,35 +39,35 @@ simple({
 })
 
 simple({
-  path: '/terms/service',
+  path: '/service',
   status: 200,
   mime: 'text/html',
   content: 'Terms of Service'
 })
 
 simple({
-  path: '/terms/agency',
+  path: '/agency',
   status: 200,
   mime: 'text/html',
   content: 'Agency Terms'
 })
 
 simple({
-  path: '/terms/privacy',
+  path: '/privacy',
   status: 200,
   mime: 'text/html',
   content: 'Privacy'
 })
 
 simple({
-  path: '/terms/free',
+  path: '/free',
   status: 200,
   mime: 'text/html',
   content: 'Free License'
 })
 
 simple({
-  path: '/terms/paid',
+  path: '/paid',
   status: 200,
   mime: 'text/html',
   content: 'Paid License'
