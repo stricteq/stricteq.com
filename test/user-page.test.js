@@ -34,6 +34,10 @@ tape('user page', test => {
       const h2Text = await h2.getText()
       test.equal(h2Text, handle, 'handle')
 
+      const locationElement = await browser.$('//th[text()="Location"]//following-sibling::td')
+      const locationText = await locationElement.getText()
+      test.equal(locationText, 'California, United States', 'displays location')
+
       // Create project.
       await login({ browser, port, handle, password })
       await createProject({ browser, port, project, url, price, category })

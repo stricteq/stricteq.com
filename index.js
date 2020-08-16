@@ -2512,7 +2512,7 @@ Payment Intent: ${paymentIntent.id}
 
 function iso3166ToEnglish (code) {
   const parsed = iso31662.subdivision(code)
-  return parsed.name + ', ' + parsed.country
+  return parsed.name + ', ' + parsed.countryName
 }
 
 function badgesList (project) {
