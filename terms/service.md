@@ -10,11 +10,11 @@ You can find and compare revisions of these terms at <https://github.com/stricte
 
 <h1 id="talk-to-a-lawyer">Talk to a Lawyer</h1>
 
-***Artless Devices provides license agency services, not legal advice.  Neither Artless Devices, nor any lawyers or firms who may be affiliated with it, form any attorney-client relationship with you.  Artless Devices does not and cannot guarantee that any license available via stricteq.com will meet your legal needs.  Only a lawyer engaged to provide you legal advice, who can ask questions about you and your legal needs in confidence, can do that.***
+<span class="conspicuous" markdown="1">Artless Devices provides license agency services, not legal advice.  Neither Artless Devices, nor any lawyers or firms who may be affiliated with it, form any attorney-client relationship with you.  Artless Devices does not and cannot guarantee that any license available via stricteq.com will meet your legal needs.  Only a lawyer engaged to provide you legal advice, who can ask questions about you and your legal needs in confidence, can do that.</span>
 
 <h1 id="no-warranties">No Warranties</h1>
 
-***stricteq.com is provided as is and as available.  Artless Devices expressly disclaims all warranties of any kind, whether express, implied, or statutory.  stricteq.com may not meet your requirements, suffer interruptions, security breaches, and errors.  You bear all risk of using stricteq.com.***
+<span class="conspicuous" markdown="1">stricteq.com is provided as is and as available.  Artless Devices expressly disclaims all warranties of any kind, whether express, implied, or statutory.  stricteq.com may not meet your requirements, suffer interruptions, security breaches, and errors.  You bear all risk of using stricteq.com.</span>
 
 <h1 id="limits-on-liability">Limits on Liability</h1>
 

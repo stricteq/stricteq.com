@@ -35,4 +35,4 @@ The developer cannot revoke this license.
 
 <h2 id="no-liability">No Liability</h2>
 
-***As far as the law allows, the software comes as is, without any warranty or condition, and the developer will not be liable to anyone for any damages related to the software or this license, under any kind of legal claim.***
+<span class="conspicuous" markdown="1">As far as the law allows, the software comes as is, without any warranty or condition, and the developer will not be liable to anyone for any damages related to the software or this license, under any kind of legal claim.</span>

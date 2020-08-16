@@ -143,3 +143,8 @@ select {
   padding: 1ex;
   width: 100%;
 }
+
+.conspicuous {
+  font-style: italic;
+  font-weight: bold;
+}

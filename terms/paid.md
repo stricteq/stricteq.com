@@ -71,8 +71,8 @@ The _Developer_ guarantees that they either own or have the rights to license co
 
 <h2 id="disclaimer">Disclaimer</h2>
 
-***With the sole exception of [Guarantee](#guarantee), as far as the law allows, the _Software_ comes as is, without any warranty or condition.***
+<span class="conspicuous" markdown="1">With the sole exception of [Guarantee](#guarantee), as far as the law allows, the _Software_ comes as is, without any warranty or condition.</span>
 
 <h2 id="exclusion">Exclusion</h2>
 
-***With the sole exception of [Guarantee](#guarantee), as far as the law allows, neither the _Developer_ nor their _Agent_ will be liable to anyone for any damages related to the _Software_ or this license, under any kind of legal claim.***
+<span class="conspicuous" markdown="1">With the sole exception of [Guarantee](#guarantee), as far as the law allows, neither the _Developer_ nor their _Agent_ will be liable to anyone for any damages related to the _Software_ or this license, under any kind of legal claim.</span>
