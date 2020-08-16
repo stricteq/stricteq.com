@@ -590,6 +590,7 @@ function serveSignUp (request, response) {
     ${nav(request)}
     <main role=main>
       <h2>${title}</h2>
+      <p>Sign up for a ${constants.website} account to track your purchases and offer projects for sale.</p>
       <form id=signupForm method=post>
         ${data.error}
         ${data.csrf}
@@ -607,16 +608,21 @@ function serveSignUp (request, response) {
           <input
               name=handle
               type=text
+              placeholder=charlie5
               pattern="^${handles.pattern}$"
               value="${escapeHTML(data.handle.value || '')}"
               required>
         </p>
-        ${data.handle.error}
+        <p>Your callsign on ${constants.website}. Your profile page will be ${process.env.BASE_HREF}/~{handle}.</p>
         <p>${handles.html}</p>
+        <p>Please respect others who have registered a particular handle in several other places, like Twitter, GitHub, npm, and so on. In general, handles are first-come, first-served. But ${constants.website} may require changes to avoid confusion.</p>
+        ${data.handle.error}
         ${passwordInput({})}
         ${data.password.error}
         ${passwordRepeatInput()}
         ${data.repeat.error}
+        <p>Please pick a strong password or passphrase just for ${constants.website}. ${constants.website} does <em>not</em> yet support two-factor authentication.</p>
+        <p>${escapeHTML(passwords.html)}</p>
         <button type=submit>${title}</button>
       </form>
     </main>
@@ -765,7 +771,7 @@ function serveCreate (request, response) {
           <label for=price>Price</label>
           $<input
             name=price
-            type=price
+            type=number
             value="${escapeHTML(data.project.price || '')}"
             min="${MINIMUM_PRICE.toString()}"
             min="${MAXIMUM_PRICE.toString()}"
@@ -2241,20 +2247,20 @@ function buyForm (data) {
   ${data.error}
   ${data.csrf}
   <input
-      type=hidden
       name=handle
+      type=hidden
       value="${escapeHTML(data.handle.value || '')}">
   <input
-      type=hidden
       name=project
+      type=hidden
       value="${escapeHTML(data.project.value || '')}">
   <fieldset>
     <legend>About You</legend>
     <label>
       Your Legal Name
       <input
-        type=text
         name=name
+        type=text
         value="${escapeHTML(data.name.value || '')}"
         required>
     </label>
@@ -2263,8 +2269,8 @@ function buyForm (data) {
       Location
       <input
         name=location
-        value="${escapeHTML(data.location.value || '')}"
         type=text
+        value="${escapeHTML(data.location.value || '')}"
         list=locations
         autocomplete=off
         required>
@@ -2276,8 +2282,8 @@ function buyForm (data) {
     <label>
       E-Mail
       <input
-        type=email
         name=email
+        type=email
         value="${escapeHTML(data.email.value || '')}"
         required>
     </label>
@@ -2292,7 +2298,7 @@ function buyForm (data) {
   <fieldset>
     <legend>Terms</legend>
     <label>
-      <input type=checkbox name=terms value=accepted required>
+      <input name=terms type=checkbox value=accepted required>
       Check this box to accept the
       <a href=/terms/service target=_blank>terms of service</a>.
     </label>
@@ -2867,15 +2873,18 @@ function locationInput (value) {
   <label for=location>Location</label>
   <input
     name=location
-    value="${escapeHTML(value || '')}"
     type=text
+    value="${escapeHTML(value || '')}"
     list=locations
     autocomplete=off
+    placeholder=US-CA
     required>
 </p>
 <datalist id=locations>
   ${locationOptions()}
 </datalist>
+<p>The <a href=https://en.wikipedia.org/wiki/ISO_3166-2 target=_blank>ISO 3166-2</a> code for where you pay taxes.</p>
+<p>${constants.website} will publish your location.</p>
   `
 }
 
@@ -2885,11 +2894,15 @@ function nameInput ({ value, autofocus }) {
   <label for=name>Name</label>
   <input
       name=name
+      type=text
+      placeholder="Charlie Smith"
       pattern="^.{3,}$"
       value="${escapeHTML(value || '')}"
       ${autofocus && 'autofocus'}
       required>
 </p>
+<p>${constants.website} requires your full legal name to document your transactions.</p>
+<p>${constants.website} will publish your name.</p>
   `
 }
 
@@ -2913,10 +2926,13 @@ function eMailInput ({ value, autofocus }) {
   <input
       name=email
       type=email
+      placeholder=charlie@example.com
       value="${escapeHTML(value || '')}"
       ${autofocus ? 'autofocus' : ''}
       required>
 </p>
+<p>${constants.website} will publish your e-mail address and uses it to request your <a href=https://gravatar.com>Gravatar</a>.</p>
+<p>Feel free to use a ${constants.website}-specific address or mail alias.</p>
   `
 }
 
@@ -2931,7 +2947,6 @@ function passwordInput ({ label, autofocus }) {
       autocomplete=off
       ${autofocus ? 'autofocus' : ''}>
 </p>
-<p>${escapeHTML(passwords.html)}</p>
   `
 }
 
