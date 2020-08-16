@@ -155,6 +155,7 @@ const staticFiles = [
   'credits.txt',
   // TODO: Relaxe robots.txt.
   'robots.txt',
+  'logo.svg',
   'buy.js'
 ]
 
@@ -248,7 +249,7 @@ const meta = html`
 <link href=/styles.css rel=stylesheet>
 `
 
-const header = `<header role=banner><h1>${constants.website}</h1></header>`
+const header = `<header role=banner><img src=/logo.svg id=logo alt=logo><h1>${constants.website}</h1></header>`
 
 const footer = `
 <footer role=contentinfo>
