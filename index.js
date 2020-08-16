@@ -266,7 +266,7 @@ const meta = function ({ title }) {
 
 const header = `
 <header role=banner>
-  <img src=/logo.svg id=logo alt=logo>
+  <a href=/><img src=/logo.svg id=logo alt=logo></a>
   <h1>${constants.website}</h1>
   <p class=slogan>${escapeHTML(constants.slogan)}</p>
   </header>
@@ -292,7 +292,6 @@ function nav (request) {
   const handle = account && account.handle
   return html`
 <nav role=navigation>
-  <a href=/>Home</a>
   ${!handle && '<a id=login href=/login>Log In</a>'}
   ${!handle && '<a id=signup href=/signup>Sign Up</a>'}
   ${handle && `<a id=account href=/account>${handle}</a>`}
