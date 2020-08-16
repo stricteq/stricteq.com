@@ -274,11 +274,11 @@ const header = `
 
 const footer = `
 <footer role=contentinfo>
+  <p>Built on <a href=/credits.txt>open code</a>. Source <a href=https://github.com/stricteq/stricteq.com>on GitHub</a>.</p>
   <p>
     Icons by <a href=https://fontawesome.com>Font Awesome</a>
     under <a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.
   </p>
-  <p>Built on <a href=/credits.txt>open code</a>. Source <a href=https://github.com/stricteq/stricteq.com>on GitHub</a>.</p>
   <a href=https://artlessdevices.com>Company</a>
   <a href=/terms/service>Terms of Service</a>
   <a href=/terms/agency>Agency Terms</a>
