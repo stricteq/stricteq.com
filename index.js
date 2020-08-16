@@ -270,6 +270,7 @@ function nav (request) {
   const handle = account && account.handle
   return html`
 <nav role=navigation>
+  <a href=/>Home</a>
   ${!handle && '<a id=login href=/login>Log In</a>'}
   ${!handle && '<a id=signup href=/signup>Sign Up</a>'}
   ${handle && `<a id=account href=/account>${handle}</a>`}
