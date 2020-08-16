@@ -1640,8 +1640,8 @@ function serveReset (request, response) {
           <label for=handle>Handle</label>
           <input
               name=handle
-              value="${escapeHTML(data.handle.value)}"
               type=text
+              value="${escapeHTML(data.handle.value)}"
               pattern="^${handles.pattern}$"
               required
               autofocus

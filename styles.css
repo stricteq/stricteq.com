@@ -93,11 +93,13 @@ form {
   margin-bottom: 1rem;
 }
 
+button[type="submit"],
 input[type="text"],
 input[type="email"],
 input[type="url"],
 input[type="number"],
-input[type="password"] {
+input[type="password"],
+select {
   box-sizing: border-box;
   padding: 1ex;
   width: 100%;
