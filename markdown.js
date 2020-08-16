@@ -3,7 +3,7 @@
 const commonmark = require('commonmark')
 
 module.exports = (markup) => {
-  const reader = new commonmark.Parser()
+  const reader = new commonmark.Parser({ smart: true })
   const writer = new commonmark.HtmlRenderer({ safe: true })
   const parsed = reader.parse(markup)
   return writer.render(parsed)
