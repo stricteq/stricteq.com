@@ -53,7 +53,7 @@ routes.set('/create', serveCreate) // create projects
 routes.set('/account', serveAccount) // account pages
 routes.set('/handle', serveHandle) // remind of handles
 routes.set('/email', serveEMail) // change account e-mail
-routes.set('/affiliations', serveAffiliations) // change account affiliations
+routes.set('/profile', serveProfile) // change account info
 // TODO: Add route for users to claim additional e-mail addresses.
 routes.set('/password', servePassword) // change passwords
 routes.set('/reset', serveReset) // reset passwords
@@ -398,20 +398,24 @@ const passwords = (() => {
   }
 })()
 
+const nameField = {
+  displayName: 'name',
+  filter: e => e.trim(),
+  validate: e => e.length >= 3
+}
+
+const locationField = {
+  displayName: 'location',
+  filter: e => e.toUpperCase().trim(),
+  validate: code => locations.includes(code)
+}
+
 function serveSignUp (request, response) {
   const title = 'Sign Up'
 
   const fields = {
-    name: {
-      displayName: 'name',
-      filter: e => e.trim(),
-      validate: e => e.length >= 3
-    },
-    location: {
-      displayName: 'location',
-      filter: e => e.toUpperCase().trim(),
-      validate: code => locations.includes(code)
-    },
+    name: nameField,
+    location: locationField,
     email: {
       displayName: 'e-mail address',
       filter: e => e.toLowerCase().trim(),
@@ -588,28 +592,10 @@ function serveSignUp (request, response) {
       <form id=signupForm method=post>
         ${data.error}
         ${data.csrf}
-        <p>
-          <label for=name>Name</label>
-          <input
-              name=name
-              pattern="^.{3,}$"
-              value="${escapeHTML(data.name.value || '')}"
-              autofocus
-              required>
-        </p>
-        <p>
-          <label for=location>Location</label>
-          <input
-            name=location
-            value="${escapeHTML(data.location.value || '')}"
-            type=text
-            list=locations
-            autocomplete=off
-            required>
-        </p>
-        <datalist id=locations>
-          ${locationOptions()}
-        </datalist>
+        ${nameInput({ value: data.name.value, autofocus: true })}
+        ${data.name.error}
+        ${locationInput(data.location.value)}
+        ${data.location.error}
         ${eMailInput({
           autofocus: true,
           value: data.email.value
@@ -660,6 +646,15 @@ const projectCategories = [
   'interpreter'
 ]
 
+const urlField = {
+  displayName: 'URL',
+  filter: e => e.trim(),
+  validate: e => e.length < 128 && URLRegEx({
+    exact: true,
+    strict: true
+  }).test(e)
+}
+
 function serveCreate (request, response) {
   const title = 'Create Project'
 
@@ -669,14 +664,7 @@ function serveCreate (request, response) {
       filter: e => e.toLowerCase().trim(),
       validate: projects.validate
     },
-    url: {
-      displayName: 'URL',
-      filter: e => e.trim(),
-      validate: e => e.length < 128 && URLRegEx({
-        exact: true,
-        strict: true
-      }).test(e)
-    },
+    url: urlField,
     price: {
       displayName: 'price',
       filter: e => parseInt(e),
@@ -763,14 +751,7 @@ function serveCreate (request, response) {
               autofocus
               required>
         </p>
-        <p>
-          <label for=url>URL</label>
-          <input
-              name=url
-              type=url
-              value="${escapeHTML(data.project.url || '')}"
-              required>
-        </p>
+        ${urlInput({ value: data.project.url })}
         <p>
           <label for=category>Category</label>
           <select
@@ -988,7 +969,7 @@ function serveAccount (request, response) {
       <a href=/create>Create Project</a>
       <a href=/password>Change Password</a>
       <a href=/email>Change E-Mail</a>
-      <a href=/affiliations>Change Affiliations</a>
+      <a href=/profile>Change Profile</a>
     </main>
     ${footer}
   </body>
@@ -1218,28 +1199,78 @@ const affiliations = (() => {
   }
 })()
 
-function serveAffiliations (request, response) {
-  const title = 'Change Affiliations'
+function serveProfile (request, response) {
+  const title = 'Change Profile'
 
   const fields = {
+    name: nameField,
+    location: locationField,
     affiliations: {
       displayName: 'affiliations',
       filter: e => e.trim(),
       validate: affiliations.validate
-    }
+    },
+    url: urlField
   }
 
   formRoute({
-    action: '/affiliations',
+    action: '/profile',
     requireAuthentication: true,
+    loadGETData,
     form,
     fields,
     processBody,
     onSuccess
   })(request, response)
 
+  function processBody (request, body, done) {
+    const handle = request.account.handle
+    runSeries([
+      done => storage.account.read(handle, (error, account) => {
+        if (error) return done(error)
+        if (!account) return done(new Error('no account record'))
+        if (account.badges.verified) {
+          var verifiedError = new Error('verified account')
+          verifiedError.statusCode = 400
+          return done(verifiedError)
+        }
+        done()
+      }),
+      done => storage.account.update(handle, {
+        name: body.name,
+        location: body.location,
+        affiliations: body.affiliations,
+        urls: [body.url]
+      }, done)
+    ], done)
+  }
+
+  function onSuccess (request, response, body) {
+    serve303(request, response, `/~${request.account.handle}`)
+  }
+
+  function loadGETData (request, data, done) {
+    const handle = request.account.handle
+    storage.account.read(handle, (error, account) => {
+      if (error) return done(error)
+      if (!account) {
+        var notFound = new Error('account not found')
+        notFound.statusCode = 404
+        return done(error)
+      }
+      if (account.badges.verified) data.verified = true
+      const fields = ['name', 'location', 'affiliations']
+      fields.forEach(field => {
+        data[field] = { value: account[field] }
+      })
+      if (account.urls[0]) data.url = { value: account.urls[0] }
+      done()
+    })
+  }
+
   function form (request, data) {
-    return html`
+    response.setHeader('Content-Type', 'text/html')
+    response.write(html`
 <!doctype html>
 <html lang=en-US>
   <head>
@@ -1251,39 +1282,46 @@ function serveAffiliations (request, response) {
     ${nav(request)}
     <main role=main>
       <h2>${title}</h2>
-      <form id=affiliationsForm method=post>
+    `)
+    if (data.verified) {
+      response.write(html`
+      <p>
+        Your profile information is locked because your account is verified.
+        Please <a href=mailto:${process.env.ADMIN_EMAIL}>e-mail us</a> about the changes you’d like to make.
+      </p>
+      `)
+    } else {
+      response.write(html`
+      <form id=profileForm method=post>
         ${data.error}
         ${data.csrf}
+        ${nameInput({ value: data.name.value, autofocus: true })}
+        ${data.name.error}
+        ${locationInput(data.location.value)}
+        ${data.location.error}
         <p>
           <label for=affiliations>Affiliations</label>
           <input
               name=affiliations
               type=text
               pattern="^${affiliations.pattern}$"
-              value="${escapeHTML(data.affiliations) || ''}"
+              value="${escapeHTML(data.affiliations.value)}"
               required>
         </p>
         ${data.affiliations.error}
         <p>${affiliations.html}</p>
+        ${urlInput({ value: data.url.value })}
+        ${data.url.error}
         <button type=submit>${title}</button>
       </form>
+      `)
+    }
+    response.end(html`
     </main>
     ${footer}
   </body>
 </html>
-    `
-  }
-
-  function onSuccess (request, response, body) {
-    response.statusCode = 303
-    response.setHeader('Location', '/account')
-    response.end()
-  }
-
-  function processBody (request, body, done) {
-    const handle = request.account.handle
-    const affiliations = body.affiliations
-    storage.account.update(handle, { affiliations }, done)
+    `)
   }
 }
 
@@ -1940,6 +1978,7 @@ function serveUserPage (request, response) {
       <table>
         ${data.name && row('Name', data.name)}
         ${data.location && row('Location', iso3166ToEnglish(data.location))}
+        ${data.affiliations && row('Affiliations', data.affiliations)}
         ${data.urls.length > 0 && html`
         <tr>
           <th>URLs</th>
@@ -1979,6 +2018,7 @@ function serveUserPage (request, response) {
 // the properties that can be published.
 function redactedAccount (account) {
   const returned = redacted(account, [
+    'affiliations',
     'badges',
     'created',
     'email',
@@ -2818,6 +2858,51 @@ function setCookie (response, value, expires) {
 
 function clearCookie (response) {
   setCookie(response, '', new Date('1970-01-01'))
+}
+
+function locationInput (value) {
+  return html`
+<p>
+  <label for=location>Location</label>
+  <input
+    name=location
+    value="${escapeHTML(value || '')}"
+    type=text
+    list=locations
+    autocomplete=off
+    required>
+</p>
+<datalist id=locations>
+  ${locationOptions()}
+</datalist>
+  `
+}
+
+function nameInput ({ value, autofocus }) {
+  return html`
+<p>
+  <label for=name>Name</label>
+  <input
+      name=name
+      pattern="^.{3,}$"
+      value="${escapeHTML(value || '')}"
+      ${autofocus && 'autofocus'}
+      required>
+</p>
+  `
+}
+
+function urlInput ({ value }) {
+  return html`
+<p>
+  <label for=url>URL</label>
+  <input
+      name=url
+      type=url
+      value="${escapeHTML(value || '')}"
+      required>
+</p>
+  `
 }
 
 function eMailInput ({ value, autofocus }) {
