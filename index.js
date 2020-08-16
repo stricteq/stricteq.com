@@ -3197,6 +3197,7 @@ function serve404 (request, response) {
     ${nav(request)}
     <main role=main>
       <h2>Not Found</h2>
+      <p>The page you tried to visit doesn’t exist on this site.</p>
     </main>
     ${footer}
   </body>
@@ -3218,6 +3219,13 @@ function serve500 (request, response, error) {
   <body>
     <main role=main>
       <h1>Internal Error</h1>
+      <p>The server ran into an error.</p>
+      <p>
+        If you'd like, you can
+        <a href=support@stricteq.com>e-mail support</a>,
+        pasting in this unique support number:
+        <code>${escapeHTML(request.id)}</code>
+      </p>
     </main>
     ${footer}
   </body>
