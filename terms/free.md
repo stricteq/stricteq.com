@@ -1,6 +1,6 @@
 ---
 title: stricteq Free License
-edition: 1e1d
+version: 1.0.0
 ---
 
 Everything not prohibited is permitted.

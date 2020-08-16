@@ -1,6 +1,6 @@
 ---
 title: stricteq Paid License
-edition: 1e3d
+version: 1.0.0
 ---
 
 # Details

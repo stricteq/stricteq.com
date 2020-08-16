@@ -1,6 +1,6 @@
 ---
 title: The Deal
-edition: 1e1d
+version: 1.0.0
 ---
 
 When you make money with software, those behind the work you depend on should make money, too.

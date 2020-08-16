@@ -382,7 +382,7 @@ function serveTerms (request, response, slug) {
     'utf8',
     (error, read) => {
       if (error) return serve500(request, response, error)
-      const { content, data: { title, edition } } = grayMatter(read)
+      const { content, data: { title, version } } = grayMatter(read)
       response.setHeader('Content-Type', 'text/html')
       response.end(html`
 <!doctype html>
@@ -396,7 +396,7 @@ function serveTerms (request, response, slug) {
     ${nav(request)}
     <main role=main>
       <h1>${escapeHTML(title)}</h1>
-      ${edition && `<p class=edition>${edition}</p>`}
+      ${version && `<p class=version>Version ${version}</p>`}
       ${markdown(content)}
     </main>
     ${footer}

@@ -1,6 +1,6 @@
 ---
 title: stricteq Agency Terms
-edition: 1e1d
+version: 1.0.0
 ---
 
 To offer to license or relicense a project through stricteq.com, you must agree to these terms, an addition to the stricteq.com terms of service, for your project.
