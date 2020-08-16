@@ -65,3 +65,11 @@ footer[role=contentinfo] ul {
   margin: 0;
   padding: 0;
 }
+
+#account {
+  background-image: url("/user.svg");
+  background-position: center left;
+  background-repeat: no-repeat;
+  background-size: 1ex;
+  padding-left: 1.5ex;
+}
