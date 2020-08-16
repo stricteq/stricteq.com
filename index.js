@@ -274,16 +274,17 @@ const header = `
 
 const footer = `
 <footer role=contentinfo>
+  <a class=spaced href=https://artlessdevices.com>Company</a>
+  <a class=spaced href=/terms/service>Terms of Service</a>
+  <a class=spaced href=/terms/agency>Agency Terms</a>
+  <a class=spaced href=/terms/privacy>Privacy</a>
+  <a class=spaced href=mailto:support@stricteq.com>Support</a>
+  <a class=spaced href=https://twitter.com/${constants.twitter}>Twitter</a>
   <p>Built on <a href=/credits.txt>open code</a>. Source <a href=https://github.com/stricteq/stricteq.com>on GitHub</a>.</p>
   <p>
     Icons by <a href=https://fontawesome.com>Font Awesome</a>
     under <a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.
   </p>
-  <a href=https://artlessdevices.com>Company</a>
-  <a href=/terms/service>Terms of Service</a>
-  <a href=/terms/agency>Agency Terms</a>
-  <a href=/terms/privacy>Privacy</a>
-  <a href=mailto:support@stricteq.com>E-Mail Support</a>
   </section>
 </footer>
 `
@@ -293,9 +294,9 @@ function nav (request) {
   const handle = account && account.handle
   return html`
 <nav role=navigation>
-  ${!handle && '<a id=login href=/login>Log In</a>'}
-  ${!handle && '<a id=signup href=/signup>Sign Up</a>'}
-  ${handle && `<a id=account href=/account>${handle}</a>`}
+  ${!handle && '<a id=login class=spaced href=/login>Log In</a>'}
+  ${!handle && '<a id=signup class=spaced href=/signup>Sign Up</a>'}
+  ${handle && `<a id=account class=spaced href=/account>${handle}</a>`}
   ${handle && logoutButton(request)}
 </nav>
   `
@@ -996,10 +997,10 @@ function serveAccount (request, response) {
           }</td>
         </tr>
       </table>
-      <a href=/create>Create Project</a>
-      <a href=/password>Change Password</a>
-      <a href=/email>Change E-Mail</a>
-      <a href=/profile>Change Profile</a>
+      <a class=spaced href=/create>Create Project</a>
+      <a class=spaced href=/password>Change Password</a>
+      <a class=spaced href=/email>Change E-Mail</a>
+      <a class=spaced href=/profile>Change Profile</a>
     </main>
     ${footer}
   </body>

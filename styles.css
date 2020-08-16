@@ -48,6 +48,14 @@ a[href]:hover {
   text-decoration: underline;
 }
 
+a[href].spaced {
+  margin-left: 0.75rem;
+}
+
+a[href].spaced:first-of-type {
+  margin-left: 0;
+}
+
 #logoutForm {
   border: none;
   display: inline-block;
