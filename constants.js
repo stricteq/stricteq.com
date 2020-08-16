@@ -1,3 +1,7 @@
 // Global Constants
 
-exports.website = 'stricteq'
+module.exports = {
+  website: 'stricteq',
+  slogan: 'the code you depend on depends on you',
+  twitter: 'stricteq'
+}

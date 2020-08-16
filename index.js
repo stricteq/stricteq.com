@@ -152,10 +152,12 @@ const icons = []
 
 const staticFiles = [
   'styles.css',
+  'normalize.css',
   'credits.txt',
   // TODO: Relaxe robots.txt.
   'robots.txt',
   'logo.svg',
+  'logo-on-white-100.png',
   'buy.js'
 ]
 
@@ -243,13 +245,32 @@ module.exports = (request, response) => {
 
 // Partials
 
-const meta = html`
+const meta = function ({ title }) {
+  return html`
 <meta charset=UTF-8>
 <meta name=viewport content="width=device-width, initial-scale=1">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="${constants.slogan}">
+<meta name="twitter:image" content="${process.env.BASE_HREF}/logo-on-white-100.png">
+<meta name="twitter:site" content="@${constants.twitter}">
+<meta name="twitter:title" content="${title || constants.website}">
+<meta name="og:type" content="website">
+<meta name="og:title" content="${title || constants.website}">
+<meta name="og:description" content="${constants.slogan}">
+<meta name="og:image" content="${process.env.BASE_HREF}/logo-on-white-100.png">
+<meta name="og:site" content="stricteq">
+<link href=/normalize.css rel=stylesheet>
 <link href=/styles.css rel=stylesheet>
-`
+  `
+}
 
-const header = `<header role=banner><img src=/logo.svg id=logo alt=logo><h1>${constants.website}</h1></header>`
+const header = `
+<header role=banner>
+  <img src=/logo.svg id=logo alt=logo>
+  <h1>${constants.website}</h1>
+  <p class=slogan>${escapeHTML(constants.slogan)}</p>
+  </header>
+`
 
 const footer = `
 <footer role=contentinfo>
@@ -315,7 +336,7 @@ function serveHomepage (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${constants.website}</title>
   </head>
   <body>
@@ -358,7 +379,7 @@ function serveTerms (request, response, slug) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${escapeHTML(title)}</title>
   </head>
   <body>
@@ -562,7 +583,7 @@ function serveSignUp (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -584,7 +605,7 @@ function serveSignUp (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -738,7 +759,7 @@ function serveCreate (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -816,7 +837,7 @@ function serveLogIn (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -941,7 +962,7 @@ function serveAccount (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>Account</title>
   </head>
   <body>
@@ -1035,7 +1056,7 @@ function serveHandle (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1071,7 +1092,7 @@ function serveHandle (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1125,7 +1146,7 @@ function serveEMail (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1153,7 +1174,7 @@ function serveEMail (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1283,7 +1304,7 @@ function serveProfile (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1364,7 +1385,7 @@ function getAuthenticated (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1418,7 +1439,7 @@ function getWithToken (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1456,7 +1477,7 @@ function invalidToken (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1522,7 +1543,7 @@ function postPassword (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1627,7 +1648,7 @@ function serveReset (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1691,7 +1712,7 @@ function serveReset (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1760,7 +1781,7 @@ function serveConfirm (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -1869,7 +1890,7 @@ function serveConnected (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>Stripe Error</title>
   </head>
   <body>
@@ -1913,7 +1934,7 @@ function serveDisconnect (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>Disconnected Stripe Account</title>
   </head>
   <body>
@@ -1968,7 +1989,7 @@ function serveUserPage (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${data.handle}</title>
   </head>
   <body>
@@ -2101,7 +2122,7 @@ function serveBadges (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>Badges</title>
   </head>
   <body>
@@ -2147,7 +2168,7 @@ function serveProjectPage (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${data.slug}</title>
   </head>
   <body>
@@ -2520,7 +2541,7 @@ Payment Intent: ${paymentIntent.id}
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -2542,7 +2563,7 @@ Payment Intent: ${paymentIntent.id}
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>${title}</title>
   </head>
   <body>
@@ -3159,7 +3180,7 @@ function serve404 (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>Not Found</title>
   </head>
   <body>
@@ -3182,7 +3203,7 @@ function serve500 (request, response, error) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta}
+    ${meta({})}
     <title>Internal Error</title>
   </head>
   <body>
