@@ -5,36 +5,34 @@ version: 1.0.0
 
 Everything not prohibited is permitted.
 
-## Prohibited Purposes
+<h2 id="prohibited-purposes">Prohibited Purposes</h2>
 
-1.  You may not use the software to make money.
+You may not use the software to make money or for work, except for brief trial periods to verify that the software works as described, such as by running on test data or integrating into private, proof-of-concept prototype projects.
 
-2.  You may not use the software at work.
-
-## Acceptance
+<h2 id=acceptance>Acceptance</h2>
 
 To receive this license, you have to agree to its rules.  Those rules are both obligations under that agreement and conditions to your license.  Don't do anything with the software against any rule you can't or won't follow.
 
-## Copyright
+<h2 id="copyright">Copyright</h2>
 
 The developer licenses you to do everything with the software that would otherwise infringe their copyright in it, except for [Prohibited Purposes](#prohibited-purposes).
 
-## Notices
+<h2 id="notices">Notices</h2>
 
 You must ensure that everyone who gets a copy of any part of the software from you, with or without changes, also gets the text of this license.
 
-## Excuse
+<h2 id="excuse">Excuse</h2>
 
 You're excused for unknowingly breaking [Notices](#notices) if you take all practical steps to comply within thirty days of learning you broke the rule.
 
-## Patent
+<h2 id="patent">Patent</h2>
 
 The developer licenses you to do everything with the software that would otherwise infringe any patent claims they can license or become able to license, except for [Prohibited Purposes](#prohibited-purposes).
 
-## Reliability
+<h2 id="reliability">Reliability</h2>
 
 The developer cannot revoke this license.
 
-## No Liability
+<h2 id="no-liability">No Liability</h2>
 
 ***As far as the law allows, the software comes as is, without any warranty or condition, and the developer will not be liable to anyone for any damages related to the software or this license, under any kind of legal claim.***
