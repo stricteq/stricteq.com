@@ -1,0 +1,5 @@
+export PUBLIC_KEY="2611e4fe0f0de6b5f640fd10e438d564f51ec7aca4dd3a6d4110508038d6c45f"
+export PRIVATE_KEY="87c14fb3e3ed232fb57c47a1e55f68dba18eec18fab87b9c17f544f511e007962611e4fe0f0de6b5f640fd10e438d564f51ec7aca4dd3a6d4110508038d6c45f"
+export BASE_HREF="http://localhost:8080"
+export DIRECTORY="$(mktemp -d)"
+export MINIMUM_COMMISSION=5
