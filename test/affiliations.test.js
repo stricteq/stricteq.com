@@ -22,7 +22,7 @@ tape('change affiliations', test => {
       await verifyLogIn({ browser, port, test, handle, email })
       // Navigate to afiliations-change page.
       await browser.navigateTo('http://localhost:' + port)
-      await click(browser, 'a=Account')
+      await click(browser, '#account')
       await click(browser, 'a=Change Affiliations')
       // Submit password-change form.
       const input = await browser.$('#affiliationsForm input[name="affiliations"]')

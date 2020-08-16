@@ -24,17 +24,6 @@ a[href]:hover {
   padding: 0;
 }
 
-button, .button {
-  background: white;
-  border: 1px solid black;
-  border-radius: 1ex;
-  color: black;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 100%;
-  padding: 1ex;
-}
-
 .badges {
   list-style-type: none;
   margin: 0;

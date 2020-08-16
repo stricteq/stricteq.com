@@ -17,7 +17,7 @@ module.exports = ({
   assert(Number.isSafeInteger(price))
   assert(typeof category === 'string')
   return browser.navigateTo('http://localhost:' + port)
-    .then(() => click(browser, '=Account'))
+    .then(() => click(browser, '#account'))
     .then(() => click(browser, '=Create Project'))
     .then(() => addValue(browser, '#createForm input[name="project"]', project))
     .then(() => addValue(browser, '#createForm input[name="url"]', url))

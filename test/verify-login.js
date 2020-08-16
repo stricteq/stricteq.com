@@ -13,9 +13,9 @@ module.exports = options => {
   const handle = options.handle
   const email = options.email
   return browser.navigateTo('http://localhost:' + port)
-    .then(() => browser.$('a=Account'))
+    .then(() => browser.$('#account'))
     .then(a => a.waitForExist())
-    .then(() => click(browser, 'a=Account'))
+    .then(() => click(browser, '#account'))
     .then(() => browser.$('.handle'))
     .then(element => element.getText())
     .then(text => test.equal(text, handle, '/account shows handle'))

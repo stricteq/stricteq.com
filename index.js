@@ -264,10 +264,10 @@ function nav (request) {
   const handle = account && account.handle
   return html`
 <nav role=navigation>
-  ${!handle && '<a id=login class=button href=/login>Log In</a>'}
-  ${!handle && '<a id=signup class=button href=/signup>Sign Up</a>'}
+  ${!handle && '<a id=login href=/login>Log In</a>'}
+  ${!handle && '<a id=signup href=/signup>Sign Up</a>'}
+  ${handle && `<a id=account href=/account>${handle}</a>`}
   ${handle && logoutButton(request)}
-  ${handle && '<a id=account class=button href=/account>Account</a>'}
 </nav>
   `
 }
@@ -985,10 +985,10 @@ function serveAccount (request, response) {
           }</td>
         </tr>
       </table>
-      <a class=button href=/create>Create Project</a>
-      <a class=button href=/password>Change Password</a>
-      <a class=button href=/email>Change E-Mail</a>
-      <a class=button href=/affiliations>Change Affiliations</a>
+      <a href=/create>Create Project</a>
+      <a href=/password>Change Password</a>
+      <a href=/email>Change E-Mail</a>
+      <a href=/affiliations>Change Affiliations</a>
     </main>
     ${footer}
   </body>
@@ -1017,7 +1017,7 @@ function serveAccount (request, response) {
         state: account.stripe.connectNonce,
         redirect_uri: `${process.env.BASE_HREF}/connected`
       })
-    return `<a id=connect class=button href="${url}">Connect Stripe Account</a>`
+    return `<a id=connect href="${url}">Connect Stripe Account</a>`
   }
 }
 
@@ -2360,7 +2360,7 @@ function serveBuy (request, response) {
             error.statusCode = 400
             return done(error)
           }
-          projectData = data
+          projectData = redactedProject(data)
           done()
         })
       },

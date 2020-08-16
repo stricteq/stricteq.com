@@ -145,7 +145,7 @@ tape('user page licenses', test => {
         click(browser, '#buyForm button[type=submit]')
       ])
 
-      await timeout(5000)
+      await timeout(7000)
 
       // Browse to Bob's user page.
       await browser.navigateTo(`http://localhost:${port}/~${bob.handle}`)
@@ -174,7 +174,7 @@ tape('user JSON', test => {
       await signup({ browser, port, name, location, handle, password, email })
       // Create project.
       await login({ browser, port, handle, password })
-      await click(browser, '=Account')
+      await click(browser, '#account')
       await click(browser, '=Create Project')
       const projectInput = await browser.$('#createForm input[name="project"]')
       await projectInput.addValue(project)

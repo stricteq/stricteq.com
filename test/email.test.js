@@ -24,7 +24,7 @@ tape('change e-mail', test => {
       await verifyLogIn({ browser, port, test, handle, email: oldEMail })
       // Navigate to password-change page.
       await browser.navigateTo('http://localhost:' + port)
-      await click(browser, 'a=Account')
+      await click(browser, '#account')
       await click(browser, 'a=Change E-Mail')
       // Submit password-change form.
       const emailInput = await browser.$('#emailForm input[name="email"]')
@@ -68,7 +68,7 @@ tape('change e-mail to existing', test => {
       await login({ browser, port, handle, password })
       await verifyLogIn({ browser, port, test, handle, email })
       // Navigate to password-change page.
-      await click(browser, 'a=Account')
+      await click(browser, '#account')
       await click(browser, 'a=Change E-Mail')
       // Submit password-change form.
       await addValue(browser, '#emailForm input[name="email"]', email)

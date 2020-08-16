@@ -25,7 +25,7 @@ tape('change password', test => {
       await browser.navigateTo('http://localhost:' + port)
       await login({ browser, port, handle, password: oldPassword })
       // Navigate to password-change page.
-      await click(browser, 'a=Account')
+      await click(browser, '#account')
       await click(browser, 'a=Change Password')
       // Submit password-change form.
       await addValue(browser, '#passwordForm input[name="old"]', oldPassword)
