@@ -36,6 +36,10 @@ header[role=banner] h1 {
   max-width: 7rem;
 }
 
+nav[role=navigation] {
+  margin-bottom: 2rem;
+}
+
 a[href] {
   text-decoration: none;
 }
