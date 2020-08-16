@@ -2184,20 +2184,20 @@ function serveProjectPage (request, response) {
   <body>
     ${header}
     ${nav(request)}
-    <ol id=customers>
-      ${data.customers.map(c => html`
-      <li>
-        <img
-            src="${c.gravatar}"
-            alt="${escapeHTML(c.name)}">
-        <span class=name>${escapeHTML(c.name)}</span>
-        ${c.affiliations && `<span class=affiliations>${escapeHTML(c.affiliations)}</span>`}
-      </li>
-      `)}
-    </ol>
     <main role=main>
       <h2>${data.project}</h2>
       ${badgesList(data)}
+      <ol id=customers>
+        ${data.customers.map(c => html`
+        <li>
+          <img
+              src="${c.gravatar}"
+              alt="${escapeHTML(c.name)}">
+          <span class=name>${escapeHTML(c.name)}</span>
+          ${c.affiliations && `<span class=affiliations>${escapeHTML(c.affiliations)}</span>`}
+        </li>
+        `)}
+      </ol>
       <table>
         <tr>
           <th>User</th>
