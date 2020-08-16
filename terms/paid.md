@@ -1,5 +1,5 @@
 ---
-title: stricteq Standard Software License
+title: stricteq Paid License
 edition: 1e3d
 ---
 

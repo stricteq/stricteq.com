@@ -16,6 +16,7 @@ const escapeHTML = require('escape-html')
 const expired = require('./expired')
 const fs = require('fs')
 const gravatar = require('gravatar')
+const grayMatter = require('gray-matter')
 const html = require('./html')
 const https = require('https')
 const iso31662 = require('iso-3166-2')
@@ -178,6 +179,15 @@ module.exports = (request, response) => {
   if (pathname === '/terms/privacy') {
     return serveTerms(request, response, 'privacy')
   }
+  if (pathname === '/terms/free') {
+    return serveTerms(request, response, 'free')
+  }
+  if (pathname === '/terms/paid') {
+    return serveTerms(request, response, 'paid')
+  }
+  if (pathname === '/deal') {
+    return serveTerms(request, response, 'deal')
+  }
   // Static Files
   const basename = path.basename(pathname)
   if (staticFiles.includes(basename)) {
@@ -338,19 +348,13 @@ function serveFile (request, response, file) {
   send(request, path.join(__dirname, file)).pipe(response)
 }
 
-const termsTitles = {
-  agency: 'Agency Terms',
-  privacy: 'Privacy Notice',
-  service: 'Terms of Service'
-}
-
 function serveTerms (request, response, slug) {
-  const title = termsTitles[slug]
   fs.readFile(
     path.join(__dirname, 'terms', `${slug}.md`),
     'utf8',
-    (error, markup) => {
+    (error, read) => {
       if (error) return serve500(request, response, error)
+      const { content, data: { title, edition } } = grayMatter(read)
       response.setHeader('Content-Type', 'text/html')
       response.end(html`
 <!doctype html>
@@ -364,7 +368,8 @@ function serveTerms (request, response, slug) {
     ${nav(request)}
     <main role=main>
       <h1>${escapeHTML(title)}</h1>
-      ${markdown(markup)}
+      ${edition && `<p class=edition>${edition}</p>`}
+      ${markdown(content)}
     </main>
     ${footer}
   </body>

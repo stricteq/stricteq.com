@@ -1,3 +1,7 @@
+---
+title: stricteq Terms of Service
+---
+
 Artless Devices LLC, a California limited liability company, operates stricteq.com.  To use stricteq.com, you must agree to these terms with us.
 
 # Changes to these Terms
