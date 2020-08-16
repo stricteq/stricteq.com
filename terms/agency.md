@@ -7,7 +7,7 @@ To offer to license or relicense a project through stricteq.com, you must agree 
 
 # Private License Agent
 
-You appoint Artless Devices LLC your agent to license the software project that you offer through stricteq.com.  Artless Devices may sign license agreements on your behalf, and those licenses will have the same legal effect as if you signed them yourself.
+You appoint Artless Devices LLC your agent to license the software project that you offer through stricteq.com  Artless Devices may sign license agreements on your behalf, and those licenses will have the same legal effect as if you signed them yourself.
 
 # Private License Terms
 

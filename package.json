@@ -38,6 +38,7 @@
     "depcheck": "^1.2.0",
     "husky": "^4.2.5",
     "licensee": "^8.1.0",
+    "markdown-spellcheck": "^1.3.1",
     "nyc": "^15.1.0",
     "parse5": "^6.0.1",
     "rimraf": "^3.0.2",
@@ -56,13 +57,14 @@
     "audit": "npm audit --production | tee audit.log",
     "prestart": "if test \"$NODE_ENV\" = \"production\"; then npm run credits ; fi",
     "credits": "cp credits.txt.header credits.txt ; creditstxt >> credits.txt",
-    "precommit": "npm run lint && npm run gotchas",
+    "precommit": "npm run lint && npm run spelling && npm run gotchas",
     "coverage": "nyc --reporter=lcov --reporter=text npm run test",
     "deps": "depcheck",
     "fix": "standard --fix",
     "gotchas": "! git grep tape.only test && ! git grep console.log test && ! git grep console.error test && ! git grep saveScreenshot test",
     "licenses": "licensee --errors-only",
     "lint": "standard",
+    "spelling": "mdspell --ignore-numbers --en-us -r **/*.md",
     "test": "NODE_ENV=test tape test/*.test.js"
   }
 }

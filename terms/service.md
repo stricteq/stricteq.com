@@ -70,7 +70,7 @@ These are some examples of breaches of [Prohibited Use](#prohibited-use):
 
 - offering a product for license that you do not have the rights to license
 
-- impersonating anyone else as a licensor
+- impersonating anyone else as a user
 
 -  providing false information about your name or legal jurisdiction
 
