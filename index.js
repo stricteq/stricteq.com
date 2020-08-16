@@ -6,6 +6,7 @@ const URLRegEx = require('url-regex')
 const cfCommonMark = require('commonform-commonmark')
 const cfDOCX = require('commonform-docx')
 const cfPrepareBlanks = require('commonform-prepare-blanks')
+const commonformify = require('./commonformify')
 const constants = require('./constants')
 const cookie = require('cookie')
 const crypto = require('crypto')
@@ -2728,13 +2729,14 @@ function serveStripeWebhook (request, response) {
           // Generate license .docx.
           done => {
             fs.readFile(
-              path.join(__dirname, 'terms', 'license.md'),
+              path.join(__dirname, 'terms', 'paid.md'),
               'utf8',
               (error, markup) => {
                 if (error) return done(error)
                 let parsed
+                const munged = commonformify(markup)
                 try {
-                  parsed = cfCommonMark.parse(markup)
+                  parsed = cfCommonMark.parse(munged)
                 } catch (error) {
                   request.log.error(error, 'Common Form parse')
                 }
@@ -2759,7 +2761,7 @@ function serveStripeWebhook (request, response) {
                   cfPrepareBlanks(blanks, parsed.directions),
                   {
                     title: parsed.frontMatter.title,
-                    edition: parsed.frontMatter.edition,
+                    edition: parsed.frontMatter.version,
                     numbering: outlineNumbering
                   }
                 )
