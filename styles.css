@@ -40,6 +40,11 @@ nav[role=navigation] {
   margin-bottom: 2rem;
 }
 
+footer[role=contentinfo] {
+  border-top: 1px solid #bbb;
+  padding-top: 1rem;
+}
+
 a[href] {
   text-decoration: none;
 }
