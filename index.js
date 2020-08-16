@@ -344,6 +344,14 @@ function serveHomepage (request, response) {
     ${header}
     ${nav(request)}
     <main role=main>
+      <p>
+        ${constants.website} is a simple, open catalog of user-supported software.
+      </p>
+      <p>
+        All ${constants.website} software is available under a <a href=/deal>standard deal</a>:
+        If you use the software to make money or for work, buy a license.
+        Otherwise, you’re free to use and share for free.
+      </p>
       <ol class=showcase>
         ${(data.showcase || []).map(entry => html`
         <li>
