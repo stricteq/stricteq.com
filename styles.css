@@ -49,6 +49,7 @@ main[role=main] {
 footer[role=contentinfo] {
   border-top: 1px solid #bbb;
   padding-top: 1rem;
+  font-size: 80%;
 }
 
 a[href] {
