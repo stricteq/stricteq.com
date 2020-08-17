@@ -349,9 +349,10 @@ function serveHomepage (request, response) {
         ${constants.website} is a simple, open catalog of user-supported software.
       </p>
       <p>
-        All ${constants.website} software is available under a <a href=/deal>standard deal</a>:
-        If you use the software to make money or for work, buy a license.
+        All ${constants.website} software is available under a <a href=/deal>standard deal</a>.
+        If you use the software to make money or for work, buy a license from the developer.
         Otherwise, you’re free to use and share for free.
+        And to offer the same deal for your own software.
       </p>
       <ol class=showcase>
         ${(data.showcase || []).map(entry => html`
