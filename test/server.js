@@ -42,10 +42,17 @@ module.exports = (callback, port) => {
       process.env.ADMIN_EMAIL = 'admin@example.com'
       process.env.MINIMUM_COMMISSION = '5'
       const environment = require('../environment')()
-      if (environment.missing.length !== 0) {
+      if (environment.missingVariables.length !== 0) {
         cleanup()
         environment.missing.forEach(missing => {
           process.stderr.write(`Missing environment variable: ${missing}\n`)
+        })
+        assert(false)
+      }
+      if (environment.missingPrograms.length !== 0) {
+        cleanup()
+        environment.missingPrograms.forEach(missing => {
+          process.stderr.write(`Missing external program: ${missing}\n`)
         })
         assert(false)
       }

@@ -8,9 +8,15 @@ const addLoggers = require('pino-http')({ logger })
 // Environment
 
 const environment = require('./environment')()
-if (environment.missing.length !== 0) {
-  environment.missing.forEach(missing => {
+if (environment.missingVariables.length !== 0) {
+  environment.missingVariables.forEach(missing => {
     logger.error({ variable: missing }, 'missing environment variable')
+  })
+  process.exit(1)
+}
+if (environment.missingPrograms.length !== 0) {
+  environment.missingPrograms.forEach(missing => {
+    logger.error({ program: missing }, 'missing external program')
   })
   process.exit(1)
 }
