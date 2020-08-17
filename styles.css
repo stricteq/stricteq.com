@@ -132,12 +132,12 @@ form {
   margin-bottom: 1rem;
 }
 
-button[type="submit"],
-input[type="text"],
-input[type="email"],
-input[type="url"],
-input[type="number"],
-input[type="password"],
+button[type=submit],
+input[type=text],
+input[type=email],
+input[type=url],
+input[type=number],
+input[type=password],
 select {
   box-sizing: border-box;
   padding: 1ex;
