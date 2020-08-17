@@ -793,7 +793,7 @@ function serveCreate (request, response) {
               required>
         </p>
         <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
-        ${urlInput({ value: data.project.url })}
+        ${urlInput({ value: data.project.url, required: true })}
         <p>URL for your project, such as a homepage or source code repository.</p>
         <p>
           <label for=category>Category</label>
@@ -1353,7 +1353,7 @@ function serveProfile (request, response) {
         </p>
         ${data.affiliations.error}
         <p>${affiliations.html}</p>
-        ${urlInput({ value: data.url.value })}
+        ${urlInput({ value: data.url.value, required: false })}
         ${data.url.error}
         <button type=submit>${title}</button>
       </form>
@@ -2943,15 +2943,15 @@ function nameInput ({ value, autofocus }) {
   `
 }
 
-function urlInput ({ value }) {
+function urlInput ({ value, required }) {
   return html`
 <p>
   <label for=url>URL</label>
   <input
       name=url
       type=url
-      value="${escapeHTML(value || '')}"
-      required>
+      ${required && 'required'}
+      value="${escapeHTML(value || '')}">
 </p>
   `
 }
