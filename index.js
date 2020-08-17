@@ -791,7 +791,9 @@ function serveCreate (request, response) {
               autofocus
               required>
         </p>
+        <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
         ${urlInput({ value: data.project.url })}
+        <p>URL for your project, such as a homepage or source code repository.</p>
         <p>
           <label for=category>Category</label>
           <select
@@ -802,7 +804,7 @@ function serveCreate (request, response) {
         </p>
         <p>
           <label for=price>Price</label>
-          $<input
+          <input
             name=price
             type=number
             value="${escapeHTML(data.project.price || '')}"
@@ -810,6 +812,7 @@ function serveCreate (request, response) {
             min="${MAXIMUM_PRICE.toString()}"
             required>
         </p>
+        <p>Cost of <a href=/paid>a license</a> in United States Dollars.</p>
         <button type=submit>${title}</button>
       </form>
     </main>
