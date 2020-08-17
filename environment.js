@@ -22,12 +22,12 @@ module.exports = () => {
   variables.forEach(variable => {
     const name = variable.name
     const value = process.env[name]
-    if (!value) returned.variables.push(name)
+    if (!value) returned.missingVariables.push(name)
     else returned[name] = value
   })
   returned.MINIMUM_COMMISSION = parseInt(returned.MINIMUM_COMMISSION)
   if (isNaN(returned.MINIMUM_COMMISSION)) {
-    returned.variables.push('MINIMUM_COMMISSION')
+    returned.missingVariables.push('MINIMUM_COMMISSION')
   }
   returned.production = process.env.NODE_ENV === 'production'
 
