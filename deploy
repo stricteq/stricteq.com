@@ -1,0 +1,6 @@
+#!/bin/sh
+ssh www@stricteq.com <<SCRIPT
+cd /var/www/stricteq/
+npm ci
+servicectl stricteq restart
+SCRIPT
