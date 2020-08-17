@@ -250,6 +250,7 @@ const meta = function ({ title }) {
   return html`
 <meta charset=UTF-8>
 <meta name=viewport content="width=device-width, initial-scale=1">
+<meta name="description" content="${constants.slogan}">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:description" content="${constants.slogan}">
 <meta name="twitter:image" content="${process.env.BASE_HREF}/logo-on-white-100.png">
