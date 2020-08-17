@@ -1349,8 +1349,7 @@ function serveProfile (request, response) {
               name=affiliations
               type=text
               pattern="^${affiliations.pattern}$"
-              value="${escapeHTML(data.affiliations.value)}"
-              required>
+              value="${escapeHTML(data.affiliations.value)}">
         </p>
         ${data.affiliations.error}
         <p>${affiliations.html}</p>
