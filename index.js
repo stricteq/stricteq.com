@@ -342,8 +342,8 @@ function serveHomepage (request, response) {
     <title>${constants.website}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <p>
         ${constants.website} is a simple, open catalog of user-supported software.
@@ -393,8 +393,8 @@ function serveTerms (request, response, slug) {
     <title>${escapeHTML(title)}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h1>${escapeHTML(title)}</h1>
       ${version && `<p class=version>Version ${version}</p>`}
@@ -597,8 +597,8 @@ function serveSignUp (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>Success</h2>
       <p class=message>Check your e-mail for a link to confirm your new account.</p>
@@ -619,8 +619,8 @@ function serveSignUp (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <p>Sign up for a ${constants.website} account to track your purchases and offer projects for sale.</p>
@@ -773,8 +773,8 @@ function serveCreate (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <form id=createForm method=post>
@@ -854,8 +854,8 @@ function serveLogIn (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <form id=loginForm method=post>
@@ -979,8 +979,8 @@ function serveAccount (request, response) {
     <title>Account</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>Account</h2>
       <table>
@@ -1073,8 +1073,8 @@ function serveHandle (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <form id=handleForm method=post>
@@ -1109,8 +1109,8 @@ function serveHandle (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <p class=message>If the e-mail you entered corresponds to an account, an e-mail was just sent to it.</p>
@@ -1163,8 +1163,8 @@ function serveEMail (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <form id=emailForm method=post>
@@ -1191,8 +1191,8 @@ function serveEMail (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <p class=message>Confirmation e-mail sent.</p>
@@ -1321,8 +1321,8 @@ function serveProfile (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
     `)
@@ -1402,8 +1402,8 @@ function getAuthenticated (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       ${messageParagraph}
@@ -1456,8 +1456,8 @@ function getWithToken (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       ${messageParagraph}
@@ -1494,8 +1494,8 @@ function invalidToken (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <p class=message>The link you followed is invalid or expired.</p>
@@ -1560,8 +1560,8 @@ function postPassword (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <p class=message>Password changed.</p>
@@ -1665,8 +1665,8 @@ function serveReset (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <form id=resetForm method=post>
@@ -1798,8 +1798,8 @@ function serveConfirm (request, response) {
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       <p class=message>The e-mail address for your account was successfully changed.</p>
@@ -1907,8 +1907,8 @@ function serveConnected (request, response) {
     <title>Stripe Error</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>Problem Connecting Stripe</h2>
       <p>Stripe reported an error connecting your account:</p>
@@ -1951,8 +1951,8 @@ function serveDisconnect (request, response) {
     <title>Disconnected Stripe Account</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>Disconnected Stripe Account</h2>
       <p class=message>Stripe has been told to disconnect your account. The change should take effect shortly.</p>
@@ -2006,8 +2006,8 @@ function serveUserPage (request, response) {
     <title>${data.handle}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <img
           class=avatar
@@ -2139,8 +2139,8 @@ function serveBadges (request, response) {
     <title>Badges</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>User Badges</h2>
       <ul class=badges>${
@@ -2185,8 +2185,8 @@ function serveProjectPage (request, response) {
     <title>${data.slug}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${data.project}</h2>
       ${badgesList(data)}
@@ -2558,8 +2558,8 @@ Payment Intent: ${paymentIntent.id}
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>Success</h2>
       <p class=message>Thank you for buying a license! As soon as your payment clears, you will receive an e-mail with your license and receipt.</p>
@@ -2580,8 +2580,8 @@ Payment Intent: ${paymentIntent.id}
     <title>${title}</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>${title}</h2>
       ${buyForm(data)}
@@ -3198,8 +3198,8 @@ function serve404 (request, response) {
     <title>Not Found</title>
   </head>
   <body>
-    ${header}
     ${nav(request)}
+    ${header}
     <main role=main>
       <h2>Not Found</h2>
       <p>The page you tried to visit doesn’t exist on this site.</p>

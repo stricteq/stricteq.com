@@ -19,7 +19,7 @@ footer[role=contentinfo] {
 }
 
 header[role=banner] {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   margin-top: 1rem;
 }
 
@@ -37,11 +37,13 @@ header[role=banner] h1 {
 }
 
 nav[role=navigation] {
-  margin-bottom: 2rem;
+  margin-top: 1rem;
+  text-align: right;
 }
 
 main[role=main] {
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
+  margin-top: 2rem;
 }
 
 footer[role=contentinfo] {
