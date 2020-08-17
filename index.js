@@ -873,8 +873,8 @@ function serveLogIn (request, response) {
         ${data.password.error}
         <button type=submit>${title}</button>
       </form>
-      <a href=/handle>Forgot Handle</a>
-      <a href=/reset>Reset Password</a>
+      <a class=spaced href=/handle>Forgot Handle</a>
+      <a class=spaced href=/reset>Reset Password</a>
     </main>
     ${footer}
   </body>
