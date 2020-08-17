@@ -1,3 +1,3 @@
 #!/bin/sh
-ssh www@stricteq.com "cd /var/www/stricteq/ ; npm ci"
-ssh root@stricteq.com "servicectl stricteq restart"
+ssh www@stricteq.com "cd /var/www/stricteq/ && git fetch origin && git reset --hard origin/main  && npm ci"
+ssh root@stricteq.com "systemctl restart stricteq.service"
