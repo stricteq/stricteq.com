@@ -299,6 +299,7 @@ function nav (request) {
   ${!handle && '<a id=login class=spaced href=/login>Log In</a>'}
   ${!handle && '<a id=signup class=spaced href=/signup>Sign Up</a>'}
   ${handle && `<a id=profile class=spaced href=/~${handle}>${handle}</a>`}
+  ${handle && '<a id=create class=spaced href=/create>Create Project</a>'}
   ${handle && '<a id=account class=spaced href=/account>Account</a>'}
   ${handle && logoutButton(request)}
 </nav>
