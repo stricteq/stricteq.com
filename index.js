@@ -391,7 +391,7 @@ function serveTerms (request, response, slug) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({ title })}
     <title>${escapeHTML(title)}</title>
   </head>
   <body>
