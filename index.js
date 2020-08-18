@@ -2102,18 +2102,33 @@ function serveUserPage (request, response) {
       ${data.urls.length > 0 && html`<ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>`}
       <p class=joined>Joined ${data.created}</p>
       <h3>Projects</h3>
-      <ul class=projects>
+      <ul id=products class=showcase>
         ${data.projects.map(element => html`
         <li>
           <a href=/~${handle}/${element.project}>${element.project}</a>
+          <a
+              class=project
+              href=/~${handle}/${element.project}
+            >${element.project}</a>
+          ${badgesList(element)}
+          <span class=category>${element.category}</span>
+          <span class=currency>$${element.price.toString()}</span>
         </li>
         `)}
       </ul>
       <h3>Licenses</h3>
-      <ul class=licenses>${
+      <ul id=licenses class=showcase>${
         data.orders.map(order => html`
         <li>
           <a href=/~${order.handle}/${order.project}>${order.handle}/${order.project}</a>
+          <a
+              class=project
+              href=/~${order.handle}/${order.project}
+            >${order.project}</a>
+          <a
+              class=byline
+              href=/~${order.handle}
+            >${order.handle}</a>
         </li>
         `)
       }</ul>
