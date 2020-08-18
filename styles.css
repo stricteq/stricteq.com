@@ -151,8 +151,8 @@ select {
   border-radius: 0.25rem;
   border: 1px solid black;
   box-sizing: border-box;
-  margin-bottom: 0.5ex;
-  margin-top: 0.5ex;
+  margin-bottom: 0.25rem;
+  margin-top: 0.25rem;
   padding: 0.5rem;
   width: 100%;
 }
@@ -161,9 +161,13 @@ button, a[href].button {
   background: white;
   border-radius: 0.25rem;
   border: 1px solid black;
+  box-sizing: border-box;
   color: black;
   cursor: pointer;
   display: inline-block;
+  height: 2.5rem;
+  margin-bottom: 0.25rem;
+  margin-top: 0.25rem;
   padding: 0.5rem;
   transition: background-color 0.2s;
   transition: color 0.2s;
