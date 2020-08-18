@@ -109,8 +109,12 @@ Cryptographic Signature: \`${signature}\`
   }, callback)
 }
 
-function send ({ to, cc, bcc, subject, markup, attachments }, callback) {
+function send ({ from, to, cc, bcc, subject, markup, attachments }, callback) {
   mail({
+    from: {
+      name: 'stricteq',
+      address: 'notifications@stricteq.com'
+    },
     to,
     cc,
     bcc,
