@@ -2161,32 +2161,12 @@ function serveProjectPage (request, response) {
         </li>
         `)}
       </ol>
-      <table>
-        <tr>
-          <th>User</th>
-          <td><a href=/~${handle}>${handle}</a></td>
-        </tr>
-        <tr>
-          <th>Price</th>
-          <td><span id=price class=currency>$${data.price.toString()}</span></td>
-        </tr>
-        <tr>
-          <th>Category</th>
-          <td><span id=category>${data.category}</span></td>
-        </tr>
-        <tr>
-          <th>Created</th>
-          <td>${data.created}</td>
-        </tr>
-        <tr>
-          <th>Available</th>
-          <td>${data.account.stripe.connected ? 'Yes' : 'No'}</td>
-        </tr>
-        <tr>
-          <th>URLs</th>
-          <td><ul>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul></td>
-        </tr>
-      </table>
+      <p class=handle><a href=/~${handle}>${handle}</a></p>
+      <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>
+      <p class=category><span id=category>${data.category}</span></p>
+      <p class=created>Since ${data.created}</p>
+      <p class=availability>${data.account.stripe.connected ? 'available for sale' : 'not available for sale'}</p>
+      <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       ${
         (
           data.account.stripe.connected &&
