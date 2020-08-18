@@ -1859,7 +1859,24 @@ function serveConnected (request, response) {
         // Log the error, but don't fail.
         if (error) request.log.error(error, 'E-Mail Error')
         done()
-      })
+      }),
+      // Notify the administrator.
+      done => {
+        if (!process.env.ADMIN_EMAIL) return done()
+        mail({
+          to: process.env.ADMIN_EMAIL,
+          subject: 'Stripe connected',
+          text: [
+            `Handle: ${account.handle}`,
+            `E-Mail: ${account.email}`,
+            `Stripe IP: ${token.stripe_user_id}`
+          ].join('\n\n')
+        }, error => {
+          // Eat errors.
+          if (error) request.log.error(error)
+          done()
+        })
+      }
     ], error => {
       if (error) {
         request.log.info(error, 'Connect error')
