@@ -44,7 +44,7 @@ module.exports = (callback, port) => {
       const environment = require('../environment')()
       if (environment.missingVariables.length !== 0) {
         cleanup()
-        environment.missing.forEach(missing => {
+        environment.missingVariables.forEach(missing => {
           process.stderr.write(`Missing environment variable: ${missing}\n`)
         })
         assert(false)
