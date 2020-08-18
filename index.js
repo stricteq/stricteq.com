@@ -1049,6 +1049,20 @@ function serveAccount (request, response) {
   }
 }
 
+function loadAccountLock (request, data, done) {
+  const handle = request.account.handle
+  storage.account.read(handle, (error, account) => {
+    if (error) return done(error)
+    if (!account) {
+      var notFound = new Error('account not found')
+      notFound.statusCode = 404
+      return done(error)
+    }
+    if (account.badges.verified) data.verified = true
+    done()
+  })
+}
+
 function serveHandle (request, response) {
   const title = 'Forgot Handle'
 
@@ -1062,6 +1076,8 @@ function serveHandle (request, response) {
 
   formRoute({
     action: '/handle',
+    requireAuthentication: true,
+    loadGETData: loadAccountLock,
     form,
     fields,
     processBody,
@@ -1069,7 +1085,7 @@ function serveHandle (request, response) {
   })(request, response)
 
   function form (request, data) {
-    return html`
+    let form = html`
 <!doctype html>
 <html lang=en-US>
   <head>
@@ -1081,6 +1097,11 @@ function serveHandle (request, response) {
     ${header}
     <main role=main>
       <h2>${title}</h2>
+    `
+    if (data.verified) {
+      form += verifiedLockExplanation
+    } else {
+      form += html`
       <form id=handleForm method=post>
         ${data.error}
         ${data.csrf}
@@ -1096,11 +1117,15 @@ function serveHandle (request, response) {
         ${data.email.error}
         <button type=submit>Send E-Mail</button>
       </form>
+      `
+    }
+    form += html`
     </main>
     ${footer}
   </body>
 </html>
     `
+    return form
   }
 
   function onSuccess (request, response, body) {
@@ -1126,16 +1151,33 @@ function serveHandle (request, response) {
   }
 
   function processBody (request, body, done) {
+    const handle = request.account.handle
     const email = body.email
-    storage.email.read(email, (error, record) => {
-      if (error) return done(error)
-      if (!record) return done()
-      notify.handleReminder({
-        to: email,
-        handle: record.handle
-      }, done)
-    })
+    runSeries([
+      errorIfVerified(handle),
+      done => storage.email.read(email, (error, record) => {
+        if (error) return done(error)
+        if (!record) return done()
+        notify.handleReminder({
+          to: email,
+          handle: record.handle
+        }, done)
+      })
+    ], done)
   }
+}
+
+function errorIfVerified (handle) {
+  return done => storage.account.read(handle, (error, account) => {
+    if (error) return done(error)
+    if (!account) return done(new Error('no account record'))
+    if (account.badges.verified) {
+      var verifiedError = new Error('verified account')
+      verifiedError.statusCode = 400
+      return done(verifiedError)
+    }
+    done()
+  })
 }
 
 function serveEMail (request, response) {
@@ -1152,26 +1194,12 @@ function serveEMail (request, response) {
   formRoute({
     action: '/email',
     requireAuthentication: true,
-    loadGETData,
+    loadGETData: loadAccountLock,
     form,
     fields,
     processBody,
     onSuccess
   })(request, response)
-
-  function loadGETData (request, data, done) {
-    const handle = request.account.handle
-    storage.account.read(handle, (error, account) => {
-      if (error) return done(error)
-      if (!account) {
-        var notFound = new Error('account not found')
-        notFound.statusCode = 404
-        return done(error)
-      }
-      if (account.badges.verified) data.verified = true
-      done()
-    })
-  }
 
   function form (request, data) {
     let form = html`
@@ -1235,17 +1263,7 @@ function serveEMail (request, response) {
     const handle = request.account.handle
     const email = body.email
     runSeries([
-      // Make sure account not verified.
-      done => storage.account.read(handle, (error, account) => {
-        if (error) return done(error)
-        if (!account) return done(new Error('no account record'))
-        if (account.badges.verified) {
-          var verifiedError = new Error('verified account')
-          verifiedError.statusCode = 400
-          return done(verifiedError)
-        }
-        done()
-      }),
+      errorIfVerified(handle),
       // Check for e-mail conflict.
       done => storage.email.read(email, (error, record) => {
         if (error) return done(error)
@@ -1322,16 +1340,7 @@ function serveProfile (request, response) {
   function processBody (request, body, done) {
     const handle = request.account.handle
     runSeries([
-      done => storage.account.read(handle, (error, account) => {
-        if (error) return done(error)
-        if (!account) return done(new Error('no account record'))
-        if (account.badges.verified) {
-          var verifiedError = new Error('verified account')
-          verifiedError.statusCode = 400
-          return done(verifiedError)
-        }
-        done()
-      }),
+      errorIfVerified(handle),
       done => storage.account.update(handle, {
         name: body.name,
         location: body.location,
