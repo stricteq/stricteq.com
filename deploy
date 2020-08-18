@@ -1,3 +1,10 @@
 #!/bin/sh
-ssh www@stricteq.com "cd /var/www/stricteq/ && git fetch origin && git reset --hard origin/main  && npm ci"
+ssh www@stricteq.com <<'SCRIPT'
+cd /var/www/stricteq/
+old_hash="$(shasum package-lock.json)"
+git fetch origin
+git reset --hard origin/main
+new_hash="$(shasum package-lock.json)"
+[ "$old_hash" != "$new_hash" ] && npm ci
+SCRIPT
 ssh root@stricteq.com "systemctl restart stricteq.service"
