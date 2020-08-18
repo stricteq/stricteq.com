@@ -204,7 +204,7 @@ button:hover, a[href].button:hover {
   padding: 0;
 }
 
-.showcase li {
+.showcase > li {
   border-radius: 0.25rem;
   border: 1px solid black;
   padding: 0.5rem;
