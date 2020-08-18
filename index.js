@@ -763,7 +763,26 @@ function serveCreate (request, response) {
       done => storage.account.update(handle, (data, done) => {
         data.projects.push({ project, created })
         done()
-      }, done)
+      }, done),
+      // Notify the administrator.
+      done => {
+        if (!process.env.ADMIN_EMAIL) return done()
+        mail({
+          to: process.env.ADMIN_EMAIL,
+          subject: 'Project Created',
+          text: [
+            `Handle: ${handle}`,
+            `Project: ${project}`,
+            `Price: $${price}`,
+            `URL: ${url}`,
+            `E-Mail: ${category}`
+          ].join('\n\n')
+        }, error => {
+          // Eat errors.
+          if (error) request.log.error(error)
+          done()
+        })
+      }
     ], done)
   }
 
