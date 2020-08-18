@@ -2559,6 +2559,9 @@ function iso3166ToEnglish (code) {
 }
 
 function badgesList (project) {
+  const badges = project.badges
+  const hasSomeBadge = Object.keys(badges).some(key => badges[key])
+  if (!hasSomeBadge) return ''
   return html`
 <ul class=badges>${
   projectBadges
