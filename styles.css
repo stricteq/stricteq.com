@@ -136,6 +136,11 @@ form {
   margin-bottom: 1rem;
 }
 
+fieldset {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
 button[type=submit],
 input[type=text],
 input[type=email],
