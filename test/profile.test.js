@@ -47,22 +47,22 @@ tape('change profile', test => {
       await click(browser, '#profileForm button[type="submit"]')
 
       // Check updated user page.
-      const displayedName = await browser.$('//th[text()="Name"]//following-sibling::td')
+      const displayedName = await browser.$('.name')
       await displayedName.waitForExist()
       const nameText = await displayedName.getText()
       test.equal(nameText, newName, 'displays new name')
 
-      const displayedLocation = await browser.$('//th[text()="Location"]//following-sibling::td')
+      const displayedLocation = await browser.$('.location')
       await displayedLocation.waitForExist()
       const locationText = await displayedLocation.getText()
       test.equal(locationText, 'Texas, United States', 'displays new location')
 
-      const displayedAffiliations = await browser.$('//th[text()="Affiliations"]//following-sibling::td')
+      const displayedAffiliations = await browser.$('.affiliations')
       await displayedAffiliations.waitForExist()
       const associationsText = await displayedAffiliations.getText()
       test.equal(associationsText, affiliations, 'displays new affiliations')
 
-      const displayedURLs = await browser.$('//th[text()="URLs"]//following-sibling::td')
+      const displayedURLs = await browser.$('.urls')
       await displayedURLs.waitForExist()
       const urlsText = await displayedURLs.getText()
       test.equal(urlsText, 'example.com', 'displays new URL')

@@ -985,32 +985,11 @@ function serveAccount (request, response) {
     ${header}
     <main role=main>
       <h2>Account</h2>
-      <table>
-        <tr>
-          <th>Handle</th>
-          <td class=handle>${escapeHTML(account.handle)}</td>
-        </tr>
-        <tr>
-          <th>E-Mail</th>
-          <td class=email>${escapeHTML(account.email)}</td>
-        </tr>
-        <tr>
-          <th>Affiliations</th>
-          <td class=affiliations>${escapeHTML(account.affiliations)}</td>
-        </tr>
-        <tr>
-          <th>Signed Up</th>
-          <td class=signedup>${escapeHTML(new Date(account.created).toISOString())}</td>
-        </tr>
-        <tr>
-          <th>Stripe</th>
-          <td>${
-            account.stripe.connected
-              ? disconnectLink()
-              : connectLink()
-          }</td>
-        </tr>
-      </table>
+      <p class=handle>${escapeHTML(account.handle)}</p>
+      <p class=email>${escapeHTML(account.email)}</p>
+      <p class=affiliation>${escapeHTML(account.affiliations)}</p>
+      <p class=joined>Joined ${escapeHTML(account.created)}</p>
+      ${account.stripe.connected ? disconnectLink() : connectLink()}
       <a class=spaced href=/create>Create Project</a>
       <a class=spaced href=/password>Change Password</a>
       <a class=spaced href=/email>Change E-Mail</a>
@@ -2019,20 +1998,11 @@ function serveUserPage (request, response) {
           .filter(badge => data.badges[badge.key])
           .map(badge => `<li>${badgeImage(badge)}</li>`)
       }</ul>
-      <table>
-        ${data.name && row('Name', data.name)}
-        ${data.location && row('Location', iso3166ToEnglish(data.location))}
-        ${data.affiliations && row('Affiliations', data.affiliations)}
-        ${data.urls.length > 0 && html`
-        <tr>
-          <th>URLs</th>
-          <td><ul>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul></td>
-        </tr>`}
-        <tr>
-          <th>Joined</th>
-          <td>${data.created}</td>
-        </tr>
-      </table>
+      <p class=name>${escapeHTML(data.name)}</p>
+      <p class=location>${escapeHTML(iso3166ToEnglish(data.location))}</p>
+      <p class=affiliations>${escapeHTML(data.affiliations)}</p>
+      ${data.urls.length > 0 && html`<ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>`}
+      <p class=joined>Joined ${data.created}</p>
       <h3>Projects</h3>
       <ul class=projects>
         ${data.projects.map(element => html`
@@ -2083,15 +2053,6 @@ function redacted (object, publishable) {
     if (!publishable.includes(key)) delete clone[key]
   })
   return clone
-}
-
-function row (label, string) {
-  return html`
-<tr>
-  <th>${escapeHTML(label)}</th>
-  <td>${escapeHTML(string)}</td>
-</tr>
-  `
 }
 
 // Helper Function for HTML-or-JSON Routes
