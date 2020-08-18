@@ -2273,6 +2273,21 @@ function serveProjectPage (request, response) {
     const project = redactedProject(data.project)
     project.account = redactedAccount(data.account)
     project.slug = slug
+    const customersList = data.customers.length === 0
+      ? ''
+      : html`
+<ol id=customers>
+  ${data.customers.map(c => html`
+  <li>
+    <img
+        src="${c.gravatar}"
+        alt="${escapeHTML(c.name)}">
+    <span class=name>${escapeHTML(c.name)}</span>
+    ${c.affiliations && `<span class=affiliations>${escapeHTML(c.affiliations)}</span>`}
+  </li>
+  `)}
+</ol>
+      `
     serveView(request, response, project, data => html`
 <!doctype html>
 <html lang=en-US>
@@ -2286,17 +2301,7 @@ function serveProjectPage (request, response) {
     <main role=main>
       <h2>${data.project}</h2>
       ${badgesList(data)}
-      <ol id=customers>
-        ${data.customers.map(c => html`
-        <li>
-          <img
-              src="${c.gravatar}"
-              alt="${escapeHTML(c.name)}">
-          <span class=name>${escapeHTML(c.name)}</span>
-          ${c.affiliations && `<span class=affiliations>${escapeHTML(c.affiliations)}</span>`}
-        </li>
-        `)}
-      </ol>
+      ${customersList}
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>
