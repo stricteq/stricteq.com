@@ -2161,12 +2161,12 @@ function serveProjectPage (request, response) {
         </li>
         `)}
       </ol>
+      <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>
       <p class=category><span id=category>${data.category}</span></p>
       <p class=created>Since ${data.created}</p>
       <p class=availability>${data.account.stripe.connected ? 'available for sale' : 'not available for sale'}</p>
-      <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       ${
         (
           data.account.stripe.connected &&
