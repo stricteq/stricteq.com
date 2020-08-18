@@ -360,12 +360,17 @@ function serveHomepage (request, response) {
       <ol class=showcase>
         ${(data.showcase || []).map(entry => html`
         <li>
-          <a href=/~${entry.handle}/${entry.project}
+          <a
+              class=project
+              href=/~${entry.handle}/${entry.project}
             >${entry.project}</a>
-          <a href=/~${entry.handle}>${entry.handle}</a>
           <span class=category>${entry.category}</span>
           <span class=currency>$${entry.price.toString()}</span>
           ${badgesList(entry)}
+          <a
+              class=byline
+              href=/~${entry.handle}
+            >${entry.handle}</a>
         </li>
         `)}
       </ol>

@@ -194,3 +194,25 @@ button:hover, a[href].button:hover {
   margin-bottom: 1em;
   margin-top: 1em;
 }
+
+.showcase {
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(auto-fit, 8rem);
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.showcase li {
+  border-radius: 0.25rem;
+  border: 1px solid black;
+  padding: 0.5rem;
+}
+
+.showcase a,
+.showcase span {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
