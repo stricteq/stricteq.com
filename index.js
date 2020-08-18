@@ -2098,7 +2098,46 @@ function serveUserPage (request, response) {
     }
     results.account.selling = results.selling
     results.account.licenses = results.licenses
-    serveView(request, response, results.account, data => html`
+    const data = results.account
+    const selling = data.selling.length === 0
+      ? ''
+      : html`
+<h3>Projects</h3>
+<ul id=selling class=showcase>
+  ${data.selling.map(project => html`
+  <li>
+    <a
+        class=project
+        href=/~${handle}/${project.project}
+      >${project.project}</a>
+    ${badgesList(project)}
+    <span class=category>${project.category}</span>
+    <span class=currency>$${project.price.toString()}</span>
+  </li>
+  `)}
+</ul>
+      `
+    const licenses = data.licenses.length === 0
+      ? ''
+      : html`
+<h3>Licenses</h3>
+<ul id=licenses class=showcase>${
+  data.licenses.map(project => html`
+  <li>
+    <a href=/~${project.handle}/${project.project}>${project.handle}/${project.project}</a>
+    <a
+        class=project
+        href=/~${project.handle}/${project.project}
+      >${project.project}</a>
+    <a
+        class=byline
+        href=/~${project.handle}
+      >${project.handle}</a>
+  </li>
+  `)
+}</ul>
+      `
+    serveView(request, response, data, data => html`
 <!doctype html>
 <html lang=en-US>
   <head>
@@ -2123,36 +2162,8 @@ function serveUserPage (request, response) {
       <p class=affiliations>${escapeHTML(data.affiliations)}</p>
       ${data.urls.length > 0 && html`<ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>`}
       <p class=joined>Joined ${data.created}</p>
-      <h3>Projects</h3>
-      <ul id=selling class=showcase>
-        ${data.selling.map(project => html`
-        <li>
-          <a
-              class=project
-              href=/~${handle}/${project.project}
-            >${project.project}</a>
-          ${badgesList(project)}
-          <span class=category>${project.category}</span>
-          <span class=currency>$${project.price.toString()}</span>
-        </li>
-        `)}
-      </ul>
-      <h3>Licenses</h3>
-      <ul id=licenses class=showcase>${
-        data.licenses.map(project => html`
-        <li>
-          <a href=/~${project.handle}/${project.project}>${project.handle}/${project.project}</a>
-          <a
-              class=project
-              href=/~${project.handle}/${project.project}
-            >${project.project}</a>
-          <a
-              class=byline
-              href=/~${project.handle}
-            >${project.handle}</a>
-        </li>
-        `)
-      }</ul>
+      ${selling}
+      ${licenses}
     </main>
     ${footer}
   </body>
