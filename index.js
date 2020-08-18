@@ -1152,14 +1152,29 @@ function serveEMail (request, response) {
   formRoute({
     action: '/email',
     requireAuthentication: true,
+    loadGETData,
     form,
     fields,
     processBody,
     onSuccess
   })(request, response)
 
+  function loadGETData (request, data, done) {
+    const handle = request.account.handle
+    storage.account.read(handle, (error, account) => {
+      if (error) return done(error)
+      if (!account) {
+        var notFound = new Error('account not found')
+        notFound.statusCode = 404
+        return done(error)
+      }
+      if (account.badges.verified) data.verified = true
+      done()
+    })
+  }
+
   function form (request, data) {
-    return html`
+    let form = html`
 <!doctype html>
 <html lang=en-US>
   <head>
@@ -1171,6 +1186,11 @@ function serveEMail (request, response) {
     ${header}
     <main role=main>
       <h2>${title}</h2>
+    `
+    if (data.verified) {
+      form += verifiedLockExplanation
+    } else {
+      form += html`
       <form id=emailForm method=post>
         ${data.error}
         ${data.csrf}
@@ -1178,11 +1198,15 @@ function serveEMail (request, response) {
         ${data.email.error}
         <button type=submit>${title}</button>
       </form>
+      `
+    }
+    form += html`
     </main>
     ${footer}
   </body>
 </html>
     `
+    return form
   }
 
   function onSuccess (request, response, body) {
@@ -1210,29 +1234,47 @@ function serveEMail (request, response) {
   function processBody (request, body, done) {
     const handle = request.account.handle
     const email = body.email
-    storage.email.read(email, (error, record) => {
-      if (error) return done(error)
-      if (record) {
-        const error = new Error('e-mail already has an account')
-        error.fieldName = 'email'
-        error.statusCode = 400
-        return done(error)
-      }
-      const token = uuid.v4()
-      storage.token.create(token, {
-        action: 'change e-mail',
-        created: new Date().toISOString(),
-        handle,
-        email
-      }, error => {
+    runSeries([
+      // Make sure account not verified.
+      done => storage.account.read(handle, (error, account) => {
         if (error) return done(error)
-        request.log.info({ token }, 'e-mail change token')
-        notify.changeEMail({
-          to: email,
-          url: `${process.env.BASE_HREF}/confirm?token=${token}`
-        }, done)
-      })
-    })
+        if (!account) return done(new Error('no account record'))
+        if (account.badges.verified) {
+          var verifiedError = new Error('verified account')
+          verifiedError.statusCode = 400
+          return done(verifiedError)
+        }
+        done()
+      }),
+      // Check for e-mail conflict.
+      done => storage.email.read(email, (error, record) => {
+        if (error) return done(error)
+        if (record) {
+          const error = new Error('e-mail already has an account')
+          error.fieldName = 'email'
+          error.statusCode = 400
+          return done(error)
+        }
+        done()
+      }),
+      // Create and issue e-mail change token.
+      done => {
+        const token = uuid.v4()
+        storage.token.create(token, {
+          action: 'change e-mail',
+          created: new Date().toISOString(),
+          handle,
+          email
+        }, error => {
+          if (error) return done(error)
+          request.log.info({ token }, 'e-mail change token')
+          notify.changeEMail({
+            to: email,
+            url: `${process.env.BASE_HREF}/confirm?token=${token}`
+          }, done)
+        })
+      }
+    ], done)
   }
 }
 
@@ -1245,6 +1287,13 @@ const affiliations = (() => {
     html: 'Affiliations are lists of companies and other organizations you belong to, up to 256 characters long.'
   }
 })()
+
+const verifiedLockExplanation = `
+<p>
+  Your profile information is locked because your account is verified.
+  Please <a href=mailto:support@stricteq.com>e-mail us</a> about the changes you’d like to make.
+</p>
+`
 
 function serveProfile (request, response) {
   const title = 'Change Profile'
@@ -1316,8 +1365,7 @@ function serveProfile (request, response) {
   }
 
   function form (request, data) {
-    response.setHeader('Content-Type', 'text/html')
-    response.write(html`
+    let form = html`
 <!doctype html>
 <html lang=en-US>
   <head>
@@ -1329,16 +1377,11 @@ function serveProfile (request, response) {
     ${header}
     <main role=main>
       <h2>${title}</h2>
-    `)
+    `
     if (data.verified) {
-      response.write(html`
-      <p>
-        Your profile information is locked because your account is verified.
-        Please <a href=mailto:support@stricteq.com>e-mail us</a> about the changes you’d like to make.
-      </p>
-      `)
+      form += verifiedLockExplanation
     } else {
-      response.write(html`
+      form += html`
       <form id=profileForm method=post>
         ${data.error}
         ${data.csrf}
@@ -1360,14 +1403,15 @@ function serveProfile (request, response) {
         ${data.url.error}
         <button type=submit>${title}</button>
       </form>
-      `)
+      `
     }
-    response.end(html`
+    form += html`
     </main>
     ${footer}
   </body>
 </html>
-    `)
+    `
+    return form
   }
 }
 
