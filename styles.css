@@ -76,7 +76,7 @@ a[href].spaced:first-of-type {
 }
 
 .badges {
-  display: block;
+  display: inline-block;
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -97,9 +97,9 @@ a[href].spaced:first-of-type {
 }
 
 .badge, .logo {
-  height: 1.5rem;
+  height: 1.0rem;
   user-select: none;
-  width: 1.5rem;
+  width: 1.0rem;
 }
 
 a[href] .logo {
@@ -218,4 +218,8 @@ button:hover, a[href].button:hover {
   display: block;
   text-align: center;
   width: 100%;
+}
+
+h2 {
+  display: inline-block;
 }
