@@ -129,7 +129,8 @@ footer[role=contentinfo] ul {
 label {
   display: block;
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 form {
