@@ -2284,7 +2284,7 @@ function serveProjectPage (request, response) {
     const project = redactedProject(data.project)
     project.account = redactedAccount(data.account)
     project.slug = slug
-    const customersList = data.customers.length === 0
+    const customersList = project.customers.length === 0
       ? ''
       : html`
 <ol id=customers>
