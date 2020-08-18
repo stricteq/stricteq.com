@@ -225,3 +225,7 @@ button:hover, a[href].button:hover {
 h2 {
   display: inline-block;
 }
+
+.avatar {
+  display: block;
+}
