@@ -214,7 +214,9 @@ button:hover, a[href].button:hover {
   font-size: 150%;
 }
 
-.showcase > * {
+.showcase > li > a,
+.showcase > li > span,
+.showcase > li > ul {
   display: block;
   text-align: center;
   width: 100%;
