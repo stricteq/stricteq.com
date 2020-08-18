@@ -296,11 +296,11 @@ function nav (request) {
   const handle = account && account.handle
   return html`
 <nav role=navigation>
-  ${!handle && '<a id=login class=spaced href=/login>Log In</a>'}
-  ${!handle && '<a id=signup class=spaced href=/signup>Sign Up</a>'}
+  ${!handle && '<a id=login class=button href=/login>Log In</a>'}
+  ${!handle && '<a id=signup class=button href=/signup>Sign Up</a>'}
   ${handle && `<a id=profile class=spaced href=/~${handle}>${handle}</a>`}
-  ${handle && '<a id=create class=spaced href=/create>Create Project</a>'}
-  ${handle && '<a id=account class=spaced href=/account>Account</a>'}
+  ${handle && '<a id=create class=button href=/create>Create Project</a>'}
+  ${handle && '<a id=account class=button href=/account>Account</a>'}
   ${handle && logoutButton(request)}
 </nav>
   `
@@ -882,8 +882,8 @@ function serveLogIn (request, response) {
         ${data.password.error}
         <button type=submit>${title}</button>
       </form>
-      <a class=spaced href=/handle>Forgot Handle</a>
-      <a class=spaced href=/reset>Reset Password</a>
+      <a class=button href=/handle>Forgot Handle</a>
+      <a class=button href=/reset>Reset Password</a>
     </main>
     ${footer}
   </body>
@@ -994,10 +994,10 @@ function serveAccount (request, response) {
       <h2>Account</h2>
       <p class=joined>Joined ${escapeHTML(account.created)}</p>
       ${account.stripe.connected ? disconnectLink() : connectLink()}
-      <a class=spaced href=/create>Create Project</a>
-      <a class=spaced href=/password>Change Password</a>
-      <a class=spaced href=/email>Change E-Mail</a>
-      <a class=spaced href=/profile>Change Profile</a>
+      <a class=button href=/create>Create Project</a>
+      <a class=button href=/password>Change Password</a>
+      <a class=button href=/email>Change E-Mail</a>
+      <a class=button href=/profile>Change Profile</a>
     </main>
     ${footer}
   </body>
@@ -1075,7 +1075,7 @@ function serveHandle (request, response) {
               autocomplete=off>
         </p>
         ${data.email.error}
-        <button type=submit>Send Handle</button>
+        <button type=submit>Send E-Mail</button>
       </form>
     </main>
     ${footer}
