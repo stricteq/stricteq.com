@@ -298,7 +298,8 @@ function nav (request) {
 <nav role=navigation>
   ${!handle && '<a id=login class=spaced href=/login>Log In</a>'}
   ${!handle && '<a id=signup class=spaced href=/signup>Sign Up</a>'}
-  ${handle && `<a id=account class=spaced href=/account>${handle}</a>`}
+  ${handle && `<a id=profile class=spaced href=/~${handle}>${handle}</a>`}
+  ${handle && '<a id=account class=spaced href=/account>Account</a>'}
   ${handle && logoutButton(request)}
 </nav>
   `
@@ -985,9 +986,6 @@ function serveAccount (request, response) {
     ${header}
     <main role=main>
       <h2>Account</h2>
-      <p class=handle>${escapeHTML(account.handle)}</p>
-      <p class=email>${escapeHTML(account.email)}</p>
-      <p class=affiliation>${escapeHTML(account.affiliations)}</p>
       <p class=joined>Joined ${escapeHTML(account.created)}</p>
       ${account.stripe.connected ? disconnectLink() : connectLink()}
       <a class=spaced href=/create>Create Project</a>
