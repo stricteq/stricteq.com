@@ -364,9 +364,9 @@ function serveHomepage (request, response) {
               class=project
               href=/~${entry.handle}/${entry.project}
             >${entry.project}</a>
+          ${badgesList(entry)}
           <span class=category>${entry.category}</span>
           <span class=currency>$${entry.price.toString()}</span>
-          ${badgesList(entry)}
           <a
               class=byline
               href=/~${entry.handle}

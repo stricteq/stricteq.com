@@ -210,8 +210,7 @@ button:hover, a[href].button:hover {
   padding: 0.5rem;
 }
 
-.showcase a,
-.showcase span {
+.showcase > * {
   display: block;
   text-align: center;
   width: 100%;
