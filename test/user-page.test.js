@@ -44,7 +44,7 @@ tape('user page', test => {
 
       // Find project link on user page.
       await browser.navigateTo(`http://localhost:${port}/~${handle}`)
-      const projects = await browser.$('.projects')
+      const projects = await browser.$('#selling')
       const link = await projects.$(`=${project}`)
       await link.waitForExist()
       test.pass('project link on user page')
@@ -153,7 +153,7 @@ tape('user page licenses', test => {
 
       // Browse to Bob's user page.
       await browser.navigateTo(`http://localhost:${port}/~${bob.handle}`)
-      const anchor = await browser.$('.licenses a')
+      const anchor = await browser.$('#licenses a')
       const href = await anchor.getAttribute('href')
       test.equal(href, `/~${ana.handle}/${project}`)
     })().then(finish).catch(finish)

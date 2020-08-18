@@ -1050,7 +1050,7 @@ function serveAccount (request, response) {
         state: account.stripe.connectNonce,
         redirect_uri: `${process.env.BASE_HREF}/connected`
       })
-    return `<a id=connect href="${url}">Connect Stripe Account</a>`
+    return `<a id=connect class=button href="${url}">Connect Stripe Account</a>`
   }
 }
 
@@ -2064,19 +2064,41 @@ function serveUserPage (request, response) {
       runParallelLimit(results.email.orderIDs.map(
         orderID => done => storage.order.read(orderID, done)
       ), 4, done)
+    }],
+    licenses: ['orders', (results, done) => {
+      runParallelLimit(
+        results.orders.map(order => {
+          const slug = `${order.handle}/${order.project}`
+          return done => storage.project.read(slug, (error, project) => {
+            if (error) return done(error)
+            done(null, redactedProject(project))
+          })
+        }),
+        3,
+        done
+      )
+    }],
+    selling: ['account', (results, done) => {
+      runParallelLimit(
+        results.account.projects.map(meta => {
+          const slug = `${handle}/${meta.project}`
+          return done => storage.project.read(slug, (error, project) => {
+            if (error) return done(error)
+            done(null, redactedProject(project))
+          })
+        }),
+        3,
+        done
+      )
     }]
-  }, (error, data) => {
+  }, (error, results) => {
     if (error) {
       if (error.statusCode === 404) return serve404(request, response)
       return serve500(request, response, error)
     }
-    data.account.orders = data.orders.map(order => {
-      return {
-        handle: order.handle,
-        project: order.project
-      }
-    })
-    serveView(request, response, data.account, data => html`
+    results.account.selling = results.selling
+    results.account.licenses = results.licenses
+    serveView(request, response, results.account, data => html`
 <!doctype html>
 <html lang=en-US>
   <head>
@@ -2102,33 +2124,33 @@ function serveUserPage (request, response) {
       ${data.urls.length > 0 && html`<ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>`}
       <p class=joined>Joined ${data.created}</p>
       <h3>Projects</h3>
-      <ul id=products class=showcase>
-        ${data.projects.map(element => html`
+      <ul id=selling class=showcase>
+        ${data.selling.map(project => html`
         <li>
-          <a href=/~${handle}/${element.project}>${element.project}</a>
+          <a href=/~${handle}/${project.project}>${project.project}</a>
           <a
               class=project
-              href=/~${handle}/${element.project}
-            >${element.project}</a>
-          ${badgesList(element)}
-          <span class=category>${element.category}</span>
-          <span class=currency>$${element.price.toString()}</span>
+              href=/~${project.handle}/${project.project}
+            >${project.project}</a>
+          ${badgesList(project)}
+          <span class=category>${project.category}</span>
+          <p class=price><span id=price class=currency>$${project.price.toString()}</span></p>
         </li>
         `)}
       </ul>
       <h3>Licenses</h3>
       <ul id=licenses class=showcase>${
-        data.orders.map(order => html`
+        data.licenses.map(project => html`
         <li>
-          <a href=/~${order.handle}/${order.project}>${order.handle}/${order.project}</a>
+          <a href=/~${project.handle}/${project.project}>${project.handle}/${project.project}</a>
           <a
               class=project
-              href=/~${order.handle}/${order.project}
-            >${order.project}</a>
+              href=/~${project.handle}/${project.project}
+            >${project.project}</a>
           <a
               class=byline
-              href=/~${order.handle}
-            >${order.handle}</a>
+              href=/~${project.handle}
+            >${project.handle}</a>
         </li>
         `)
       }</ul>
