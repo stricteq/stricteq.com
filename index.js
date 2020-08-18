@@ -476,11 +476,67 @@ function serveSignUp (request, response) {
 
   formRoute({
     action: '/signup',
-    form,
     fields,
+    form,
     processBody,
     onSuccess
   })(request, response)
+
+  function form (request, data) {
+    response.setHeader('Content-Type', 'text/html')
+    response.end(html`
+<!doctype html>
+<html lang=en-US>
+  <head>
+    ${meta({})}
+    <title>${title}</title>
+  </head>
+  <body>
+    ${nav(request)}
+    ${header}
+    <main role=main>
+      <h2>${title}</h2>
+      <p>Sign up for a ${constants.website} account to track your purchases and offer projects for sale.</p>
+      <form id=signupForm method=post>
+        ${data.error}
+        ${data.csrf}
+        ${nameInput({ value: data.name.value, autofocus: true })}
+        ${data.name.error}
+        ${locationInput(data.location.value)}
+        ${data.location.error}
+        ${eMailInput({
+          autofocus: true,
+          value: data.email.value
+        })}
+        ${data.email.error}
+        <p>
+          <label for=handle>Handle</label>
+          <input
+              name=handle
+              type=text
+              placeholder=charlie5
+              pattern="^${handles.pattern}$"
+              value="${escapeHTML(data.handle.value || '')}"
+              required>
+        </p>
+        <p>Your callsign on ${constants.website}. Your profile page will be ${process.env.BASE_HREF}/~{handle}.</p>
+        <p>${handles.html}</p>
+        <p>Please respect others who have registered a particular handle in several other places, like Twitter, GitHub, npm, and so on. In general, handles are first-come, first-served. But ${constants.website} may require changes to avoid confusion.</p>
+        ${data.handle.error}
+        ${passwordInput({})}
+        ${data.password.error}
+        ${passwordRepeatInput()}
+        ${data.repeat.error}
+        <p>Please pick a strong password or passphrase just for ${constants.website}. ${constants.website} does <em>not</em> yet support two-factor authentication.</p>
+        <p>${escapeHTML(passwords.html)}</p>
+        <button type=submit>${title}</button>
+      </form>
+    </main>
+    ${footer}
+  </body>
+</html>
+    `)
+  }
 
   function processBody (request, body, done) {
     const { handle, email, password, name, location } = body
@@ -617,62 +673,6 @@ function serveSignUp (request, response) {
 </html>
   `)
   }
-
-  function form (request, data) {
-    response.setHeader('Content-Type', 'text/html')
-    response.end(html`
-<!doctype html>
-<html lang=en-US>
-  <head>
-    ${meta({})}
-    <title>${title}</title>
-  </head>
-  <body>
-    ${nav(request)}
-    ${header}
-    <main role=main>
-      <h2>${title}</h2>
-      <p>Sign up for a ${constants.website} account to track your purchases and offer projects for sale.</p>
-      <form id=signupForm method=post>
-        ${data.error}
-        ${data.csrf}
-        ${nameInput({ value: data.name.value, autofocus: true })}
-        ${data.name.error}
-        ${locationInput(data.location.value)}
-        ${data.location.error}
-        ${eMailInput({
-          autofocus: true,
-          value: data.email.value
-        })}
-        ${data.email.error}
-        <p>
-          <label for=handle>Handle</label>
-          <input
-              name=handle
-              type=text
-              placeholder=charlie5
-              pattern="^${handles.pattern}$"
-              value="${escapeHTML(data.handle.value || '')}"
-              required>
-        </p>
-        <p>Your callsign on ${constants.website}. Your profile page will be ${process.env.BASE_HREF}/~{handle}.</p>
-        <p>${handles.html}</p>
-        <p>Please respect others who have registered a particular handle in several other places, like Twitter, GitHub, npm, and so on. In general, handles are first-come, first-served. But ${constants.website} may require changes to avoid confusion.</p>
-        ${data.handle.error}
-        ${passwordInput({})}
-        ${data.password.error}
-        ${passwordRepeatInput()}
-        ${data.repeat.error}
-        <p>Please pick a strong password or passphrase just for ${constants.website}. ${constants.website} does <em>not</em> yet support two-factor authentication.</p>
-        <p>${escapeHTML(passwords.html)}</p>
-        <button type=submit>${title}</button>
-      </form>
-    </main>
-    ${footer}
-  </body>
-</html>
-    `)
-  }
 }
 
 function randomNonce () {
@@ -729,67 +729,11 @@ function serveCreate (request, response) {
   formRoute({
     action: '/create',
     requireAuthentication: true,
-    form,
     fields,
+    form,
     processBody,
     onSuccess
   })(request, response)
-
-  function processBody (request, body, done) {
-    const handle = request.account.handle
-    const { project, url, price, category } = body
-    const slug = `${handle}/${project}`
-    const created = new Date().toISOString()
-    runSeries([
-      done => storage.project.create(slug, {
-        project,
-        handle,
-        urls: [url],
-        price,
-        commission: process.env.MINIMUM_COMMISSION,
-        customers: [],
-        badges: {},
-        category,
-        created
-      }, (error, success) => {
-        if (error) return done(error)
-        if (!success) {
-          const error = new Error('project nmame taken')
-          error.statusCode = 400
-          return done(error)
-        }
-        done()
-      }),
-      done => storage.account.update(handle, (data, done) => {
-        data.projects.push({ project, created })
-        done()
-      }, done),
-      // Notify the administrator.
-      done => {
-        if (!process.env.ADMIN_EMAIL) return done()
-        mail({
-          to: process.env.ADMIN_EMAIL,
-          subject: 'Project Created',
-          text: [
-            `Handle: ${handle}`,
-            `Project: ${project}`,
-            `Price: $${price}`,
-            `URL: ${url}`,
-            `E-Mail: ${category}`
-          ].join('\n\n')
-        }, error => {
-          // Eat errors.
-          if (error) request.log.error(error)
-          done()
-        })
-      }
-    ], done)
-  }
-
-  function onSuccess (request, response, body) {
-    const slug = `${request.account.handle}/${body.project}`
-    serve303(request, response, `/~${slug}`)
-  }
 
   function form (request, data) {
     response.setHeader('Content-Type', 'text/html')
@@ -849,6 +793,62 @@ function serveCreate (request, response) {
 </html>
     `)
   }
+
+  function processBody (request, body, done) {
+    const handle = request.account.handle
+    const { project, url, price, category } = body
+    const slug = `${handle}/${project}`
+    const created = new Date().toISOString()
+    runSeries([
+      done => storage.project.create(slug, {
+        project,
+        handle,
+        urls: [url],
+        price,
+        commission: process.env.MINIMUM_COMMISSION,
+        customers: [],
+        badges: {},
+        category,
+        created
+      }, (error, success) => {
+        if (error) return done(error)
+        if (!success) {
+          const error = new Error('project nmame taken')
+          error.statusCode = 400
+          return done(error)
+        }
+        done()
+      }),
+      done => storage.account.update(handle, (data, done) => {
+        data.projects.push({ project, created })
+        done()
+      }, done),
+      // Notify the administrator.
+      done => {
+        if (!process.env.ADMIN_EMAIL) return done()
+        mail({
+          to: process.env.ADMIN_EMAIL,
+          subject: 'Project Created',
+          text: [
+            `Handle: ${handle}`,
+            `Project: ${project}`,
+            `Price: $${price}`,
+            `URL: ${url}`,
+            `E-Mail: ${category}`
+          ].join('\n\n')
+        }, error => {
+          // Eat errors.
+          if (error) request.log.error(error)
+          done()
+        })
+      }
+    ], done)
+  }
+
+  function onSuccess (request, response, body) {
+    const slug = `${request.account.handle}/${body.project}`
+    serve303(request, response, `/~${slug}`)
+  }
 }
 
 function serveLogIn (request, response) {
@@ -867,8 +867,8 @@ function serveLogIn (request, response) {
 
   module.exports = formRoute({
     action: '/login',
-    form,
     fields,
+    form,
     processBody,
     onSuccess
   })(request, response)
@@ -1078,8 +1078,8 @@ function serveHandle (request, response) {
     action: '/handle',
     requireAuthentication: true,
     loadGETData: loadAccountLock,
-    form,
     fields,
+    form,
     processBody,
     onSuccess
   })(request, response)
@@ -1128,6 +1128,22 @@ function serveHandle (request, response) {
     return form
   }
 
+  function processBody (request, body, done) {
+    const handle = request.account.handle
+    const email = body.email
+    runSeries([
+      errorIfVerified(handle),
+      done => storage.email.read(email, (error, record) => {
+        if (error) return done(error)
+        if (!record) return done()
+        notify.handleReminder({
+          to: email,
+          handle: record.handle
+        }, done)
+      })
+    ], done)
+  }
+
   function onSuccess (request, response, body) {
     response.setHeader('Content-Type', 'text/html')
     response.end(html`
@@ -1148,22 +1164,6 @@ function serveHandle (request, response) {
   </body>
 </html>
     `)
-  }
-
-  function processBody (request, body, done) {
-    const handle = request.account.handle
-    const email = body.email
-    runSeries([
-      errorIfVerified(handle),
-      done => storage.email.read(email, (error, record) => {
-        if (error) return done(error)
-        if (!record) return done()
-        notify.handleReminder({
-          to: email,
-          handle: record.handle
-        }, done)
-      })
-    ], done)
   }
 }
 
@@ -1195,8 +1195,8 @@ function serveEMail (request, response) {
     action: '/email',
     requireAuthentication: true,
     loadGETData: loadAccountLock,
-    form,
     fields,
+    form,
     processBody,
     onSuccess
   })(request, response)
@@ -1237,28 +1237,6 @@ function serveEMail (request, response) {
     return form
   }
 
-  function onSuccess (request, response, body) {
-    response.setHeader('Content-Type', 'text/html')
-    response.end(html`
-<!doctype html>
-<html lang=en-US>
-  <head>
-    ${meta({})}
-    <title>${title}</title>
-  </head>
-  <body>
-    ${nav(request)}
-    ${header}
-    <main role=main>
-      <h2>${title}</h2>
-      <p class=message>Confirmation e-mail sent.</p>
-    </main>
-    ${footer}
-  </body>
-</html>
-    `)
-  }
-
   function processBody (request, body, done) {
     const handle = request.account.handle
     const email = body.email
@@ -1293,6 +1271,28 @@ function serveEMail (request, response) {
         })
       }
     ], done)
+  }
+
+  function onSuccess (request, response, body) {
+    response.setHeader('Content-Type', 'text/html')
+    response.end(html`
+<!doctype html>
+<html lang=en-US>
+  <head>
+    ${meta({})}
+    <title>${title}</title>
+  </head>
+  <body>
+    ${nav(request)}
+    ${header}
+    <main role=main>
+      <h2>${title}</h2>
+      <p class=message>Confirmation e-mail sent.</p>
+    </main>
+    ${footer}
+  </body>
+</html>
+    `)
   }
 }
 
@@ -1331,28 +1331,11 @@ function serveProfile (request, response) {
     action: '/profile',
     requireAuthentication: true,
     loadGETData,
-    form,
     fields,
+    form,
     processBody,
     onSuccess
   })(request, response)
-
-  function processBody (request, body, done) {
-    const handle = request.account.handle
-    runSeries([
-      errorIfVerified(handle),
-      done => storage.account.update(handle, {
-        name: body.name,
-        location: body.location,
-        affiliations: body.affiliations,
-        urls: [body.url]
-      }, done)
-    ], done)
-  }
-
-  function onSuccess (request, response, body) {
-    serve303(request, response, `/~${request.account.handle}`)
-  }
 
   function loadGETData (request, data, done) {
     const handle = request.account.handle
@@ -1421,6 +1404,23 @@ function serveProfile (request, response) {
 </html>
     `
     return form
+  }
+
+  function processBody (request, body, done) {
+    const handle = request.account.handle
+    runSeries([
+      errorIfVerified(handle),
+      done => storage.account.update(handle, {
+        name: body.name,
+        location: body.location,
+        affiliations: body.affiliations,
+        urls: [body.url]
+      }, done)
+    ], done)
+  }
+
+  function onSuccess (request, response, body) {
+    serve303(request, response, `/~${request.account.handle}`)
   }
 }
 
@@ -1706,8 +1706,8 @@ function serveReset (request, response) {
 
   formRoute({
     action: '/reset',
-    form,
     fields,
+    form,
     processBody,
     onSuccess
   })(request, response)
@@ -2436,11 +2436,33 @@ function serveBuy (request, response) {
 
   formRoute({
     action,
-    form,
     fields,
+    form,
     processBody,
     onSuccess
   })(request, response)
+
+  function form (request, data) {
+    response.setHeader('Content-Type', 'text/html')
+    response.end(html`
+<!doctype html>
+<html lang=en-US>
+  <head>
+    ${meta({})}
+    <title>${title}</title>
+  </head>
+  <body>
+    ${nav(request)}
+    ${header}
+    <main role=main>
+      <h2>${title}</h2>
+      ${buyForm(data)}
+    </main>
+    ${footer}
+  </body>
+</html>
+    `)
+  }
 
   function processBody (request, body, done) {
     const { handle, project, name, email, location, token } = body
@@ -2603,28 +2625,6 @@ Payment Intent: ${paymentIntent.id}
   </body>
 </html>
   `)
-  }
-
-  function form (request, data) {
-    response.setHeader('Content-Type', 'text/html')
-    response.end(html`
-<!doctype html>
-<html lang=en-US>
-  <head>
-    ${meta({})}
-    <title>${title}</title>
-  </head>
-  <body>
-    ${nav(request)}
-    ${header}
-    <main role=main>
-      <h2>${title}</h2>
-      ${buyForm(data)}
-    </main>
-    ${footer}
-  </body>
-</html>
-    `)
   }
 }
 
