@@ -2133,7 +2133,7 @@ function serveUserPage (request, response) {
             >${project.project}</a>
           ${badgesList(project)}
           <span class=category>${project.category}</span>
-          <p class=price><span id=price class=currency>$${project.price.toString()}</span></p>
+          <span class=currency>$${project.price.toString()}</span>
         </li>
         `)}
       </ul>
