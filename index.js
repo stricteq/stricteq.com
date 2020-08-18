@@ -1309,7 +1309,7 @@ function serveProfile (request, response) {
       response.write(html`
       <p>
         Your profile information is locked because your account is verified.
-        Please <a href=mailto:${process.env.ADMIN_EMAIL}>e-mail us</a> about the changes you’d like to make.
+        Please <a href=mailto:support@stricteq.com>e-mail us</a> about the changes you’d like to make.
       </p>
       `)
     } else {
@@ -3170,7 +3170,7 @@ function serve500 (request, response, error) {
       <p>The server ran into an error.</p>
       <p>
         If you'd like, you can
-        <a href=support@stricteq.com>e-mail support</a>,
+        <a href=mailto:support@stricteq.com>e-mail support</a>,
         pasting in this unique support number:
         <code>${escapeHTML(request.id)}</code>
       </p>
