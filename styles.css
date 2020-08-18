@@ -152,3 +152,9 @@ select {
   font-style: italic;
   font-weight: bold;
 }
+
+.urls {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
