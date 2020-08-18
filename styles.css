@@ -144,7 +144,9 @@ input[type=number],
 input[type=password],
 select {
   box-sizing: border-box;
-  padding: 1ex;
+  margin-bottom: 0.5ex;
+  margin-top: 0.5ex;
+  padding: 0.5ex;
   width: 100%;
 }
 
