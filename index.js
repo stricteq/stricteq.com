@@ -2127,10 +2127,9 @@ function serveUserPage (request, response) {
       <ul id=selling class=showcase>
         ${data.selling.map(project => html`
         <li>
-          <a href=/~${handle}/${project.project}>${project.project}</a>
           <a
               class=project
-              href=/~${project.handle}/${project.project}
+              href=/~${handle}/${project.project}
             >${project.project}</a>
           ${badgesList(project)}
           <span class=category>${project.category}</span>
