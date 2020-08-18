@@ -76,7 +76,7 @@ a[href].spaced:first-of-type {
 }
 
 .badges {
-  display: inline-block;
+  display: block;
   list-style-type: none;
   margin: 0;
   padding: 0;
