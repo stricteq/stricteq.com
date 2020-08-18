@@ -580,7 +580,12 @@ function serveSignUp (request, response) {
         mail({
           to: process.env.ADMIN_EMAIL,
           subject: 'Sign Up',
-          text: `Handle: ${handle}\nE-Mail: ${email}\n`
+          text: [
+            `Name: ${name}`,
+            `E-Mail: ${email}`,
+            `Handle: ${handle}`,
+            `Location: ${location} (${iso3166ToEnglish(location)})`
+          ].join('\n\n')
         }, error => {
           // Eat errors.
           if (error) request.log.error(error)
