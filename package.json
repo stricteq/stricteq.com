@@ -36,7 +36,6 @@
   "devDependencies": {
     "creditstxt": "^1.0.2",
     "depcheck": "^1.2.0",
-    "husky": "^4.2.5",
     "licensee": "^8.1.0",
     "markdown-spellcheck": "^1.3.1",
     "nyc": "^15.1.0",
@@ -48,16 +47,11 @@
     "tape": "^5.0.1",
     "webdriverio": "^6.4.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run precommit"
-    }
-  },
   "scripts": {
     "audit": "npm audit --production | tee audit.log",
     "prestart": "if test \"$NODE_ENV\" = \"production\"; then npm run credits ; fi",
     "credits": "cp credits.txt.header credits.txt ; creditstxt >> credits.txt",
-    "precommit": "npm run lint && npm run spelling && npm run gotchas",
+    "check": "npm run lint && npm run spelling && npm run gotchas",
     "coverage": "nyc --reporter=lcov --reporter=text npm run test",
     "deps": "depcheck",
     "fix": "standard --fix",
