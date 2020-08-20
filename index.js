@@ -1087,7 +1087,6 @@ function serveHandle (request, response) {
 
   formRoute({
     action: '/handle',
-    loadGETData: loadAccountLock,
     fields,
     form,
     processBody,
@@ -1139,10 +1138,8 @@ function serveHandle (request, response) {
   }
 
   function processBody (request, body, done) {
-    const handle = request.account.handle
     const email = body.email
     runSeries([
-      errorIfVerified(handle),
       done => storage.email.read(email, (error, record) => {
         if (error) return done(error)
         if (!record) return done()
