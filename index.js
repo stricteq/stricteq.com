@@ -459,6 +459,16 @@ const locationField = {
   validate: code => locations.includes(code)
 }
 
+const urlsField = {
+  array: 3,
+  displayNames: 'URLs',
+  filter: e => e.trim(),
+  validate: e => e.length < 128 && URLRegEx({
+    exact: true,
+    strict: true
+  }).test(e)
+}
+
 function serveSignUp (request, response) {
   const title = 'Sign Up'
 
@@ -470,6 +480,7 @@ function serveSignUp (request, response) {
       filter: e => e.toLowerCase().trim(),
       validate: e => EMAIL_RE.test(e)
     },
+    urls: urlsField,
     handle: {
       displayName: 'handle',
       filter: e => e.toLowerCase().trim(),
@@ -520,6 +531,30 @@ function serveSignUp (request, response) {
           value: data.email.value
         })}
         ${data.email.error}
+        <label for=urls>URLs</label>
+        <p>
+          <input
+              name=urls
+              type=url
+              placeholder=https://github.com/you
+              value="${escapeHTML(data.urls[0] || '')}">
+        </p>
+        <p>
+          <input
+              name=urls
+              type=url
+              placeholder=https://twitter.com/you
+              value="${escapeHTML(data.urls[0] || '')}">
+        </p>
+        <p>
+          <input
+              name=urls
+              type=url
+              placeholder=https://twitch.tv/you
+              value="${escapeHTML(data.urls[0] || '')}">
+        </p>
+        <p>Add a URLs for other places to find you on the Web.</p>
+        ${data.urls.error}
         <p>
           <label for=handle>Handle</label>
           <input
@@ -550,7 +585,7 @@ function serveSignUp (request, response) {
   }
 
   function processBody (request, body, done) {
-    const { handle, email, password, name, location } = body
+    const { handle, email, password, name, location, urls } = body
     runSeries([
       // Check if e-mail already used.
       done => {
@@ -577,7 +612,7 @@ function serveSignUp (request, response) {
                 passwordHash,
                 name,
                 location,
-                urls: [],
+                urls,
                 badges: {},
                 projects: [],
                 affiliations: '',
@@ -706,15 +741,6 @@ const projectCategories = [
   'interpreter'
 ]
 
-const urlField = {
-  displayName: 'URL',
-  filter: e => e.trim(),
-  validate: e => e.length < 128 && URLRegEx({
-    exact: true,
-    strict: true
-  }).test(e)
-}
-
 function serveCreate (request, response) {
   const title = 'Create Project'
 
@@ -724,7 +750,7 @@ function serveCreate (request, response) {
       filter: e => e.toLowerCase().trim(),
       validate: projects.validate
     },
-    url: urlField,
+    urls: urlsField,
     price: {
       displayName: 'price',
       filter: e => parseInt(e),
@@ -775,8 +801,24 @@ function serveCreate (request, response) {
               required>
         </p>
         <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
-        ${urlInput({ value: data.project.url, required: true })}
-        <p>URL for your project, such as a homepage or source code repository.</p>
+        <label for=urls>URLs</label>
+        <input
+            name=urls
+            type=url
+            placeholder=https://github.com/example/project
+            value="${escapeHTML(data.urls[0] || '')}"
+            required>
+        <input
+            name=urls
+            type=url
+            placeholder=http://project.com
+            value="${escapeHTML(data.urls[1] || '')}">
+        <input
+            name=urls
+            type=url
+            placeholder=https://twitter.com/project
+            value="${escapeHTML(data.urls[2] || '')}">
+        <p>URLs for your project, such as its source code repository and homepage.</p>
         <p>
           <label for=category>Category</label>
           <select
@@ -807,14 +849,14 @@ function serveCreate (request, response) {
 
   function processBody (request, body, done) {
     const handle = request.account.handle
-    const { project, url, price, category } = body
+    const { project, urls, price, category } = body
     const slug = `${handle}/${project}`
     const created = new Date().toISOString()
     runSeries([
       done => storage.project.create(slug, {
         project,
         handle,
-        urls: [url],
+        urls,
         price,
         commission: process.env.MINIMUM_COMMISSION,
         customers: [],
@@ -844,7 +886,7 @@ function serveCreate (request, response) {
             `Handle: ${handle}`,
             `Project: ${project}`,
             `Price: $${price}`,
-            `URL: ${url}`,
+            `URLs: ${urls.map(u => `<${u}>`).join(', ')}`,
             `E-Mail: ${category}`
           ].join('\n\n')
         }, error => {
@@ -1331,7 +1373,7 @@ function serveProfile (request, response) {
       filter: e => e.trim(),
       validate: affiliations.validate
     },
-    url: urlField
+    urls: urlsField
   }
 
   formRoute({
@@ -1388,6 +1430,20 @@ function serveProfile (request, response) {
         ${data.name.error}
         ${locationInput(data.location.value)}
         ${data.location.error}
+        <label for=urls>URLs</label>
+        <input
+            name=urls
+            type=url
+            value="${escapeHTML(data.urls[0] || '')}">
+        <input
+            name=urls
+            type=url
+            value="${escapeHTML(data.urls[1] || '')}">
+        <input
+            name=urls
+            type=url
+            value="${escapeHTML(data.urls[2] || '')}">
+        ${data.urls.error}
         <p>
           <label for=affiliations>Affiliations</label>
           <input
@@ -1398,8 +1454,6 @@ function serveProfile (request, response) {
         </p>
         ${data.affiliations.error}
         <p>${affiliations.html}</p>
-        ${urlInput({ value: data.url.value, required: false })}
-        ${data.url.error}
         <button type=submit>${title}</button>
       </form>
       `
@@ -1421,7 +1475,7 @@ function serveProfile (request, response) {
         name: body.name,
         location: body.location,
         affiliations: body.affiliations,
-        urls: [body.url]
+        urls: body.urls
       }, done)
     ], done)
   }
@@ -3040,19 +3094,6 @@ function nameInput ({ value, autofocus }) {
   `
 }
 
-function urlInput ({ value, required }) {
-  return html`
-<p>
-  <label for=url>URL</label>
-  <input
-      name=url
-      type=url
-      ${required && 'required'}
-      value="${escapeHTML(value || '')}">
-</p>
-  `
-}
-
 function eMailInput ({ value, autofocus }) {
   return html`
 <p>
@@ -3163,7 +3204,10 @@ function formRoute ({
       })
     } else {
       fieldNames.forEach(fieldName => {
-        data[fieldName] = { value: '', error: false }
+        data[fieldName] = {
+          value: fields[fieldName].array ? [] : '',
+          error: false
+        }
       })
     }
     if (error && !error.fieldName) {
@@ -3226,6 +3270,10 @@ function parseAndValidatePostBody ({
   const fieldNames = Object.keys(fields)
   const body = {}
 
+  fieldNames.forEach(name => {
+    if (fields[name].array) body[name] = []
+  })
+
   runSeries([parse, validate], error => {
     if (error) return callback(error)
     callback(null, body)
@@ -3241,7 +3289,12 @@ function parseAndValidatePostBody ({
               .concat('csrftoken', 'csrfnonce')
               .map(n => n.length)
           ),
-          fields: fieldNames.length + 2,
+          fields: fieldNames.reduce((total, name) => {
+            const description = fields[name]
+            return description.array
+              ? total + description.array
+              : total + 1
+          }, 0) + 2,
           fieldSizeLimit,
           parts: 1
         }
@@ -3257,7 +3310,9 @@ function parseAndValidatePostBody ({
             ? description.filter(value)
             : value
           if (description.optional && filteredValue === '') return
-          body[name] = filteredValue
+          if (description.array && filteredValue === '') return
+          if (description.array) body[name].push(filteredValue)
+          else body[name] = filteredValue
         })
         .once('finish', done)
     )
@@ -3269,7 +3324,9 @@ function parseAndValidatePostBody ({
       const description = fields[fieldName]
       const value = body[fieldName]
       if (description.optional && value === undefined) continue
-      const valid = description.validate(value, body)
+      const valid = description.array
+        ? value.every(value => description.validate(value, body))
+        : description.validate(value, body)
       if (valid) continue
       const error = new Error('invalid ' + description.displayName)
       error.statusCode = 401

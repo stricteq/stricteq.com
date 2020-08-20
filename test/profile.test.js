@@ -40,7 +40,7 @@ tape('change profile', test => {
       const affiliationInput = await browser.$('#profileForm input[name="affiliations"]')
       await affiliationInput.setValue(affiliations)
 
-      const urlInput = await browser.$('#profileForm input[name="url"]')
+      const urlInput = await browser.$('#profileForm input[name="urls"]')
       await urlInput.setValue(url)
 
       // Submit.

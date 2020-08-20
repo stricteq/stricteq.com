@@ -18,7 +18,7 @@ const handle = 'ana'
 const password = 'ana password'
 const email = 'ana@example.com'
 const project = 'apple'
-const url = 'http://example.com'
+const urls = ['http://example.com']
 const price = 100
 const category = 'library'
 
@@ -38,13 +38,13 @@ tape('project page', test => {
       const disconnectText = await disconnectButton.getText()
       test.equal(disconnectText, 'Disconnect Stripe Account', 'connected')
       // Create project.
-      await createProject({ browser, port, project, url, price, category })
+      await createProject({ browser, port, project, urls, price, category })
       await logout({ browser, port })
       await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
       const h2 = await browser.$('h2')
       const h2Text = await h2.getText()
       test.equal(h2Text, project, 'project page')
-      const projectLink = await browser.$(`a[href="${url}"]`)
+      const projectLink = await browser.$(`a[href="${urls[0]}"]`)
       await projectLink.waitForExist()
       test.pass('URL')
       const priceElement = await browser.$('#price')
@@ -146,7 +146,7 @@ tape('project JSON', test => {
         browser, port, name, location, handle, password, email
       })
       await login({ browser, port, handle, password })
-      await createProject({ browser, port, project, url, price, category })
+      await createProject({ browser, port, project, urls, price, category })
       await new Promise((resolve, reject) => {
         http.request({
           port,
@@ -161,7 +161,7 @@ tape('project JSON', test => {
               test.equal(parsed.project, project, '.project')
               test.equal(parsed.price, price, '.price')
               test.equal(parsed.category, category, '.category')
-              test.deepEqual(parsed.urls, [url], '.urls')
+              test.deepEqual(parsed.urls, urls, '.urls')
               test.equal(typeof parsed.created, 'string', '.created')
               test.equal(typeof parsed.account, 'object', '.account')
               resolve()

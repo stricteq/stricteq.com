@@ -6,21 +6,28 @@ module.exports = ({
   browser,
   port,
   project,
-  url,
+  urls,
   price,
   category = 'library'
 }, callback) => {
   assert(browser)
   assert(Number.isSafeInteger(port))
   assert(typeof project === 'string')
-  assert(typeof url === 'string')
   assert(Number.isSafeInteger(price))
   assert(typeof category === 'string')
+  if (!urls) {
+    urls = [
+      `https://github.com/example/${project}`,
+      `http://example.com/${project}`
+    ]
+  }
   return browser.navigateTo('http://localhost:' + port)
     .then(() => click(browser, '#account'))
     .then(() => click(browser, '=Create Project'))
     .then(() => addValue(browser, '#createForm input[name="project"]', project))
-    .then(() => addValue(browser, '#createForm input[name="url"]', url))
+    .then(() => Promise.all(
+      urls.map((url, index) => addValue(browser, `(//form[@id="createForm"]//input[@name="urls"])[${index + 1}]`, url))
+    ))
     .then(() => addValue(browser, '#createForm input[name="price"]', price))
     .then(() => browser.$('#createForm select[name="category"]'))
     .then(input => input.selectByVisibleText(category))

@@ -13,7 +13,7 @@ const timeout = require('./timeout')
 const webdriver = require('./webdriver')
 
 const project = 'apple'
-const url = 'http://example.com'
+const urls = ['http://example.com']
 const price = 11
 const category = 'library'
 
@@ -40,7 +40,7 @@ tape('user page', test => {
 
       // Create project.
       await login({ browser, port, handle, password })
-      await createProject({ browser, port, project, url, price, category })
+      await createProject({ browser, port, project, urls, price, category })
 
       // Find project link on user page.
       await browser.navigateTo(`http://localhost:${port}/~${handle}`)
@@ -86,7 +86,7 @@ tape('user page licenses', test => {
       await disconnect.waitForExist()
 
       // Create project.
-      await createProject({ browser, port, project, url, price, category })
+      await createProject({ browser, port, project, urls, price, category })
       await logout({ browser, port })
 
       // As Bob...
@@ -182,7 +182,7 @@ tape('user JSON', test => {
       await click(browser, '=Create Project')
       const projectInput = await browser.$('#createForm input[name="project"]')
       await projectInput.addValue(project)
-      const urlInput = await browser.$('#createForm input[name="url"]')
+      const urlInput = await browser.$('#createForm input[name="urls"]')
       await urlInput.addValue('http://example.com')
       await click(browser, '#createForm button[type="submit"]')
     })()
