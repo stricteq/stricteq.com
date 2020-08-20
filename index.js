@@ -141,6 +141,12 @@ const projectBadges = [
 const hostLogos = [
   { icon: 'twitter', hostname: 'twitter.com' },
   { icon: 'github', hostname: 'github.com' },
+  { icon: 'twitch', hostname: 'twitch.tv' },
+  { icon: 'linkedin', hostname: 'linkedin.com' },
+  { icon: 'facebook', hostname: 'facebook.com' },
+  { icon: 'facebook', hostname: 'facebook.com' },
+  { icon: 'medium', hostname: 'medium.com' },
+  { icon: 'wordpress', hostname: 'wordpress.com' },
   { icon: 'gitlab', hostname: 'gitlab.com' }
 ]
 
