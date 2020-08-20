@@ -1081,7 +1081,6 @@ function serveHandle (request, response) {
 
   formRoute({
     action: '/handle',
-    requireAuthentication: true,
     loadGETData: loadAccountLock,
     fields,
     form,
