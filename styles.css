@@ -199,7 +199,7 @@ button:hover, a[href].button:hover {
 .showcase {
   display: grid;
   grid-gap: 1rem;
-  grid-template-columns: repeat(auto-fit, 8rem);
+  grid-template-columns: repeat(auto-fit, 12rem);
   list-style-type: none;
   margin: 0;
   padding: 0;
