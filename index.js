@@ -377,7 +377,7 @@ function serveHomepage (request, response) {
           ${badgesList(entry)}
           <span class=category>${escapeHTML(entry.category)}</span>
           <span class=langauge>${escapeHTML(entry.language)}</span>
-          <span class=currency>$${entry.price.toString()}</span>
+          <span class=currency>$${entry.price}</span>
           <a
               class=byline
               href=/~${entry.handle}
@@ -852,8 +852,8 @@ function serveCreate (request, response) {
           name=price
           type=number
           value="${escapeHTML(data.price.value || '')}"
-          min="${MINIMUM_PRICE.toString()}"
-          min="${MAXIMUM_PRICE.toString()}"
+          min="${MINIMUM_PRICE}"
+          min="${MAXIMUM_PRICE}"
           required>
         <p>Cost of <a href=/paid>a license</a> in United States Dollars.</p>
         ${data.price.error}
@@ -2228,7 +2228,7 @@ function serveUserPage (request, response) {
     ${badgesList(selling)}
     <span class=category>${escapeHTML(selling.category)}</span>
     <span class=language>${escapeHTML(selling.language)}</span>
-    <span class=currency>$${selling.price.toString()}</span>
+    <span class=currency>$${selling.price}</span>
   </li>
   `)}
 </ul>
@@ -2491,8 +2491,8 @@ function serveProjectForDeveloper (request, response) {
           name=price
           type=number
           value="${escapeHTML(data.price.value || '')}"
-          min="${MINIMUM_PRICE.toString()}"
-          min="${MAXIMUM_PRICE.toString()}"
+          min="${MINIMUM_PRICE}"
+          min="${MAXIMUM_PRICE}"
           required>
         <button type=submit>Update</button>
       </form>
@@ -2556,7 +2556,7 @@ function serveProjectForCustomers (request, response) {
       ${data.language && `<p class=language>${escapeHTML(data.language)}</p>`}
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=handle><a href=/~${handle}>${handle}</a></p>
-      <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>
+      <p class=price><span id=price class=currency>$${data.price}</span></p>
       <p class=created>Since ${data.created}</p>
       <article class=description>${markdown(data.description || '', { safe: true })}</article>
       ${
