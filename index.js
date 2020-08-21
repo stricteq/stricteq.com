@@ -2553,11 +2553,11 @@ function serveProjectForCustomers (request, response) {
       ${customersList(data)}
       <p class=category>${data.category}</p>
       ${data.language && `<p class=language>${escapeHTML(data.language)}</p>`}
-      <article class=description>${markdown(data.description || '', { safe: true })}</article>
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>
       <p class=created>Since ${data.created}</p>
+      <article class=description>${markdown(data.description || '', { safe: true })}</article>
       ${
         (
           data.account.stripe.connected &&
