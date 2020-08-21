@@ -381,7 +381,6 @@ function serveHomepage (request, response) {
             >${entry.project}</a>
           ${badgesList(entry)}
           <span class=tagline>${escapeHTML(entry.tagline)}</span>
-          <span class=category>${escapeHTML(entry.category)}</span>
           <span class=langauge>${escapeHTML(entry.language)}</span>
           <span class=currency>$${entry.price}</span>
           <a
@@ -2273,7 +2272,6 @@ function serveUserPage (request, response) {
       >${selling.project}</a>
     ${badgesList(selling)}
     <span class=tagline>${escapeHTML(selling.tagline)}</span>
-    <span class=category>${escapeHTML(selling.category)}</span>
     <span class=language>${escapeHTML(selling.language)}</span>
     <span class=currency>$${selling.price}</span>
   </li>
