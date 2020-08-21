@@ -953,6 +953,7 @@ function projectCategorySelect ({ disabled, value }) {
 </select>
   `
 }
+
 function serveLogIn (request, response) {
   const title = 'Log In'
 
