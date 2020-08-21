@@ -2350,7 +2350,6 @@ function serveProjectPage (request, response) {
       <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>
       <p class=category><span id=category>${data.category}</span></p>
       <p class=created>Since ${data.created}</p>
-      <p class=availability>${data.account.stripe.connected ? 'available for sale' : 'not available for sale'}</p>
       ${
         (
           data.account.stripe.connected &&
