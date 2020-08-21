@@ -155,7 +155,7 @@ const icons = []
   .concat(accountBadges.map(badge => badge.icon))
   .concat(projectBadges.map(badge => badge.icon))
   .concat(hostLogos.map(host => host.icon))
-  .concat('user')
+  .concat('user', 'link')
 
 const staticFiles = [
   'styles.css',
@@ -2267,7 +2267,7 @@ function urlLink (url) {
   const escaped = escapeHTML(url)
   const shortened = escapeHTML(url.replace(/^https?:\/\//, ''))
   const parsed = parseURL(url)
-  const logo = hostLogos.find(host => parsed.hostname === host.hostname)
+  const logo = hostLogos.find(host => parsed.hostname === host.hostname) || { icon: 'link' }
   return html`
 <a href="${escaped}" target=_blank>${
   logo && `<img class=logo alt=logo src=/${logo.icon}.svg>`
