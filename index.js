@@ -977,7 +977,7 @@ function projectCategorySelect ({ disabled, value }) {
   `
 }
 
-function projectTaglineInput ({ value, disabled }) {
+function projectTaglineInput ({ value, disabled, autofocus }) {
   return html`
 <label for=tagline>Tagline</label>
 <input
@@ -986,6 +986,7 @@ function projectTaglineInput ({ value, disabled }) {
     minlength=${projectTaglineField.minLength}
     maxlength=${projectTaglineField.maxLength}
     ${disabled && 'disabled'}
+    ${autofocus && 'autofocus'}
     value="${escapeHTML(value || '')}"
     required>
   `
@@ -2505,7 +2506,7 @@ function serveProjectForDeveloper (request, response) {
       <form id=projectForm method=post>
         ${data.error}
         ${data.csrf}
-        ${projectTaglineInput({ value: data.tagline.value })}
+        ${projectTaglineInput({ value: data.tagline.value, autofocus: true })}
         ${data.tagline.error}
         ${projectPitchInput({ value: data.pitch.value })}
         ${data.pitch.error}
@@ -2691,6 +2692,7 @@ function buyForm (data) {
   <input
       name=handle
       type=hidden
+      autofocus
       value="${escapeHTML(data.handle.value || '')}">
   <input
       name=project
