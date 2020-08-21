@@ -112,8 +112,8 @@ Cryptographic Signature: \`${signature}\`
 function send ({ from, to, cc, bcc, subject, markup, attachments }, callback) {
   mail({
     from: {
-      name: 'stricteq',
-      address: 'notifications@stricteq.com'
+      name: constants.website,
+      address: process.env.NOTIFICATIONS_EMAIL
     },
     to,
     cc,
