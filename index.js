@@ -745,6 +745,13 @@ const projectCategoryField = {
   validate: e => projectCategories.includes(e)
 }
 
+const projectDescriptionField = {
+  displayName: 'description',
+  filter: e => e.trim(),
+  validate: e => e.length > 0 && e.length < 1024,
+  html: 'Description must be less than 1024 characters.'
+}
+
 function serveCreate (request, response) {
   const title = 'Create Project'
 
@@ -754,6 +761,7 @@ function serveCreate (request, response) {
       filter: e => e.toLowerCase().trim(),
       validate: projects.validate
     },
+    description: projectDescriptionField,
     urls: urlsField,
     price: projectPriceField,
     category: projectCategoryField
@@ -785,7 +793,6 @@ function serveCreate (request, response) {
       <form id=createForm method=post>
         ${data.error}
         ${data.csrf}
-        ${data.project.error}
         <label for=project>Project Name</label>
         <input
             name=project
@@ -795,23 +802,30 @@ function serveCreate (request, response) {
             autofocus
             required>
         <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
+        ${data.project.error}
+        <label for=description>Description</label>
+        <input
+          name=description
+          value="${escapeHTML(data.description.value || '')}">
+        ${projectDescriptionField.html}
+        ${data.description.error}
         <label for=urls>URLs</label>
         <input
             name=urls
             type=url
             placeholder=https://github.com/example/project
-            value="${escapeHTML(data.urls[0] || '')}"
+            value="${escapeHTML(data.urls.value[0] || '')}"
             required>
         <input
             name=urls
             type=url
             placeholder=http://project.com
-            value="${escapeHTML(data.urls[1] || '')}">
+            value="${escapeHTML(data.urls.value[1] || '')}">
         <input
             name=urls
             type=url
             placeholder=https://twitter.com/project
-            value="${escapeHTML(data.urls[2] || '')}">
+            value="${escapeHTML(data.urls.value[2] || '')}">
         <p>URLs for your project, such as its source code repository and homepage.</p>
         <label for=category>Category</label>
         <select
@@ -823,7 +837,7 @@ function serveCreate (request, response) {
         <input
           name=price
           type=number
-          value="${escapeHTML(data.project.price || '')}"
+          value="${escapeHTML(data.price.value || '')}"
           min="${MINIMUM_PRICE.toString()}"
           min="${MAXIMUM_PRICE.toString()}"
           required>
@@ -839,13 +853,14 @@ function serveCreate (request, response) {
 
   function processBody (request, body, done) {
     const handle = request.account.handle
-    const { project, urls, price, category } = body
+    const { project, urls, price, category, description } = body
     const slug = `${handle}/${project}`
     const created = new Date().toISOString()
     runSeries([
       done => storage.project.create(slug, {
         project,
         handle,
+        description,
         urls,
         price,
         commission: process.env.MINIMUM_COMMISSION,
@@ -2319,6 +2334,7 @@ function serveProjectForDeveloper (request, response) {
   const title = slug
 
   const fields = {
+    description: projectDescriptionField,
     urls: urlsField,
     price: projectPriceField,
     category: projectCategoryField
@@ -2370,6 +2386,12 @@ function serveProjectForDeveloper (request, response) {
       <form id=projectForm method=post>
         ${data.error}
         ${data.csrf}
+        <label for=description>Description</label>
+        <input
+            name=description
+            value="${escapeHTML(data.description.value || '')}"
+            required>
+        ${data.description.error}
         <label for=urls>URLs</label>
         <input
             name=urls
@@ -2467,6 +2489,7 @@ function serveProjectForCustomers (request, response) {
       <h2>${data.project}</h2>
       ${badgesList(data)}
       ${customersList(data)}
+      <p class=description>${escapeHTML(data.description)}</p>
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>

@@ -6,6 +6,7 @@ module.exports = ({
   browser,
   port,
   project,
+  description = 'a simple test project',
   urls,
   price,
   category = 'library'
@@ -25,6 +26,7 @@ module.exports = ({
     .then(() => click(browser, '#account'))
     .then(() => click(browser, '=Create Project'))
     .then(() => addValue(browser, '#createForm input[name="project"]', project))
+    .then(() => addValue(browser, '#createForm input[name="description"]', description))
     .then(() => Promise.all(
       urls.map((url, index) => addValue(browser, `(//form[@id="createForm"]//input[@name="urls"])[${index + 1}]`, url))
     ))
