@@ -149,6 +149,7 @@ input[type=url],
 input[type=number],
 input[type=password],
 select {
+  background: white;
   border-radius: 0.25rem;
   border: 1px solid black;
   box-sizing: border-box;
