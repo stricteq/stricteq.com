@@ -927,12 +927,7 @@ function projectLanguageSelect ({ disabled, value }) {
   return html`
 <label for=language>Language</label>
 <select name=language>
-  ${programmingLanguages.map(language => html`
-  <option
-      value="${escapeHTML(language)}"
-      ${value === language && 'selected'}
-    >${escapeHTML(language)}</option>
-  `)}
+  ${options(value, programmingLanguages)}
 </select>
   `
 }
@@ -943,15 +938,21 @@ function projectCategorySelect ({ disabled, value }) {
 <select
     name=category
     required>
-  ${projectCategories.map(c => html`
   <option value=""></option>
-  <option
-      value="${escapeHTML(c)}"
-      ${value === c && 'selected'}
-    >${escapeHTML(c)}</option>
-  `)}
+  ${options(value, projectCategories)}
 </select>
   `
+}
+
+function options (current, available) {
+  return available
+    .map(value => html`
+<option
+    value="${escapeHTML(value)}"
+    ${current === value && 'selected'}
+  >${escapeHTML(value)}</option>
+    `)
+    .join('')
 }
 
 function serveLogIn (request, response) {
