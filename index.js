@@ -769,16 +769,16 @@ const projectTaglineField = (() => {
   }
 })()
 
-const projectDescriptionField = (() => {
+const projectPitchField = (() => {
   const minLength = 1
   const maxLength = 8192
   return {
     minLength,
     maxLength,
-    displayName: 'description',
+    displayName: 'pitch',
     filter: e => e.trim(),
     validate: e => e.length >= minLength && e.length <= maxLength,
-    html: 'Description must be ' +
+    html: 'Pitch must be ' +
       '<a href=https://commonmark.org>valid CommonMark</a>.'
   }
 })()
@@ -799,7 +799,7 @@ function serveCreate (request, response) {
       validate: projects.validate
     },
     tagline: projectTaglineField,
-    description: projectDescriptionField,
+    pitch: projectPitchField,
     urls: urlsField,
     price: projectPriceField,
     language: projectLanguageField,
@@ -844,9 +844,9 @@ function serveCreate (request, response) {
         ${data.project.error}
         ${projectTaglineInput({ value: data.tagline.value })}
         ${projectTaglineField.html}
-        ${projectDescriptionInput({ value: data.description.value })}
-        ${projectDescriptionField.html}
-        ${data.description.error}
+        ${projectPitchInput({ value: data.pitch.value })}
+        ${projectPitchField.html}
+        ${data.pitch.error}
         ${projectLanguageSelect({ value: data.language.value })}
         ${data.language.error}
         ${projectCategorySelect({ value: data.category.value })}
@@ -890,7 +890,7 @@ function serveCreate (request, response) {
 
   function processBody (request, body, done) {
     const handle = request.account.handle
-    const { project, urls, price, language, category, description, tagline } = body
+    const { project, urls, price, language, category, pitch, tagline } = body
     const slug = `${handle}/${project}`
     const created = new Date().toISOString()
     runSeries([
@@ -898,7 +898,7 @@ function serveCreate (request, response) {
         project,
         handle,
         tagline,
-        description,
+        pitch,
         language,
         urls,
         price,
@@ -988,13 +988,13 @@ function projectTaglineInput ({ value, disabled }) {
   `
 }
 
-function projectDescriptionInput ({ value, disabled }) {
+function projectPitchInput ({ value, disabled }) {
   return html`
-<label for=description>Description</label>
+<label for=pitch>Pitch</label>
 <textarea
-    name=description
-    minlength=${projectDescriptionField.minLength}
-    maxlength=${projectDescriptionField.maxLength}
+    name=pitch
+    minlength=${projectPitchField.minLength}
+    maxlength=${projectPitchField.maxLength}
     ${disabled && 'disabled'}
     required
   >${escapeHTML(value || '')}</textarea>
@@ -2444,7 +2444,7 @@ function serveProjectForDeveloper (request, response) {
 
   const fields = {
     tagline: projectTaglineField,
-    description: projectDescriptionField,
+    pitch: projectPitchField,
     urls: urlsField,
     price: projectPriceField,
     language: projectLanguageField,
@@ -2499,8 +2499,8 @@ function serveProjectForDeveloper (request, response) {
         ${data.csrf}
         ${projectTaglineInput({ value: data.tagline.value })}
         ${projectTaglineField.html}
-        ${projectDescriptionInput({ value: data.description.value })}
-        ${data.description.error}
+        ${projectPitchInput({ value: data.pitch.value })}
+        ${data.pitch.error}
         ${projectLanguageSelect({
           disabled: data.verified,
           value: data.language.value
@@ -2552,7 +2552,8 @@ function serveProjectForDeveloper (request, response) {
     storage.project.update(slug, (project, done) => {
       if (project.badges.verified) {
         project.price = body.price
-        project.description = body.description
+        project.pitch = body.pitch
+        project.tagline = body.tagline
       } else {
         Object.keys(fields).forEach(key => {
           project[key] = body[key]
@@ -2603,7 +2604,7 @@ function serveProjectForCustomers (request, response) {
       <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price}</span></p>
       <p class=created>Since ${data.created}</p>
-      <article class=description>${markdown(data.description || '', { safe: true })}</article>
+      <article class=pitch>${markdown(data.pitch || '', { safe: true })}</article>
       ${
         (
           data.account.stripe.connected &&
@@ -3088,7 +3089,7 @@ function redactedProject (project) {
     'badges',
     'category',
     'created',
-    'description',
+    'pitch',
     'handle',
     'language',
     'price',

@@ -7,7 +7,7 @@ module.exports = ({
   port,
   project,
   tagline = 'just a test',
-  description = 'a simple _test_ project',
+  pitch = 'a simple _test_ project',
   language = 'C',
   urls,
   price,
@@ -29,7 +29,7 @@ module.exports = ({
     .then(() => click(browser, '=Create Project'))
     .then(() => addValue(browser, '#createForm input[name="project"]', project))
     .then(() => addValue(browser, '#createForm input[name="tagline"]', tagline))
-    .then(() => addValue(browser, '#createForm textarea[name="description"]', description))
+    .then(() => addValue(browser, '#createForm textarea[name="pitch"]', pitch))
     .then(() => Promise.all(
       urls.map((url, index) => addValue(browser, `(//form[@id="createForm"]//input[@name="urls"])[${index + 1}]`, url))
     ))
