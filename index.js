@@ -2491,7 +2491,7 @@ function serveProjectForCustomers (request, response) {
       <h2>${data.project}</h2>
       ${badgesList(data)}
       ${customersList(data)}
-      <p class=description>${escapeHTML(data.description)}</p>
+      <p class=description>${escapeHTML(data.description || '')}</p>
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>
@@ -2922,6 +2922,7 @@ function redactedProject (project) {
     'badges',
     'category',
     'created',
+    'description',
     'handle',
     'price',
     'project',
