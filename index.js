@@ -322,7 +322,11 @@ function logoutButton (request) {
     sessionID: request.session.id
   })
   return html`
-<form id=logoutForm action=/logout method=post>
+<form
+    id=logoutForm
+    class=buttonWrapper
+    action=/logout
+    method=post>
   ${csrfInputs}
   <button id=logout type=submit>Log Out</button>
 </form>
@@ -1148,7 +1152,11 @@ function serveAccount (request, response) {
       action, sessionID: request.session.id
     })
     return html`
-<form id=disconnectForm action=${action} method=post>
+<form
+    id=disconnectForm
+    class=buttonWrapper
+    action=${action}
+    method=post>
   ${csrfInputs}
   <button id=disconnect type=submit>Disconnect Stripe Account</button>
 </form>
