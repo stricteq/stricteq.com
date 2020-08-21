@@ -2277,7 +2277,6 @@ function serveUserPage (request, response) {
       <p class=location>${escapeHTML(iso3166ToEnglish(data.location))}</p>
       <p class=affiliations>${escapeHTML(data.affiliations)}</p>
       ${data.urls.length > 0 && html`<ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>`}
-      <p class=joined>Joined ${data.created}</p>
       ${selling}
       ${licenses}
     </main>
