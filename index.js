@@ -557,8 +557,8 @@ function serveSignUp (request, response) {
             type=url
             placeholder=https://twitch.tv/you
             value="${escapeHTML(data.urls[0] || '')}">
-        <p>Add a URLs for other places to find you on the Web.</p>
         ${data.urls.error}
+        <p>Add a URLs for other places to find you on the Web.</p>
         <label for=handle>Handle</label>
         <input
             name=handle
@@ -567,10 +567,10 @@ function serveSignUp (request, response) {
             pattern="^${handles.pattern}$"
             value="${escapeHTML(data.handle.value || '')}"
             required>
+        ${data.handle.error}
         <p>Your callsign on ${constants.website}. Your profile page will be ${process.env.BASE_HREF}/~{handle}.</p>
         <p>${handles.html}</p>
         <p>Please respect others who have registered a particular handle in several other places, like Twitter, GitHub, npm, and so on. In general, handles are first-come, first-served. But ${constants.website} may require changes to avoid confusion.</p>
-        ${data.handle.error}
         ${passwordInput({})}
         ${data.password.error}
         ${passwordRepeatInput()}
@@ -840,13 +840,14 @@ function serveCreate (request, response) {
             value="${escapeHTML(data.project.value || '')}"
             autofocus
             required>
-        <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
         ${data.project.error}
+        <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
         ${projectTaglineInput({ value: data.tagline.value })}
+        ${data.tagline.error}
         ${projectTaglineField.html}
         ${projectPitchInput({ value: data.pitch.value })}
-        ${projectPitchField.html}
         ${data.pitch.error}
+        ${projectPitchField.html}
         ${projectLanguageSelect({ value: data.language.value })}
         ${data.language.error}
         ${projectCategorySelect({ value: data.category.value })}
@@ -868,6 +869,7 @@ function serveCreate (request, response) {
             type=url
             placeholder=https://twitter.com/project
             value="${escapeHTML(data.urls.value[2] || '')}">
+        ${data.urls.error}
         <p>URLs for your project, such as its source code repository and homepage.</p>
         <label for=price>Price</label>
         <input
@@ -877,8 +879,8 @@ function serveCreate (request, response) {
           min="${MINIMUM_PRICE}"
           min="${MAXIMUM_PRICE}"
           required>
-        <p>Cost of <a href=/paid>a license</a> in United States Dollars.</p>
         ${data.price.error}
+        <p>Cost of <a href=/paid>a license</a> in United States Dollars.</p>
         <button type=submit>${title}</button>
       </form>
     </main>
@@ -2498,7 +2500,7 @@ function serveProjectForDeveloper (request, response) {
         ${data.error}
         ${data.csrf}
         ${projectTaglineInput({ value: data.tagline.value })}
-        ${projectTaglineField.html}
+        ${data.tagline.error}
         ${projectPitchInput({ value: data.pitch.value })}
         ${data.pitch.error}
         ${projectLanguageSelect({
@@ -2531,6 +2533,7 @@ function serveProjectForDeveloper (request, response) {
             placeholder=https://twitter.com/project
             ${data.verified && 'disabled'}
             value="${escapeHTML(data.urls.value[2] || '')}">
+        ${data.urls.error}
         <label for=price>Price</label>
         <input
           name=price
