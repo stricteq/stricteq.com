@@ -806,6 +806,7 @@ function serveCreate (request, response) {
         <label for=description>Description</label>
         <input
           name=description
+          type=text
           value="${escapeHTML(data.description.value || '')}">
         ${projectDescriptionField.html}
         ${data.description.error}
@@ -2389,6 +2390,7 @@ function serveProjectForDeveloper (request, response) {
         <label for=description>Description</label>
         <input
             name=description
+            type=text
             value="${escapeHTML(data.description.value || '')}"
             required>
         ${data.description.error}
