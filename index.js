@@ -63,6 +63,7 @@ routes.set('/confirm', serveConfirm) // confirm links in e-mails
 routes.set('/connected', serveConnected) // confirm Stripe connected
 routes.set('/disconnect', serveDisconnect) // disconnect Stripe
 routes.set('/buy', serveBuy) // buy licenses
+routes.set('/pricing', servePricing)
 
 // Validation Rules for Account Names
 const handles = (() => {
@@ -283,6 +284,7 @@ const header = `
 const footer = `
 <footer role=contentinfo>
   <a class=spaced href=https://artlessdevices.com>Company</a>
+  <a class=spaced href=/pricing>Pricing</a>
   <a class=spaced href=/service>Terms of Service</a>
   <a class=spaced href=/agency>Agency Terms</a>
   <a class=spaced href=/privacy>Privacy</a>
@@ -2894,6 +2896,64 @@ Payment Intent: ${paymentIntent.id}
 </html>
   `)
   }
+}
+
+function servePricing (request, response) {
+  response.setHeader('Content-Type', 'text/html')
+  response.end(html`
+<!doctype html>
+<html lang=en-US>
+  <head>
+    ${meta({})}
+    <title>Pricing</title>
+  </head>
+  <body>
+    ${nav(request)}
+    ${header}
+    <main role=main>
+      <h2>Pricing</h2>
+      <h3>Buying</h3>
+      <p>Developers set their own prices through ${constants.website}.</p>
+      <h3>Selling</h3>
+      <math>
+        <mrow>
+          <mi>Customer Paid</mi>
+          <mo>&minus;</mo>
+          <mi>${process.env.MINIMUM_COMMISSION}%</mi>
+          <mo>&minus;</mo>
+          <mi>30&cent;</mi>
+          <mo>&minus;</mo>
+          <mi>2.9%</mi>
+          <mo>=</mo>
+          <mi>Developer Paid</mi>
+        </mrow>
+      </math>
+      <p>
+        Developers pay
+        <a href=https://artlessdevices.com>Artless Devices</a>,
+        the company behind ${constants.website}, commission on each sale.
+        Commission is currently ${process.env.MINIMUM_COMMISSION}% of
+        purchase price for new accounts.
+        See the <a href=/agency#commission>commission
+        section of the agency terms</a> for specifics.
+      </p>
+      <p>
+        Developers also pay <a href=https://stripe.com>Stripe</a>
+        for payment processing.  As of May 2020, Stripe offers
+        2.9% plus 30&cent; for new accounts.
+      </p>
+      <p>
+        Depending on the jurisdictions of the buyer and the
+        seller, one or both may owe sales taxes. ${constants.website}
+        can’t do your taxes for you, but it reports <a
+        href=https://en.wikipedia.org/wiki/ISO_3166-2>buyer and
+        seller jurisdictions</a>, so everyone has records.
+      </p>
+    </main>
+    ${footer}
+  </body>
+</html>
+    `)
 }
 
 function iso3166ToEnglish (code) {
