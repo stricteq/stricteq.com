@@ -104,7 +104,7 @@ a[href].spaced:first-of-type {
 a[href] .logo {
   display: inline;
   margin-right: 0.5ex;
-  vertical-align: bottom;
+  vertical-align: middle;
 }
 
 footer[role=contentinfo] {
