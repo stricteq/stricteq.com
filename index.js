@@ -839,28 +839,9 @@ function serveCreate (request, response) {
             placeholder=https://twitter.com/project
             value="${escapeHTML(data.urls.value[2] || '')}">
         <p>URLs for your project, such as its source code repository and homepage.</p>
-        <label for=language>Language</label>
-        <select name=language>
-          ${programmingLanguages.map(language => html`
-          <option
-              value="${escapeHTML(language)}"
-              ${data.language.value === language && 'selected'}
-            >${escapeHTML(language)}</option>
-          `)}
-        </select>
+        ${projectLanguageSelect({ value: data.language.value })}
         ${data.language.error}
-        <label for=category>Category</label>
-        <select
-            name=category
-            required>
-          ${projectCategories.map(c => html`
-          <option value=""></option>
-          <option
-              value="${escapeHTML(c)}"
-              ${data.category.value === c && 'selected'}
-            >${escapeHTML(c)}</option>
-          `)}
-        </select>
+        ${projectCategorySelect({ value: data.category.value })}
         ${data.category.error}
         <label for=price>Price</label>
         <input
@@ -942,6 +923,36 @@ function serveCreate (request, response) {
   }
 }
 
+function projectLanguageSelect ({ disabled, value }) {
+  return html`
+<label for=language>Language</label>
+<select name=language>
+  ${programmingLanguages.map(language => html`
+  <option
+      value="${escapeHTML(language)}"
+      ${value === language && 'selected'}
+    >${escapeHTML(language)}</option>
+  `)}
+</select>
+  `
+}
+
+function projectCategorySelect ({ disabled, value }) {
+  return html`
+<label for=category>Category</label>
+<select
+    name=category
+    required>
+  ${projectCategories.map(c => html`
+  <option value=""></option>
+  <option
+      value="${escapeHTML(c)}"
+      ${value === c && 'selected'}
+    >${escapeHTML(c)}</option>
+  `)}
+</select>
+  `
+}
 function serveLogIn (request, response) {
   const title = 'Log In'
 
@@ -2447,30 +2458,15 @@ function serveProjectForDeveloper (request, response) {
             placeholder=https://twitter.com/project
             ${data.verified && 'disabled'}
             value="${escapeHTML(data.urls.value[2] || '')}">
-        <label for=language>Language</label>
-        <select
-            ${data.verified && 'disabled'}
-            name=language>
-          ${programmingLanguages.map(l => html`
-          <option
-              value="${escapeHTML(l)}"
-              ${data.language.value === l && 'selected'}
-            >${escapeHTML(l)}</option>
-          `)}
-        </select>
+        ${projectLanguageSelect({
+          disabled: data.verified,
+          value: data.language.value
+        })}
         ${data.language.error}
-        <label for=category>Category</label>
-        <select
-            name=category
-            ${data.verified && 'disabled'}
-            required>
-          ${projectCategories.map(c => html`
-          <option
-              value="${escapeHTML(c)}"
-              ${data.category.value === c && 'selected'}
-            >${escapeHTML(c)}</option>
-          `)}
-        </select>
+        ${projectCategorySelect({
+          disabled: data.verified,
+          value: data.category.value
+        })}
         ${data.category.error}
         <label for=price>Price</label>
         <input
