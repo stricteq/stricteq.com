@@ -3422,7 +3422,9 @@ function parseAndValidatePostBody ({
   const body = {}
 
   fieldNames.forEach(name => {
+    if (body[name] !== undefined) return
     if (fields[name].array) body[name] = []
+    else body[name] = ''
   })
 
   runSeries([parse, validate], error => {
@@ -3474,10 +3476,17 @@ function parseAndValidatePostBody ({
       const fieldName = fieldNames[index]
       const description = fields[fieldName]
       const value = body[fieldName]
-      if (description.optional && value === undefined) continue
-      const valid = description.array
-        ? value.every(value => description.validate(value, body))
-        : description.validate(value, body)
+      const isArray = description.array
+      if (
+        description.optional &&
+        (
+          (isArray && Array.isArray(value) && value.length === 0) ||
+          value === ''
+        )
+      ) continue
+      const valid = isArray
+        ? value.every(value => description.validate(value || '', body))
+        : description.validate(value || '', body)
       if (valid) continue
       const error = new Error('invalid ' + description.displayName)
       error.statusCode = 401
