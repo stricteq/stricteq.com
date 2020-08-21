@@ -532,39 +532,31 @@ function serveSignUp (request, response) {
         })}
         ${data.email.error}
         <label for=urls>URLs</label>
-        <p>
-          <input
-              name=urls
-              type=url
-              placeholder=https://github.com/you
-              value="${escapeHTML(data.urls[0] || '')}">
-        </p>
-        <p>
-          <input
-              name=urls
-              type=url
-              placeholder=https://twitter.com/you
-              value="${escapeHTML(data.urls[0] || '')}">
-        </p>
-        <p>
-          <input
-              name=urls
-              type=url
-              placeholder=https://twitch.tv/you
-              value="${escapeHTML(data.urls[0] || '')}">
-        </p>
+        <input
+            name=urls
+            type=url
+            placeholder=https://github.com/you
+            value="${escapeHTML(data.urls[0] || '')}">
+        <input
+            name=urls
+            type=url
+            placeholder=https://twitter.com/you
+            value="${escapeHTML(data.urls[0] || '')}">
+        <input
+            name=urls
+            type=url
+            placeholder=https://twitch.tv/you
+            value="${escapeHTML(data.urls[0] || '')}">
         <p>Add a URLs for other places to find you on the Web.</p>
         ${data.urls.error}
-        <p>
-          <label for=handle>Handle</label>
-          <input
-              name=handle
-              type=text
-              placeholder=charlie5
-              pattern="^${handles.pattern}$"
-              value="${escapeHTML(data.handle.value || '')}"
-              required>
-        </p>
+        <label for=handle>Handle</label>
+        <input
+            name=handle
+            type=text
+            placeholder=charlie5
+            pattern="^${handles.pattern}$"
+            value="${escapeHTML(data.handle.value || '')}"
+            required>
         <p>Your callsign on ${constants.website}. Your profile page will be ${process.env.BASE_HREF}/~{handle}.</p>
         <p>${handles.html}</p>
         <p>Please respect others who have registered a particular handle in several other places, like Twitter, GitHub, npm, and so on. In general, handles are first-come, first-served. But ${constants.website} may require changes to avoid confusion.</p>
@@ -790,16 +782,14 @@ function serveCreate (request, response) {
         ${data.error}
         ${data.csrf}
         ${data.project.error}
-        <p>
-          <label for=project>Project Name</label>
-          <input
-              name=project
-              type=text
-              pattern="^${projects.pattern}$"
-              value="${escapeHTML(data.project.value || '')}"
-              autofocus
-              required>
-        </p>
+        <label for=project>Project Name</label>
+        <input
+            name=project
+            type=text
+            pattern="^${projects.pattern}$"
+            value="${escapeHTML(data.project.value || '')}"
+            autofocus
+            required>
         <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
         <label for=urls>URLs</label>
         <input
@@ -819,24 +809,20 @@ function serveCreate (request, response) {
             placeholder=https://twitter.com/project
             value="${escapeHTML(data.urls[2] || '')}">
         <p>URLs for your project, such as its source code repository and homepage.</p>
-        <p>
-          <label for=category>Category</label>
-          <select
-              name=category
-              required>
-            ${projectCategories.map(c => `<option value="${c}">${c}</option>`)}
-          </select>
-        </p>
-        <p>
-          <label for=price>Price</label>
-          <input
-            name=price
-            type=number
-            value="${escapeHTML(data.project.price || '')}"
-            min="${MINIMUM_PRICE.toString()}"
-            min="${MAXIMUM_PRICE.toString()}"
+        <label for=category>Category</label>
+        <select
+            name=category
             required>
-        </p>
+          ${projectCategories.map(c => `<option value="${c}">${c}</option>`)}
+        </select>
+        <label for=price>Price</label>
+        <input
+          name=price
+          type=number
+          value="${escapeHTML(data.project.price || '')}"
+          min="${MINIMUM_PRICE.toString()}"
+          min="${MAXIMUM_PRICE.toString()}"
+          required>
         <p>Cost of <a href=/paid>a license</a> in United States Dollars.</p>
         <button type=submit>${title}</button>
       </form>
@@ -942,15 +928,11 @@ function serveLogIn (request, response) {
       <form id=loginForm method=post>
         ${data.error}
         ${data.csrf}
-        <p>
-          <label for=handle>Handle</label>
-          <input name=handle type=text required autofocus>
-        </p>
+        <label for=handle>Handle</label>
+        <input name=handle type=text required autofocus>
         ${data.handle.error}
-        <p>
-          <label for=password>Password</label>
-          <input name=password type=password required>
-        </p>
+        <label for=password>Password</label>
+        <input name=password type=password required>
         ${data.password.error}
         <button type=submit>${title}</button>
       </form>
@@ -1156,15 +1138,13 @@ function serveHandle (request, response) {
       <form id=handleForm method=post>
         ${data.error}
         ${data.csrf}
-        <p>
-          <label for=email>E-Mail</label>
-          <input
-              name=email
-              type=email
-              required
-              autofocus
-              autocomplete=off>
-        </p>
+        <label for=email>E-Mail</label>
+        <input
+            name=email
+            type=email
+            required
+            autofocus
+            autocomplete=off>
         ${data.email.error}
         <button type=submit>Send E-Mail</button>
       </form>
@@ -1444,14 +1424,12 @@ function serveProfile (request, response) {
             type=url
             value="${escapeHTML(data.urls[2] || '')}">
         ${data.urls.error}
-        <p>
-          <label for=affiliations>Affiliations</label>
-          <input
-              name=affiliations
-              type=text
-              pattern="^${affiliations.pattern}$"
-              value="${escapeHTML(data.affiliations.value)}">
-        </p>
+        <label for=affiliations>Affiliations</label>
+        <input
+            name=affiliations
+            type=text
+            pattern="^${affiliations.pattern}$"
+            value="${escapeHTML(data.affiliations.value)}">
         ${data.affiliations.error}
         <p>${affiliations.html}</p>
         <button type=submit>${title}</button>
@@ -1529,10 +1507,8 @@ function getAuthenticated (request, response) {
           action: '/password',
           sessionID: request.session.id
         })}
-        <p>
-          <label for=old>Old Password</label>
-          <input name=old type=password required autofocus autocomplete=off>
-        </p>
+        <label for=old>Old Password</label>
+        <input name=old type=password required autofocus autocomplete=off>
         ${passwordInput({ label: 'New Password' })}
         ${passwordRepeatInput()}
         <button type=submit>${title}</button>
@@ -1789,17 +1765,15 @@ function serveReset (request, response) {
       <form id=resetForm method=post>
         ${data.error}
         ${data.csrf}
-        <p>
-          <label for=handle>Handle</label>
-          <input
-              name=handle
-              type=text
-              value="${escapeHTML(data.handle.value)}"
-              pattern="^${handles.pattern}$"
-              required
-              autofocus
-              autocomplete=off>
-        </p>
+        <label for=handle>Handle</label>
+        <input
+            name=handle
+            type=text
+            value="${escapeHTML(data.handle.value)}"
+            pattern="^${handles.pattern}$"
+            required
+            autofocus
+            autocomplete=off>
         ${data.handle.error}
         <button type=submit>Send E-Mail</button>
       </form>
@@ -3061,17 +3035,15 @@ function clearCookie (response) {
 
 function locationInput (value) {
   return html`
-<p>
-  <label for=location>Location</label>
-  <input
-    name=location
-    type=text
-    value="${escapeHTML(value || '')}"
-    list=locations
-    autocomplete=off
-    placeholder=US-CA
-    required>
-</p>
+<label for=location>Location</label>
+<input
+  name=location
+  type=text
+  value="${escapeHTML(value || '')}"
+  list=locations
+  autocomplete=off
+  placeholder=US-CA
+  required>
 <datalist id=locations>
   ${locationOptions()}
 </datalist>
@@ -3082,17 +3054,15 @@ function locationInput (value) {
 
 function nameInput ({ value, autofocus }) {
   return html`
-<p>
-  <label for=name>Name</label>
-  <input
-      name=name
-      type=text
-      placeholder="Charlie Smith"
-      pattern="^.{3,}$"
-      value="${escapeHTML(value || '')}"
-      ${autofocus && 'autofocus'}
-      required>
-</p>
+<label for=name>Name</label>
+<input
+    name=name
+    type=text
+    placeholder="Charlie Smith"
+    pattern="^.{3,}$"
+    value="${escapeHTML(value || '')}"
+    ${autofocus && 'autofocus'}
+    required>
 <p>${constants.website} requires your full legal name to document your transactions.</p>
 <p>${constants.website} will publish your name.</p>
   `
@@ -3100,16 +3070,14 @@ function nameInput ({ value, autofocus }) {
 
 function eMailInput ({ value, autofocus }) {
   return html`
-<p>
-  <label for=email>E-Mail</label>
-  <input
-      name=email
-      type=email
-      placeholder=charlie@example.com
-      value="${escapeHTML(value || '')}"
-      ${autofocus ? 'autofocus' : ''}
-      required>
-</p>
+<label for=email>E-Mail</label>
+<input
+    name=email
+    type=email
+    placeholder=charlie@example.com
+    value="${escapeHTML(value || '')}"
+    ${autofocus ? 'autofocus' : ''}
+    required>
 <p>${constants.website} will publish your e-mail address and uses it to request your <a href=https://gravatar.com>Gravatar</a>.</p>
 <p>Feel free to use a ${constants.website}-specific address or mail alias.</p>
   `
@@ -3117,29 +3085,25 @@ function eMailInput ({ value, autofocus }) {
 
 function passwordInput ({ label, autofocus }) {
   return html`
-<p>
-  <label for=password>${escapeHTML(label || 'Password')}</label>
-  <input
-      name=password
-      type=password
-      required
-      autocomplete=off
-      ${autofocus ? 'autofocus' : ''}>
-</p>
+<label for=password>${escapeHTML(label || 'Password')}</label>
+<input
+    name=password
+    type=password
+    required
+    autocomplete=off
+    ${autofocus ? 'autofocus' : ''}>
   `
 }
 
 function passwordRepeatInput () {
   return html`
-<p>
-  <label for=repeat>Repeat</label>
-  <input
-      name=repeat
-      type=password
-      pattern="^${passwords.pattern}$"
-      required
-      autocomplete=off>
-</p>
+<label for=repeat>Repeat</label>
+<input
+    name=repeat
+    type=password
+    pattern="^${passwords.pattern}$"
+    required
+    autocomplete=off>
   `
 }
 
