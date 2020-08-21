@@ -379,6 +379,7 @@ function serveHomepage (request, response) {
               href=/~${entry.handle}/${entry.project}
             >${entry.project}</a>
           ${badgesList(entry)}
+          <span class=tagline>${escapeHTML(entry.tagline)}</span>
           <span class=category>${escapeHTML(entry.category)}</span>
           <span class=langauge>${escapeHTML(entry.language)}</span>
           <span class=currency>$${entry.price}</span>
@@ -754,6 +755,20 @@ const projectCategoryField = {
   validate: e => projectCategories.includes(e)
 }
 
+const projectTaglineField = (() => {
+  const minLength = 1
+  const maxLength = 32
+  return {
+    minLength,
+    maxLength,
+    displayName: 'tagline',
+    filter: e => e.trim(),
+    validate: e => e.length >= minLength && e.length <= maxLength,
+    html: 'Taglines must be short summaries ' +
+      `no more than ${maxLength} characters long.`
+  }
+})()
+
 const projectDescriptionField = (() => {
   const minLength = 1
   const maxLength = 8192
@@ -783,6 +798,7 @@ function serveCreate (request, response) {
       filter: e => e.toLowerCase().trim(),
       validate: projects.validate
     },
+    tagline: projectTaglineField,
     description: projectDescriptionField,
     urls: urlsField,
     price: projectPriceField,
@@ -826,6 +842,8 @@ function serveCreate (request, response) {
             required>
         <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
         ${data.project.error}
+        ${projectTaglineInput({ value: data.tagline.value })}
+        ${projectTaglineField.html}
         ${projectDescriptionInput({ value: data.description.value })}
         ${projectDescriptionField.html}
         ${data.description.error}
@@ -872,13 +890,14 @@ function serveCreate (request, response) {
 
   function processBody (request, body, done) {
     const handle = request.account.handle
-    const { project, urls, price, language, category, description } = body
+    const { project, urls, price, language, category, description, tagline } = body
     const slug = `${handle}/${project}`
     const created = new Date().toISOString()
     runSeries([
       done => storage.project.create(slug, {
         project,
         handle,
+        tagline,
         description,
         language,
         urls,
@@ -910,6 +929,7 @@ function serveCreate (request, response) {
           text: [
             `Handle: ${handle}`,
             `Project: ${project}`,
+            `Tagline: ${tagline}`,
             `Category: ${category}`,
             `Language: ${language}`,
             `Price: $${price}`,
@@ -951,6 +971,20 @@ function projectCategorySelect ({ disabled, value }) {
     required>
   ${options(value, projectCategories)}
 </select>
+  `
+}
+
+function projectTaglineInput ({ value, disabled }) {
+  return html`
+<label for=tagline>Tagline</label>
+<input
+    name=tagline
+    type=text
+    minlength=${projectTaglineField.minLength}
+    maxlength=${projectTaglineField.maxLength}
+    ${disabled && 'disabled'}
+    value="${escapeHTML(value || '')}"
+    required>
   `
 }
 
@@ -2234,6 +2268,7 @@ function serveUserPage (request, response) {
         href=/~${handle}/${selling.project}
       >${selling.project}</a>
     ${badgesList(selling)}
+    <span class=tagline>${escapeHTML(selling.tagline)}</span>
     <span class=category>${escapeHTML(selling.category)}</span>
     <span class=language>${escapeHTML(selling.language)}</span>
     <span class=currency>$${selling.price}</span>
@@ -2408,6 +2443,7 @@ function serveProjectForDeveloper (request, response) {
   const title = slug
 
   const fields = {
+    tagline: projectTaglineField,
     description: projectDescriptionField,
     urls: urlsField,
     price: projectPriceField,
@@ -2461,6 +2497,8 @@ function serveProjectForDeveloper (request, response) {
       <form id=projectForm method=post>
         ${data.error}
         ${data.csrf}
+        ${projectTaglineInput({ value: data.tagline.value })}
+        ${projectTaglineField.html}
         ${projectDescriptionInput({ value: data.description.value })}
         ${data.description.error}
         ${projectLanguageSelect({
@@ -3055,6 +3093,7 @@ function redactedProject (project) {
     'language',
     'price',
     'project',
+    'tagline',
     'urls'
   ])
   returned.customers = project.customers.map(c => {

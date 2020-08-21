@@ -120,7 +120,7 @@ function send ({ from, to, cc, bcc, subject, markup, attachments }, callback) {
     bcc,
     subject,
     text: markup,
-    html: markdown(markup),
+    html: markdown(markup, { safe: true }),
     attachments
   }, callback)
 }
