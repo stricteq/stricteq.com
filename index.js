@@ -255,19 +255,22 @@ module.exports = (request, response) => {
 
 // Partials
 
-const meta = function ({ title }) {
+function meta ({
+  title = constants.website,
+  description = constants.slogan
+}) {
   return html`
 <meta charset=UTF-8>
 <meta name=viewport content="width=device-width, initial-scale=1">
 <meta name="description" content="${constants.slogan}">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:description" content="${constants.slogan}">
+<meta name="twitter:description" content="${escapeHTML(description)}">
 <meta name="twitter:image" content="${process.env.BASE_HREF}/logo-on-white-100.png">
 <meta name="twitter:site" content="@${constants.twitter}">
-<meta name="twitter:title" content="${title || constants.website}">
+<meta name="twitter:title" content="${escapeHTML(title)}">
 <meta name="og:type" content="website">
-<meta name="og:title" content="${title || constants.website}">
-<meta name="og:description" content="${constants.slogan}">
+<meta name="og:title" content="${escapeHTML(title)}">
+<meta name="og:description" content="${escapeHTML(description)}">
 <meta name="og:image" content="${process.env.BASE_HREF}/logo-on-white-100.png">
 <meta name="og:site" content="stricteq">
 <link href=/normalize.css rel=stylesheet>
@@ -2301,7 +2304,10 @@ function serveUserPage (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({
+      title: handle,
+      description: 'striceq developer'
+    })}
     <title>${data.handle}</title>
   </head>
   <body>
@@ -2596,7 +2602,10 @@ function serveProjectForCustomers (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({
+      title: data.slug,
+      description: data.tagline
+    })}
     <title>${data.slug}</title>
   </head>
   <body>
@@ -2604,6 +2613,7 @@ function serveProjectForCustomers (request, response) {
     ${header}
     <main role=main>
       <h2>${data.project}</h2>
+      <p class=tagline>${escapeHTML(data.tagline)}</p>
       ${badgesList(data)}
       ${customersList(data)}
       <p class=category>${data.category}</p>
