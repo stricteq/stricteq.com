@@ -7,6 +7,7 @@ module.exports = ({
   port,
   project,
   description = 'a simple test project',
+  language = 'C',
   urls,
   price,
   category = 'library'
@@ -31,6 +32,8 @@ module.exports = ({
       urls.map((url, index) => addValue(browser, `(//form[@id="createForm"]//input[@name="urls"])[${index + 1}]`, url))
     ))
     .then(() => addValue(browser, '#createForm input[name="price"]', price))
+    .then(() => browser.$('#createForm select[name="language"]'))
+    .then(input => input.selectByVisibleText(language))
     .then(() => browser.$('#createForm select[name="category"]'))
     .then(input => input.selectByVisibleText(category))
     .then(() => click(browser, '#createForm button[type="submit"]'))

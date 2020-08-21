@@ -30,6 +30,7 @@ const parseJSON = require('json-parse-errback')
 const parseURL = require('url-parse')
 const passwordStorage = require('./password-storage')
 const path = require('path')
+const programmingLanguages = require('./programming-languages')
 const querystring = require('querystring')
 const runAuto = require('run-auto')
 const runParallel = require('run-parallel')
@@ -754,6 +755,13 @@ const projectDescriptionField = {
   html: 'Description must be less than 1024 characters.'
 }
 
+const projectLanguageField = {
+  displayName: 'language',
+  optional: true,
+  filter: e => e.trim(),
+  validate: e => programmingLanguages.includes(e)
+}
+
 function serveCreate (request, response) {
   const title = 'Create Project'
 
@@ -766,6 +774,7 @@ function serveCreate (request, response) {
     description: projectDescriptionField,
     urls: urlsField,
     price: projectPriceField,
+    language: projectLanguageField,
     category: projectCategoryField
   }
 
@@ -807,9 +816,9 @@ function serveCreate (request, response) {
         ${data.project.error}
         <label for=description>Description</label>
         <input
-          name=description
-          type=text
-          value="${escapeHTML(data.description.value || '')}">
+            name=description
+            type=text
+            value="${escapeHTML(data.description.value || '')}">
         ${projectDescriptionField.html}
         ${data.description.error}
         <label for=urls>URLs</label>
@@ -830,12 +839,29 @@ function serveCreate (request, response) {
             placeholder=https://twitter.com/project
             value="${escapeHTML(data.urls.value[2] || '')}">
         <p>URLs for your project, such as its source code repository and homepage.</p>
+        <label for=language>Language</label>
+        <select name=language>
+          ${programmingLanguages.map(language => html`
+          <option
+              value="${escapeHTML(language)}"
+              ${data.language.value === language && 'selected'}
+            >${escapeHTML(language)}</option>
+          `)}
+        </select>
+        ${data.language.error}
         <label for=category>Category</label>
         <select
             name=category
             required>
-          ${projectCategories.map(c => `<option value="${c}">${c}</option>`)}
+          ${projectCategories.map(c => html`
+          <option value=""></option>
+          <option
+              value="${escapeHTML(c)}"
+              ${data.category.value === c && 'selected'}
+            >${escapeHTML(c)}</option>
+          `)}
         </select>
+        ${data.category.error}
         <label for=price>Price</label>
         <input
           name=price
@@ -845,6 +871,7 @@ function serveCreate (request, response) {
           min="${MAXIMUM_PRICE.toString()}"
           required>
         <p>Cost of <a href=/paid>a license</a> in United States Dollars.</p>
+        ${data.price.error}
         <button type=submit>${title}</button>
       </form>
     </main>
@@ -856,7 +883,7 @@ function serveCreate (request, response) {
 
   function processBody (request, body, done) {
     const handle = request.account.handle
-    const { project, urls, price, category, description } = body
+    const { project, urls, price, language, category, description } = body
     const slug = `${handle}/${project}`
     const created = new Date().toISOString()
     runSeries([
@@ -864,6 +891,7 @@ function serveCreate (request, response) {
         project,
         handle,
         description,
+        language,
         urls,
         price,
         commission: process.env.MINIMUM_COMMISSION,
@@ -893,6 +921,8 @@ function serveCreate (request, response) {
           text: [
             `Handle: ${handle}`,
             `Project: ${project}`,
+            `Category: ${category}`,
+            `Language: ${language}`,
             `Price: $${price}`,
             `URLs: ${urls.map(u => `<${u}>`).join(', ')}`,
             `E-Mail: ${category}`
@@ -2340,6 +2370,7 @@ function serveProjectForDeveloper (request, response) {
     description: projectDescriptionField,
     urls: urlsField,
     price: projectPriceField,
+    language: projectLanguageField,
     category: projectCategoryField
   }
 
@@ -2416,6 +2447,18 @@ function serveProjectForDeveloper (request, response) {
             placeholder=https://twitter.com/project
             ${data.verified && 'disabled'}
             value="${escapeHTML(data.urls.value[2] || '')}">
+        <label for=language>Language</label>
+        <select
+            ${data.verified && 'disabled'}
+            name=language>
+          ${programmingLanguages.map(l => html`
+          <option
+              value="${escapeHTML(l)}"
+              ${data.language.value === l && 'selected'}
+            >${escapeHTML(l)}</option>
+          `)}
+        </select>
+        ${data.language.error}
         <label for=category>Category</label>
         <select
             name=category
@@ -2423,11 +2466,12 @@ function serveProjectForDeveloper (request, response) {
             required>
           ${projectCategories.map(c => html`
           <option
-              value="${c}"
+              value="${escapeHTML(c)}"
               ${data.category.value === c && 'selected'}
-            >${c}</option>
+            >${escapeHTML(c)}</option>
           `)}
         </select>
+        ${data.category.error}
         <label for=price>Price</label>
         <input
           name=price
@@ -2493,11 +2537,12 @@ function serveProjectForCustomers (request, response) {
       <h2>${data.project}</h2>
       ${badgesList(data)}
       ${customersList(data)}
+      <p class=category>${data.category}</p>
+      ${data.language && `<p class=language>${escapeHTML(data.language)}</p>`}
       <p class=description>${escapeHTML(data.description || '')}</p>
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>
-      <p class=category><span id=category>${data.category}</span></p>
       <p class=created>Since ${data.created}</p>
       ${
         (
@@ -2984,6 +3029,7 @@ function redactedProject (project) {
     'created',
     'description',
     'handle',
+    'language',
     'price',
     'project',
     'urls'
@@ -3551,6 +3597,8 @@ function parseAndValidatePostBody ({
         ? value.every(value => description.validate(value || '', body))
         : description.validate(value || '', body)
       if (valid) continue
+      console.error(`field: ${fieldName}`)
+      console.error(`value: ${JSON.stringify(value)}`)
       const error = new Error('invalid ' + description.displayName)
       error.statusCode = 401
       return done(error)

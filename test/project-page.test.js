@@ -51,7 +51,7 @@ tape('project page', test => {
       const priceElement = await browser.$('#price')
       const priceText = await priceElement.getText()
       test.equal(priceText, `$${price}`, 'price')
-      const categoryElement = await browser.$('#category')
+      const categoryElement = await browser.$('.category')
       const categoryPrice = await categoryElement.getText()
       test.equal(categoryPrice, category, 'category')
       // Buy a license.
@@ -169,7 +169,7 @@ tape('project edit form', test => {
       await updatedLink.waitForExist()
       test.pass('URL')
       // Verify new category.
-      const categoryElement = await browser.$('#category')
+      const categoryElement = await browser.$('.category')
       const categoryPrice = await categoryElement.getText()
       test.equal(categoryPrice, newCategory, 'category')
     })().then(finish).catch(finish)
