@@ -2489,7 +2489,8 @@ function serveProjectForCustomers (request, response) {
             location: accountValue('location'),
             email: accountValue('email'),
             handle: { value: data.account.handle },
-            project: { value: data.project }
+            project: { value: data.project },
+            price: { value: data.price }
           })
           : '<p>Licenses are not available for sale at this time.</p>'
       }
@@ -2536,7 +2537,7 @@ function customersList (project) {
 }
 
 function buyForm (data) {
-  ['account', 'project', 'name', 'email', 'location', 'terms']
+  ['account', 'project', 'name', 'email', 'location', 'terms', 'price']
     .forEach(key => {
       if (!data[key]) data[key] = {}
     })
@@ -2552,6 +2553,10 @@ function buyForm (data) {
       name=project
       type=hidden
       value="${escapeHTML(data.project.value || '')}">
+  <input
+      name=price
+      type=hidden
+      value="${escapeHTML(data.price.value || '')}">
   <fieldset>
     <legend>About You</legend>
     <label>
@@ -2627,6 +2632,7 @@ function serveBuy (request, response) {
   const action = '/buy'
 
   const fields = {
+    price: projectPriceField,
     handle: {
       displayName: 'handle',
       filter: e => e.toLowerCase().trim(),
@@ -2692,7 +2698,7 @@ function serveBuy (request, response) {
   }
 
   function processBody (request, body, done) {
-    const { handle, project, name, email, location, token } = body
+    const { handle, project, name, email, location, token, price } = body
     let accountData, projectData
     let orderID, paymentIntent
     const date = new Date().toISOString()
@@ -2730,6 +2736,16 @@ function serveBuy (request, response) {
           projectData = redactedProject(data)
           done()
         })
+      },
+
+      // Make sure price hasn't changed.
+      done => {
+        if (projectData.price !== parseInt(price)) {
+          const priceError = new Error('price changed')
+          priceError.statusCode = 400
+          return done(priceError)
+        }
+        done()
       },
 
       // Create an order.
