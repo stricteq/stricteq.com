@@ -818,9 +818,14 @@ function serveCreate (request, response) {
         <input
             name=description
             type=text
-            value="${escapeHTML(data.description.value || '')}">
+            value="${escapeHTML(data.description.value || '')}"
+            required>
         ${projectDescriptionField.html}
         ${data.description.error}
+        ${projectLanguageSelect({ value: data.language.value })}
+        ${data.language.error}
+        ${projectCategorySelect({ value: data.category.value })}
+        ${data.category.error}
         <label for=urls>URLs</label>
         <input
             name=urls
@@ -839,10 +844,6 @@ function serveCreate (request, response) {
             placeholder=https://twitter.com/project
             value="${escapeHTML(data.urls.value[2] || '')}">
         <p>URLs for your project, such as its source code repository and homepage.</p>
-        ${projectLanguageSelect({ value: data.language.value })}
-        ${data.language.error}
-        ${projectCategorySelect({ value: data.category.value })}
-        ${data.category.error}
         <label for=price>Price</label>
         <input
           name=price
@@ -2440,6 +2441,16 @@ function serveProjectForDeveloper (request, response) {
             value="${escapeHTML(data.description.value || '')}"
             required>
         ${data.description.error}
+        ${projectLanguageSelect({
+          disabled: data.verified,
+          value: data.language.value
+        })}
+        ${data.language.error}
+        ${projectCategorySelect({
+          disabled: data.verified,
+          value: data.category.value
+        })}
+        ${data.category.error}
         <label for=urls>URLs</label>
         <input
             name=urls
@@ -2460,16 +2471,6 @@ function serveProjectForDeveloper (request, response) {
             placeholder=https://twitter.com/project
             ${data.verified && 'disabled'}
             value="${escapeHTML(data.urls.value[2] || '')}">
-        ${projectLanguageSelect({
-          disabled: data.verified,
-          value: data.language.value
-        })}
-        ${data.language.error}
-        ${projectCategorySelect({
-          disabled: data.verified,
-          value: data.category.value
-        })}
-        ${data.category.error}
         <label for=price>Price</label>
         <input
           name=price
