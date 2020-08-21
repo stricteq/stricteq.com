@@ -21,18 +21,21 @@ tape('Stripe Connect', test => {
       await connectStripe({ browser, port })
       // Confirm connected.
       const disconnect = await browser.$('#disconnect')
+      await disconnect.waitForExist()
       const text = await disconnect.getText()
       test.equal(text, 'Disconnect Stripe Account', 'connected')
       // Disconnect.
       await click(browser, '#disconnect')
       const h2 = await browser.$('h2')
+      await h2.waitForExist()
       const h2Text = await h2.getText()
       test.equal(h2Text, 'Disconnected Stripe Account', 'disconnected')
-      await timeout(5000)
+      await timeout(7000)
       // Navigate back to account page.
       await click(browser, '#account')
       // Confirm disconnected.
       const connect = await browser.$('#connect')
+      await connect.waitForExist()
       const connectText = await connect.getText()
       test.equal(connectText, 'Connect Stripe Account', 'confirmed disconnected')
     })().then(finish).catch(finish)

@@ -83,7 +83,7 @@ tape('user page licenses', test => {
 
       // Confirm connected.
       const disconnect = await browser.$('#disconnect')
-      await disconnect.waitForExist()
+      await disconnect.waitForExist({ timeout: 10000 })
 
       // Create project.
       await createProject({ browser, port, project, urls, price, category })
