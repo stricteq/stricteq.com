@@ -173,7 +173,8 @@ const staticFiles = [
 // Function for http.createServer()
 module.exports = (request, response) => {
   const parsed = request.parsed = parseURL(request.url, true)
-  const pathname = parsed.pathname
+  const pathname = request.pathname = parsed.pathname
+  request.query = parsed.query
   // Try autenticated routes.
   const { handler, params } = routes.get(pathname)
   if (handler) {
@@ -2432,7 +2433,11 @@ function serveBadges (request, response) {
 // /~{handle}/{project}
 function serveProject (request, response) {
   const { handle } = request.parameters
-  if (request.account && request.account.handle === handle) {
+  if (
+    request.account &&
+    request.account.handle === handle &&
+    !request.query.preview
+  ) {
     return serveProjectForDeveloper(request, response)
   } else {
     return serveProjectForCustomers(request, response)
@@ -2494,6 +2499,7 @@ function serveProjectForDeveloper (request, response) {
     ${header}
     <main role=main>
       <h2>${title}</h2>
+      <a href="/~${slug}?preview=true">View as Customer</a>
       ${badgesList(data.projectObject)}
       ${customersList(data.projectObject)}
       <form id=projectForm method=post>
