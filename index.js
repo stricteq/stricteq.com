@@ -2217,7 +2217,7 @@ function serveUserPage (request, response) {
       const selling = data.selling.length === 0
         ? ''
         : html`
-<h3>Projects</h3>
+<h3>Developing</h3>
 <ul id=selling class=showcase>
   ${data.selling.map(selling => html`
   <li>
@@ -2236,7 +2236,7 @@ function serveUserPage (request, response) {
       const licenses = data.licenses.length === 0
         ? ''
         : html`
-<h3>Licenses</h3>
+<h3>Supported</h3>
 <ul id=licenses class=showcase>${
   data.licenses.map(license => html`
   <li>
