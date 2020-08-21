@@ -124,7 +124,7 @@ footer[role=contentinfo] ul {
   padding-left: 1.5ex;
 }
 
-.profile { background-image: url("/user.svg"); }
+#profile { background-image: url("/user.svg"); }
 .affiliations { background-image: url("/building.svg"); }
 .location { background-image: url("/map-marker.svg"); }
 
