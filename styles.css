@@ -117,7 +117,7 @@ footer[role=contentinfo] ul {
   padding: 0;
 }
 
-#profile, .location, .affiliations {
+#profile, .location, .affiliations, .email {
   background-position: center left;
   background-repeat: no-repeat;
   background-size: 1ex;
@@ -127,6 +127,7 @@ footer[role=contentinfo] ul {
 #profile { background-image: url("/user.svg"); }
 .affiliations { background-image: url("/building.svg"); }
 .location { background-image: url("/map-marker.svg"); }
+.email { background-image: url("/envelope.svg"); }
 
 label {
   display: block;
