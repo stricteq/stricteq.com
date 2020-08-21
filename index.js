@@ -418,7 +418,7 @@ function serveTerms (request, response, slug) {
     <main role=main>
       <h1>${escapeHTML(title)}</h1>
       ${version && `<p class=version>Version ${version}</p>`}
-      ${markdown(content)}
+      <article class=terms>${markdown(content)}</article>
     </main>
     ${footer}
   </body>
