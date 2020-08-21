@@ -225,6 +225,7 @@ button:hover, a[href].button:hover {
 
 h2 {
   display: inline-block;
+  margin-bottom: 0;
 }
 
 .avatar {
