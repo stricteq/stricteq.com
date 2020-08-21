@@ -757,7 +757,6 @@ const projectDescriptionField = {
 
 const projectLanguageField = {
   displayName: 'language',
-  optional: true,
   filter: e => e.trim(),
   validate: e => programmingLanguages.includes(e)
 }
@@ -939,7 +938,6 @@ function projectCategorySelect ({ disabled, value }) {
 <select
     name=category
     required>
-  <option value=""></option>
   ${options(value, projectCategories)}
 </select>
   `
