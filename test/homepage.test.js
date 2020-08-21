@@ -32,7 +32,7 @@ tape('homepage', test => {
             const string = buffer.toString()
             test.doesNotThrow(() => parse5.parse(string), 'valid HTML5')
             test.assert(
-              string.includes(`<a href=/~${handle}/${project}`),
+              string.includes(`href=/~${handle}/${project}`),
               'links to showcased'
             )
             test.end()
