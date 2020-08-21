@@ -1,6 +1,7 @@
 ---
 title: The Deal
 version: 1.0.0
+summary: deal for use of stricteq projects
 ---
 
 To use software listed on stricteq.com to make money or for work, you need to buy a license.  If you're part of a team, everyone on your team who uses the software needs to buy a license.

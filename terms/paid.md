@@ -1,6 +1,7 @@
 ---
 title: stricteq Paid License
 version: 1.0.0
+summary: terms for paid licenses through stricteq
 ---
 
 <h2 id="details">Details</h2>

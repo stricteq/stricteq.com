@@ -1,5 +1,6 @@
 ---
 title: stricteq Privacy Notice
+summary: privacy information and practices
 ---
 
 This privacy notice describes the policies of stricteq.com, a website operated by Artless Devices LLC, a California limited liability company, concerning personally identifiable information about you and other visitors.

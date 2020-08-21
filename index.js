@@ -259,10 +259,17 @@ function meta ({
   title = constants.website,
   description = constants.slogan
 }) {
-  return html`
+  let returned = html`
 <meta charset=UTF-8>
 <meta name=viewport content="width=device-width, initial-scale=1">
-<meta name="description" content="${constants.slogan}">
+  `
+  if (description) {
+    returned += html`
+<meta name="description" content="${escapeHTML(description)}">
+    `
+  }
+  if (title && description) {
+    returned += html`
 <meta name="twitter:card" content="summary">
 <meta name="twitter:description" content="${escapeHTML(description)}">
 <meta name="twitter:image" content="${process.env.BASE_HREF}/logo-on-white-100.png">
@@ -273,9 +280,13 @@ function meta ({
 <meta name="og:description" content="${escapeHTML(description)}">
 <meta name="og:image" content="${process.env.BASE_HREF}/logo-on-white-100.png">
 <meta name="og:site" content="stricteq">
+    `
+  }
+  returned += html`
 <link href=/normalize.css rel=stylesheet>
 <link href=/styles.css rel=stylesheet>
   `
+  return returned
 }
 
 const header = `
@@ -359,7 +370,10 @@ function serveHomepage (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({
+      title: constants.website,
+      description: constants.slogan
+    })}
     <title>${constants.website}</title>
   </head>
   <body>
@@ -411,13 +425,13 @@ function serveTerms (request, response, slug) {
     'utf8',
     (error, read) => {
       if (error) return serve500(request, response, error)
-      const { content, data: { title, version } } = grayMatter(read)
+      const { content, data: { title, version, summary } } = grayMatter(read)
       response.setHeader('Content-Type', 'text/html')
       response.end(html`
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title })}
+    ${meta({ title, description: summary })}
     <title>${escapeHTML(title)}</title>
   </head>
   <body>
@@ -523,7 +537,7 @@ function serveSignUp (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({ title, description: 'sign up for stricteq' })}
     <title>${title}</title>
   </head>
   <body>
@@ -824,7 +838,7 @@ function serveCreate (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({ title, description: 'register a new stricteq project' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1032,7 +1046,7 @@ function serveLogIn (request, response) {
     }
   }
 
-  module.exports = formRoute({
+  formRoute({
     action: '/login',
     fields,
     form,
@@ -1045,7 +1059,7 @@ function serveLogIn (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({ title, description: 'log into stricteq.com' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1161,19 +1175,20 @@ function serveAccount (request, response) {
   if (request.method !== 'GET') return serve405(request, response)
   const account = request.account
   if (!account) return serve302(request, response, '/login')
+  const title = 'Account'
   response.setHeader('Content-Type', 'text/html')
   response.end(html`
 <!doctype html>
 <html lang=en-US>
   <head>
     ${meta({})}
-    <title>Account</title>
+    <title>${title}</title>
   </head>
   <body>
     ${nav(request)}
     ${header}
     <main role=main>
-      <h2>Account</h2>
+      <h2>${title}</h2>
       <p class=joined>Joined ${escapeHTML(account.created)}</p>
       ${account.stripe.connected ? disconnectLink() : connectLink()}
       <a class=button href=/create>Create Project</a>
@@ -1254,7 +1269,7 @@ function serveHandle (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({ title, description: 'find your stricteq handle' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1677,7 +1692,7 @@ function getWithToken (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({ title, description: 'change your stricteq password' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1886,7 +1901,7 @@ function serveReset (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({ title, description: 'reset your stricteq password' })}
     <title>${title}</title>
   </head>
   <body>
@@ -2306,7 +2321,7 @@ function serveUserPage (request, response) {
   <head>
     ${meta({
       title: handle,
-      description: 'striceq developer'
+      description: `${constants.website} developer`
     })}
     <title>${data.handle}</title>
   </head>
@@ -2409,7 +2424,10 @@ function serveBadges (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({
+      title: 'Badges',
+      description: 'list of badges'
+    })}
     <title>Badges</title>
   </head>
   <body>
@@ -2496,7 +2514,7 @@ function serveProjectForDeveloper (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({ title, description: data.tagline.value })}
     <title>${title}</title>
   </head>
   <body>
@@ -2834,7 +2852,7 @@ function serveBuy (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
+    ${meta({ title, description: 'buy a license' })}
     <title>${title}</title>
   </head>
   <body>
@@ -3025,19 +3043,20 @@ Payment Intent: ${paymentIntent.id}
 }
 
 function servePricing (request, response) {
+  const title = 'Pricing'
   response.setHeader('Content-Type', 'text/html')
   response.end(html`
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({})}
-    <title>Pricing</title>
+    ${meta({ title, description: 'for buyers and sellers' })}
+    <title>${title}</title>
   </head>
   <body>
     ${nav(request)}
     ${header}
     <main role=main>
-      <h2>Pricing</h2>
+      <h2>${title}</h2>
       <h3>Buying</h3>
       <p>Developers set their own prices through ${constants.website}.</p>
       <h3>Selling</h3>
@@ -3694,19 +3713,20 @@ function parseAndValidatePostBody ({
 
 function serve404 (request, response) {
   response.statusCode = 404
+  const title = 'Not Found'
   response.setHeader('Content-Type', 'text/html')
   response.end(`
 <!doctype html>
 <html lang=en-US>
   <head>
     ${meta({})}
-    <title>Not Found</title>
+    <title>${title}</title>
   </head>
   <body>
     ${nav(request)}
     ${header}
     <main role=main>
-      <h2>Not Found</h2>
+      <h2>${title}</h2>
       <p>The page you tried to visit doesn’t exist on this site.</p>
     </main>
     ${footer}
@@ -3718,17 +3738,18 @@ function serve404 (request, response) {
 function serve500 (request, response, error) {
   request.log.error(error)
   response.statusCode = 500
+  const title = 'Internal Error'
   response.setHeader('Content-Type', 'text/html')
   response.end(html`
 <!doctype html>
 <html lang=en-US>
   <head>
     ${meta({})}
-    <title>Internal Error</title>
+    <title>${title}</title>
   </head>
   <body>
     <main role=main>
-      <h1>Internal Error</h1>
+      <h1>${title}</h1>
       <p>The server ran into an error.</p>
       <p>
         If you'd like, you can
