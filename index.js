@@ -3597,8 +3597,6 @@ function parseAndValidatePostBody ({
         ? value.every(value => description.validate(value || '', body))
         : description.validate(value || '', body)
       if (valid) continue
-      console.error(`field: ${fieldName}`)
-      console.error(`value: ${JSON.stringify(value)}`)
       const error = new Error('invalid ' + description.displayName)
       error.statusCode = 401
       return done(error)
