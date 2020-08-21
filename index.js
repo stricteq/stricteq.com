@@ -156,7 +156,7 @@ const icons = []
   .concat(accountBadges.map(badge => badge.icon))
   .concat(projectBadges.map(badge => badge.icon))
   .concat(hostLogos.map(host => host.icon))
-  .concat('user', 'link')
+  .concat('user', 'link', 'building', 'globe')
 
 const staticFiles = [
   'styles.css',
@@ -284,7 +284,7 @@ const header = `
 const footer = `
 <footer role=contentinfo>
   <a class=spaced href=https://artlessdevices.com>Company</a>
-  <a class=spaced href=/pricing>Pricing</a>
+  <a class=spaced href=/service>Pricing</a>
   <a class=spaced href=/service>Terms of Service</a>
   <a class=spaced href=/agency>Agency Terms</a>
   <a class=spaced href=/privacy>Privacy</a>
