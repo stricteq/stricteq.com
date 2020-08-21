@@ -2155,45 +2155,45 @@ function serveUserPage (request, response) {
     results.account.selling = results.selling
     results.account.licenses = results.licenses
     const data = results.account
-    const selling = data.selling.length === 0
-      ? ''
-      : html`
+    serveView(request, response, data, data => {
+      const selling = data.selling.length === 0
+        ? ''
+        : html`
 <h3>Projects</h3>
 <ul id=selling class=showcase>
-  ${data.selling.map(project => html`
+  ${data.selling.map(selling => html`
   <li>
     <a
         class=project
-        href=/~${handle}/${project.project}
-      >${project.project}</a>
-    ${badgesList(project)}
-    <span class=category>${project.category}</span>
-    <span class=currency>$${project.price.toString()}</span>
+        href=/~${handle}/${selling.project}
+      >${selling.project}</a>
+    ${badgesList(selling)}
+    <span class=category>${selling.category}</span>
+    <span class=currency>$${selling.price.toString()}</span>
   </li>
   `)}
 </ul>
-      `
-    const licenses = data.licenses.length === 0
-      ? ''
-      : html`
+        `
+      const licenses = data.licenses.length === 0
+        ? ''
+        : html`
 <h3>Licenses</h3>
 <ul id=licenses class=showcase>${
-  data.licenses.map(project => html`
+  data.licenses.map(license => html`
   <li>
-    <a href=/~${project.handle}/${project.project}>${project.handle}/${project.project}</a>
     <a
         class=project
-        href=/~${project.handle}/${project.project}
-      >${project.project}</a>
+        href=/~${license.handle}/${license.project}
+      >${license.project}</a>
     <a
         class=byline
-        href=/~${project.handle}
-      >${project.handle}</a>
+        href=/~${license.handle}
+      >${license.handle}</a>
   </li>
   `)
 }</ul>
       `
-    serveView(request, response, data, data => html`
+      return html`
 <!doctype html>
 <html lang=en-US>
   <head>
@@ -2224,7 +2224,8 @@ function serveUserPage (request, response) {
     ${footer}
   </body>
 </html>
-    `)
+      `
+    })
   })
 }
 
@@ -2340,9 +2341,10 @@ function serveProjectPage (request, response) {
     const project = redactedProject(data.project)
     project.account = redactedAccount(data.account)
     project.slug = slug
-    const customersList = project.customers.length === 0
-      ? ''
-      : html`
+    serveView(request, response, project, data => {
+      const customersList = data.customers.length === 0
+        ? ''
+        : html`
 <ol id=customers>
   ${data.customers.map(c => html`
   <li>
@@ -2354,8 +2356,8 @@ function serveProjectPage (request, response) {
   </li>
   `)}
 </ol>
-      `
-    serveView(request, response, project, data => html`
+        `
+      return html`
 <!doctype html>
 <html lang=en-US>
   <head>
@@ -2400,7 +2402,8 @@ function serveProjectPage (request, response) {
     ${footer}
   </body>
 </html>
-    `)
+    `
+    })
 
     function accountValue (key) {
       if (!request.account) return {}
@@ -2767,6 +2770,7 @@ function redactedProject (project) {
     'badges',
     'category',
     'created',
+    'handle',
     'price',
     'project',
     'urls'
