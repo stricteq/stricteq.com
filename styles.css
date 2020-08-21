@@ -87,10 +87,6 @@ a[href].spaced:first-of-type {
   margin: 0 0.5rem;
 }
 
-.badges li:first-of-type {
-  margin-left: 0;
-}
-
 .badges li:last-of-type {
   margin-right: 0;
 }
