@@ -2506,6 +2506,7 @@ function serveProjectForDeveloper (request, response) {
     storage.project.update(slug, (project, done) => {
       if (project.badges.verified) {
         project.price = body.price
+        project.description = body.description
       } else {
         Object.keys(fields).forEach(key => {
           project[key] = body[key]
