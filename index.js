@@ -2629,6 +2629,7 @@ function buyForm (data) {
     })
   return html`
 <form id=buyForm action=/buy method=post>
+  <h2>Buy a License</h2>
   ${data.error}
   ${data.csrf}
   <input
