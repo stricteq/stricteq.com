@@ -239,3 +239,10 @@ h2 {
   color: #777;
   padding: 0 1ex;
 }
+
+.error {
+  background: #f2dede;
+  border: 1px solid #ebccd1;
+  border-radius: 0.25rem;
+  color: #a94442;
+}
