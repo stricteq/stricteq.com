@@ -156,7 +156,7 @@ const icons = []
   .concat(accountBadges.map(badge => badge.icon))
   .concat(projectBadges.map(badge => badge.icon))
   .concat(hostLogos.map(host => host.icon))
-  .concat('user', 'link', 'building', 'globe')
+  .concat('user', 'link', 'building', 'map-marker')
 
 const staticFiles = [
   'styles.css',

@@ -126,7 +126,7 @@ footer[role=contentinfo] ul {
 
 .profile { background-image: url("/user.svg"); }
 .affiliations { background-image: url("/building.svg"); }
-.location { background-image: url("/globe.svg"); }
+.location { background-image: url("/map-marker.svg"); }
 
 label {
   display: block;
