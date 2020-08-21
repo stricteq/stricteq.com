@@ -9,6 +9,7 @@ const variables = [
   { name: 'CSRF_KEY', required: true },
   { name: 'DIRECTORY', required: true },
   { name: 'MINIMUM_COMMISSION', required: true },
+  { name: 'NOTIFICATIONS_EMAIL', required: true },
   { name: 'STRIPE_CLIENT_ID', required: true },
   { name: 'STRIPE_SECRET_KEY', required: true },
   { name: 'STRIPE_PUBLISHABLE_KEY', required: true }
