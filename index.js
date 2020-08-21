@@ -374,7 +374,8 @@ function serveHomepage (request, response) {
               href=/~${entry.handle}/${entry.project}
             >${entry.project}</a>
           ${badgesList(entry)}
-          <span class=category>${entry.category}</span>
+          <span class=category>${escapeHTML(entry.category)}</span>
+          <span class=langauge>${escapeHTML(entry.language)}</span>
           <span class=currency>$${entry.price.toString()}</span>
           <a
               class=byline
@@ -2206,7 +2207,8 @@ function serveUserPage (request, response) {
         href=/~${handle}/${selling.project}
       >${selling.project}</a>
     ${badgesList(selling)}
-    <span class=category>${selling.category}</span>
+    <span class=category>${escapeHTML(selling.category)}</span>
+    <span class=language>${escapeHTML(selling.language)}</span>
     <span class=currency>$${selling.price.toString()}</span>
   </li>
   `)}
