@@ -3,3 +3,4 @@ export PRIVATE_KEY="87c14fb3e3ed232fb57c47a1e55f68dba18eec18fab87b9c17f544f511e0
 export BASE_HREF="http://localhost:8080"
 export DIRECTORY="$(mktemp -d)"
 export MINIMUM_COMMISSION=5
+export NOTIFICATIONS_EMAIL=notifications@mail.stricteq.com
