@@ -243,7 +243,7 @@ module.exports = (request, response) => {
       project: match[2]
     }
     return authenticate(request, response, () => {
-      serveProjectPage(request, response)
+      serveProject(request, response)
     })
   }
   // Default
@@ -2300,7 +2300,7 @@ function serveBadges (request, response) {
 }
 
 // /~{handle}/{project}
-function serveProjectPage (request, response) {
+function serveProject (request, response) {
   const { handle, project } = request.parameters
   const slug = `${handle}/${project}`
 
