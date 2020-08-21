@@ -23,6 +23,7 @@ tape('server', test => {
             PUBLIC_KEY: keys.publicKey,
             PRIVATE_KEY: keys.privateKey,
             MINIMUM_COMMISSION: 5,
+            NOTIFICATIONS_EMAIL: 'notifications@mail.stricteq.com',
             DIRECTORY: directory,
             STRIPE_CLIENT_ID: process.env.STRIPE_CLIENT_ID,
             STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
