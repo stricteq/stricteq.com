@@ -284,6 +284,7 @@ const header = `
 
 const footer = `
 <footer role=contentinfo>
+  <a class=spaced href=/deal>Deal</a>
   <a class=spaced href=https://artlessdevices.com>Company</a>
   <a class=spaced href=/service>Pricing</a>
   <a class=spaced href=/service>Terms of Service</a>
