@@ -157,7 +157,7 @@ const icons = []
   .concat(accountBadges.map(badge => badge.icon))
   .concat(projectBadges.map(badge => badge.icon))
   .concat(hostLogos.map(host => host.icon))
-  .concat('user', 'link', 'building', 'map-marker')
+  .concat('user', 'link', 'building', 'map-marker', 'envelope')
 
 const staticFiles = [
   'styles.css',
@@ -2252,6 +2252,7 @@ function serveUserPage (request, response) {
           .map(badge => `<li>${badgeImage(badge)}</li>`)
       }</ul>
       <p class=name>${escapeHTML(data.name)}</p>
+      <a class=email href="mailto:${escapeHTML(data.email)}">${escapeHTML(data.email)}</a>
       <p class=location>${escapeHTML(iso3166ToEnglish(data.location))}</p>
       <p class=affiliations>${escapeHTML(data.affiliations)}</p>
       ${data.urls.length > 0 && html`<ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>`}
