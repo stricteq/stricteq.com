@@ -151,6 +151,7 @@ input[type=email],
 input[type=url],
 input[type=number],
 input[type=password],
+textarea,
 select {
   background: white;
   border-radius: 0.25rem;

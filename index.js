@@ -749,12 +749,19 @@ const projectCategoryField = {
   validate: e => projectCategories.includes(e)
 }
 
-const projectDescriptionField = {
-  displayName: 'description',
-  filter: e => e.trim(),
-  validate: e => e.length > 0 && e.length < 1024,
-  html: 'Description must be less than 1024 characters.'
-}
+const projectDescriptionField = (() => {
+  const minLength = 1
+  const maxLength = 8192
+  return {
+    minLength,
+    maxLength,
+    displayName: 'description',
+    filter: e => e.trim(),
+    validate: e => e.length >= minLength && e.length <= maxLength,
+    html: 'Description must be ' +
+      '<a href=https://commonmark.org>valid CommonMark</a>.'
+  }
+})()
 
 const projectLanguageField = {
   displayName: 'language',
@@ -814,12 +821,7 @@ function serveCreate (request, response) {
             required>
         <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
         ${data.project.error}
-        <label for=description>Description</label>
-        <input
-            name=description
-            type=text
-            value="${escapeHTML(data.description.value || '')}"
-            required>
+        ${projectDescriptionInput({ value: data.description.value })}
         ${projectDescriptionField.html}
         ${data.description.error}
         ${projectLanguageSelect({ value: data.language.value })}
@@ -927,7 +929,9 @@ function serveCreate (request, response) {
 function projectLanguageSelect ({ disabled, value }) {
   return html`
 <label for=language>Language</label>
-<select name=language>
+<select
+    name=language
+    ${disabled && 'disabled'}>
   ${options(value, programmingLanguages)}
 </select>
   `
@@ -938,9 +942,23 @@ function projectCategorySelect ({ disabled, value }) {
 <label for=category>Category</label>
 <select
     name=category
+    ${disabled && 'disabled'}
     required>
   ${options(value, projectCategories)}
 </select>
+  `
+}
+
+function projectDescriptionInput ({ value, disabled }) {
+  return html`
+<label for=description>Description</label>
+<textarea
+    name=description
+    minlength=${projectDescriptionField.minLength}
+    maxlength=${projectDescriptionField.maxLength}
+    ${disabled && 'disabled'}
+    required
+  >${escapeHTML(value || '')}</textarea>
   `
 }
 
@@ -2435,12 +2453,7 @@ function serveProjectForDeveloper (request, response) {
       <form id=projectForm method=post>
         ${data.error}
         ${data.csrf}
-        <label for=description>Description</label>
-        <input
-            name=description
-            type=text
-            value="${escapeHTML(data.description.value || '')}"
-            required>
+        ${projectDescriptionInput({ value: data.description.value })}
         ${data.description.error}
         ${projectLanguageSelect({
           disabled: data.verified,
@@ -2539,7 +2552,7 @@ function serveProjectForCustomers (request, response) {
       ${customersList(data)}
       <p class=category>${data.category}</p>
       ${data.language && `<p class=language>${escapeHTML(data.language)}</p>`}
-      <p class=description>${escapeHTML(data.description || '')}</p>
+      <article class=description>${markdown(data.description || '', { safe: true })}</article>
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>
