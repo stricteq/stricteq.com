@@ -733,6 +733,18 @@ const projectCategories = [
   'interpreter'
 ]
 
+const projectPriceField = {
+  displayName: 'price',
+  filter: e => parseInt(e),
+  validate: e => !isNaN(e) && e >= MINIMUM_PRICE
+}
+
+const projectCategoryField = {
+  displayName: 'category',
+  filter: e => e.toLowerCase().trim(),
+  validate: e => projectCategories.includes(e)
+}
+
 function serveCreate (request, response) {
   const title = 'Create Project'
 
@@ -743,16 +755,8 @@ function serveCreate (request, response) {
       validate: projects.validate
     },
     urls: urlsField,
-    price: {
-      displayName: 'price',
-      filter: e => parseInt(e),
-      validate: e => !isNaN(e) && e >= MINIMUM_PRICE
-    },
-    category: {
-      displayName: 'category',
-      filter: e => e.toLowerCase().trim(),
-      validate: e => projectCategories.includes(e)
-    }
+    price: projectPriceField,
+    category: projectCategoryField
   }
 
   formRoute({
@@ -1196,7 +1200,7 @@ function serveHandle (request, response) {
   }
 }
 
-function errorIfVerified (handle) {
+function errorIfAccountVerified (handle) {
   return done => storage.account.read(handle, (error, account) => {
     if (error) return done(error)
     if (!account) return done(new Error('no account record'))
@@ -1270,7 +1274,7 @@ function serveEMail (request, response) {
     const handle = request.account.handle
     const email = body.email
     runSeries([
-      errorIfVerified(handle),
+      errorIfAccountVerified(handle),
       // Check for e-mail conflict.
       done => storage.email.read(email, (error, record) => {
         if (error) return done(error)
@@ -1448,7 +1452,7 @@ function serveProfile (request, response) {
   function processBody (request, body, done) {
     const handle = request.account.handle
     runSeries([
-      errorIfVerified(handle),
+      errorIfAccountVerified(handle),
       done => storage.account.update(handle, {
         name: body.name,
         location: body.location,
@@ -2301,6 +2305,139 @@ function serveBadges (request, response) {
 
 // /~{handle}/{project}
 function serveProject (request, response) {
+  const { handle } = request.parameters
+  if (request.account && request.account.handle === handle) {
+    return serveProjectForDeveloper(request, response)
+  } else {
+    return serveProjectForCustomers(request, response)
+  }
+}
+
+function serveProjectForDeveloper (request, response) {
+  const { handle, project } = request.parameters
+  const slug = `${handle}/${project}`
+  const title = slug
+
+  const fields = {
+    urls: urlsField,
+    price: projectPriceField,
+    category: projectCategoryField
+  }
+
+  formRoute({
+    action: `/${slug}`,
+    requireAuthentication: handle,
+    loadGETData,
+    fields,
+    form,
+    processBody,
+    onSuccess
+  })(request, response)
+
+  function loadGETData (request, data, done) {
+    storage.project.read(slug, (error, project) => {
+      if (error) return done(error)
+      if (!project) {
+        var notFound = new Error('not found')
+        notFound.statusCode = 404
+        return done(error)
+      }
+      Object.keys(fields).forEach(key => {
+        data[key] = { value: project[key] }
+      })
+      if (project.badges.verified) data.verified = true
+      data.projectObject = project
+      done()
+    })
+  }
+
+  function form (request, data) {
+    response.setHeader('Content-Type', 'text/html')
+    response.end(html`
+<!doctype html>
+<html lang=en-US>
+  <head>
+    ${meta({})}
+    <title>${title}</title>
+  </head>
+  <body>
+    ${nav(request)}
+    ${header}
+    <main role=main>
+      <h2>${title}</h2>
+      ${badgesList(data.projectObject)}
+      ${customersList(data.projectObject)}
+      <form id=projectForm method=post>
+        ${data.error}
+        ${data.csrf}
+        <label for=urls>URLs</label>
+        <input
+            name=urls
+            type=url
+            placeholder=https://github.com/example/project
+            value="${escapeHTML(data.urls.value[0] || '')}"
+            ${data.verified && 'disabled'}
+            required>
+        <input
+            name=urls
+            type=url
+            placeholder=http://project.com
+            ${data.verified && 'disabled'}
+            value="${escapeHTML(data.urls.value[1] || '')}">
+        <input
+            name=urls
+            type=url
+            placeholder=https://twitter.com/project
+            ${data.verified && 'disabled'}
+            value="${escapeHTML(data.urls.value[2] || '')}">
+        <label for=category>Category</label>
+        <select
+            name=category
+            ${data.verified && 'disabled'}
+            required>
+          ${projectCategories.map(c => html`
+          <option
+              value="${c}"
+              ${data.category.value === c && 'selected'}
+            >${c}</option>
+          `)}
+        </select>
+        <label for=price>Price</label>
+        <input
+          name=price
+          type=number
+          value="${escapeHTML(data.price.value || '')}"
+          min="${MINIMUM_PRICE.toString()}"
+          min="${MAXIMUM_PRICE.toString()}"
+          required>
+        <button type=submit>Update</button>
+      </form>
+    </main>
+    ${footer}
+  </body>
+</html>
+    `)
+  }
+
+  function processBody (request, body, done) {
+    storage.project.update(slug, (project, done) => {
+      if (project.badges.verified) {
+        project.price = body.price
+      } else {
+        Object.keys(fields).forEach(key => {
+          project[key] = body[key]
+        })
+      }
+      done()
+    }, done)
+  }
+
+  function onSuccess (request, response, body) {
+    serve303(request, response, `/~${slug}`)
+  }
+}
+
+function serveProjectForCustomers (request, response) {
   const { handle, project } = request.parameters
   const slug = `${handle}/${project}`
 
@@ -2316,21 +2453,6 @@ function serveProject (request, response) {
     project.account = redactedAccount(data.account)
     project.slug = slug
     serveView(request, response, project, data => {
-      const customersList = data.customers.length === 0
-        ? ''
-        : html`
-<ol id=customers>
-  ${data.customers.map(c => html`
-  <li>
-    <img
-        src="${c.gravatar}"
-        alt="${escapeHTML(c.name)}">
-    <span class=name>${escapeHTML(c.name)}</span>
-    ${c.affiliations && `<span class=affiliations>${escapeHTML(c.affiliations)}</span>`}
-  </li>
-  `)}
-</ol>
-        `
       return html`
 <!doctype html>
 <html lang=en-US>
@@ -2344,7 +2466,7 @@ function serveProject (request, response) {
     <main role=main>
       <h2>${data.project}</h2>
       ${badgesList(data)}
-      ${customersList}
+      ${customersList(data)}
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price.toString()}</span></p>
@@ -2395,6 +2517,22 @@ function serveProject (request, response) {
       done(null, data)
     })
   }
+}
+
+function customersList (project) {
+  return project.customers.length === 0 ? '' : html`
+<ol id=customers>
+  ${project.customers.map(c => html`
+  <li>
+    <img
+        src="${c.gravatar}"
+        alt="${escapeHTML(c.name)}">
+    <span class=name>${escapeHTML(c.name)}</span>
+    ${c.affiliations && `<span class=affiliations>${escapeHTML(c.affiliations)}</span>`}
+  </li>
+  `)}
+</ol>
+  `
 }
 
 function buyForm (data) {
@@ -3151,6 +3289,13 @@ function formRoute ({
     function proceed () {
       if (requireAuthentication && !request.account) {
         return serve303(request, response, '/login')
+      }
+      if (
+        typeof requireAuthentication === 'string' &&
+        request.account.handle !== requireAuthentication
+      ) {
+        response.statusCode = 403
+        return response.end()
       }
       if (isGet) return get(request, response)
       post(request, response)

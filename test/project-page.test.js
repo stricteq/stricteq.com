@@ -6,6 +6,7 @@ const login = require('./login')
 const logout = require('./logout')
 const mail = require('../mail')
 const server = require('./server')
+const setValue = require('./set-value')
 const signup = require('./signup')
 const simpleConcat = require('simple-concat')
 const tape = require('tape')
@@ -128,6 +129,49 @@ tape('project page', test => {
       const img = await browser.$('#customers li img')
       const alt = await img.getAttribute('alt')
       test.equal(alt, customerName, 'Gravatar on project page')
+    })().then(finish).catch(finish)
+
+    function finish (error) {
+      test.ifError(error)
+      test.end()
+      done()
+    }
+  }, 8080)
+})
+
+tape('project edit form', test => {
+  const newPrice = 123
+  const newURL = 'http://changed.com'
+  const newCategory = 'application'
+  server((port, done) => {
+    (async () => {
+      const browser = await webdriver()
+      await signup({ browser, port, name, location, handle, password, email })
+      await login({ browser, port, handle, password })
+      await createProject({ browser, port, project, urls, price, category })
+      // Change url.
+      await setValue(browser, '#projectForm input[name=urls]', newURL)
+      // Change category.
+      const categorySelect = await browser.$('#projectForm select[name="category"]')
+      await categorySelect.selectByVisibleText(newCategory)
+      // Change price.
+      await setValue(browser, '#projectForm input[name=price]', newPrice)
+      await click(browser, '#projectForm button[type=submit]')
+      // Log out and visit project page as customer.
+      await logout({ browser, port })
+      await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
+      // Verify price updated.
+      const priceElement = await browser.$('#price')
+      const priceText = await priceElement.getText()
+      test.equal(priceText, `$${newPrice}`, 'price')
+      // Verify new URL.
+      const updatedLink = await browser.$(`a[href="${newURL}"]`)
+      await updatedLink.waitForExist()
+      test.pass('URL')
+      // Verify new category.
+      const categoryElement = await browser.$('#category')
+      const categoryPrice = await categoryElement.getText()
+      test.equal(categoryPrice, newCategory, 'category')
     })().then(finish).catch(finish)
 
     function finish (error) {
