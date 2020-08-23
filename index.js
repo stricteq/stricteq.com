@@ -279,7 +279,7 @@ function meta ({
 <meta name="og:title" content="${escapeHTML(title)}">
 <meta name="og:description" content="${escapeHTML(description)}">
 <meta name="og:image" content="${process.env.BASE_HREF}/logo-on-white-100.png">
-<meta name="og:site" content="stricteq">
+<meta name="og:site" content="${escapeHTML(constants.website)}">
     `
   }
   returned += html`
@@ -537,7 +537,7 @@ function serveSignUp (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'sign up for stricteq' })}
+    ${meta({ title, description: 'sign up for strictEq' })}
     <title>${title}</title>
   </head>
   <body>
@@ -838,7 +838,7 @@ function serveCreate (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'register a new stricteq project' })}
+    ${meta({ title, description: 'register a new strictEq project' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1269,7 +1269,7 @@ function serveHandle (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'find your stricteq handle' })}
+    ${meta({ title, description: 'find your strictEq handle' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1692,7 +1692,7 @@ function getWithToken (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'change your stricteq password' })}
+    ${meta({ title, description: 'change your strictEq password' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1901,7 +1901,7 @@ function serveReset (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'reset your stricteq password' })}
+    ${meta({ title, description: 'reset your strictEq password' })}
     <title>${title}</title>
   </head>
   <body>

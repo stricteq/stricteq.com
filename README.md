@@ -1,4 +1,4 @@
-# stricteq
+# strictEq
 
 next evolution of [License Zero](https://licensezero.com)
 

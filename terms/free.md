@@ -1,7 +1,7 @@
 ---
-title: stricteq Free License
+title: strictEq Free License
 version: 1.0.0
-summary: terms for free use of stricteq projects
+summary: terms for free use of strictEq projects
 ---
 
 Everything not prohibited is permitted.

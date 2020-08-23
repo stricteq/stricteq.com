@@ -1,5 +1,5 @@
 ---
-title: stricteq Terms of Service
+title: strictEq Terms of Service
 summary: terms for use of stricteq.com
 ---
 

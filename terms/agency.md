@@ -1,7 +1,7 @@
 ---
-title: stricteq Agency Terms
+title: strictEq Agency Terms
 version: 1.0.0
-summary: terms for selling through stricteq
+summary: terms for selling through strictEq
 ---
 
 To offer to license or relicense a project through stricteq.com, you must agree to these terms, an addition to the stricteq.com terms of service, for your project.

@@ -1,5 +1,5 @@
 ---
-title: stricteq Privacy Notice
+title: strictEq Privacy Notice
 summary: privacy information and practices
 ---
 
