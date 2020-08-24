@@ -1,6 +1,6 @@
 ---
 title: strictEq Free License
-version: 1.0.0
+version: 1.1.0
 summary: terms for free use of strictEq projects
 ---
 
@@ -8,7 +8,11 @@ Everything not prohibited is permitted.
 
 <h2 id="prohibited-purposes">Prohibited Purposes</h2>
 
-You may not use the software to make money or for work, except for brief trial periods to verify that the software works as described, such as by running on test data or integrating into private, proof-of-concept prototype projects.
+You may not use the software to make money or for work, except for [Free Trials](#free-trials).
+
+<h2 id="free-trials">Free Trials</h2>
+
+You may use the software for brief trial periods to verify that the software works as described, such as by running on test data or integrating into private, proof-of-concept prototypes.
 
 <h2 id="acceptance">Acceptance</h2>
 
