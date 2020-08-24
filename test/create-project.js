@@ -38,6 +38,7 @@ module.exports = ({
     .then(input => input.selectByVisibleText(language))
     .then(() => browser.$('#createForm select[name="category"]'))
     .then(input => input.selectByVisibleText(category))
+    .then(() => click(browser, '#createForm input[name=terms]'))
     .then(() => click(browser, '#createForm button[type="submit"]'))
     .catch(callback)
 }

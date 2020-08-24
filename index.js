@@ -820,7 +820,11 @@ function serveCreate (request, response) {
     urls: urlsField,
     price: projectPriceField,
     language: projectLanguageField,
-    category: projectCategoryField
+    category: projectCategoryField,
+    terms: {
+      displayName: 'terms checkbox',
+      validate: e => e === 'accepted'
+    }
   }
 
   formRoute({
@@ -898,6 +902,16 @@ function serveCreate (request, response) {
           required>
         ${data.price.error}
         <p>Cost of <a href=/paid>a license</a> in United States Dollars.</p>
+        <label>
+          <input
+              name=terms
+              type=checkbox
+              value=accepted
+              required>
+          Check this box to access the
+          <a href=/agency target=_blank>agency terms</a>.
+        </label>
+        ${data.terms.error}
         <button type=submit>${title}</button>
       </form>
     </main>
