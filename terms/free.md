@@ -10,7 +10,7 @@ Everything not prohibited is permitted.
 
 You may not use the software to make money or for work, except for brief trial periods to verify that the software works as described, such as by running on test data or integrating into private, proof-of-concept prototype projects.
 
-<h2 id=acceptance>Acceptance</h2>
+<h2 id="acceptance">Acceptance</h2>
 
 To receive this license, you have to agree to its rules.  Those rules are both obligations under that agreement and conditions to your license.  Don't do anything with the software against any rule you can't or won't follow.
 
