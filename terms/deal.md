@@ -1,5 +1,5 @@
 ---
-title: The Deal
+title: The Standard Deal
 version: 1.1.0
 summary: deal for use of strictEq projects
 ---
