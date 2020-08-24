@@ -396,7 +396,7 @@ function serveHomepage (request, response) {
               class=project
               href=/~${entry.handle}/${entry.project}
             >${entry.project}</a>
-          ${badgesList(entry)}
+          ${badgesList(entry, ['featured'])}
           <span class=tagline>${escapeHTML(entry.tagline)}</span>
           <span class=langauge>${escapeHTML(entry.language)}</span>
           <span class=currency>$${entry.price}</span>
@@ -3120,14 +3120,16 @@ function iso3166ToEnglish (code) {
   return parsed.name + ', ' + parsed.countryName
 }
 
-function badgesList (project) {
+function badgesList (project, suppress = []) {
   const badges = project.badges
-  const hasSomeBadge = Object.keys(badges).some(key => badges[key])
+  const hasSomeBadge = Object.keys(badges)
+    .some(key => badges[key] && !suppress.includes(key))
   if (!hasSomeBadge) return ''
   return html`
 <ul class=badges>${
   projectBadges
     .filter(badge => project.badges[badge.key])
+    .filter(badge => !suppress.includes(badge.key))
     .map(badge => `<li>${badgeImage(badge)}</li>`)
 }</ul>
   `
