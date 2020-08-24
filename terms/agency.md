@@ -1,54 +1,50 @@
 ---
 title: strictEq Agency Terms
-version: 1.0.0
+version: 2.0.0
 summary: terms for selling through strictEq
 ---
 
-To offer to license or relicense a project through stricteq.com, you must agree to these terms, an addition to the stricteq.com terms of service, for your project.
+To offer licenses for a software project through stricteq.com, you must agree to these terms, an addition to the stricteq.com terms of service, for your project.  These terms make Artless Devices LLC your agent, with the power to sell licenses for your project on your behalf.
 
-# Private License Agent
+# Free Licensing
 
-You appoint Artless Devices LLC your agent to license the software project that you offer through stricteq.com  Artless Devices may sign license agreements on your behalf, and those licenses will have the same legal effect as if you signed them yourself.
+You agree to license your project to the public for free on your choice of the terms of the standard deal published on stricteq.com at this time, any later version published on stricteq.com, or any new terms published on stricteq.com as an approved free license choice.
 
-# Private License Terms
+# Paid License Agent
 
-Artless Devices may only sign licenses on your behalf on the terms of the current form private license agreements published on stricteq.com at the time of each purchase, for the prices you set via stricteq.com.
+You appoint Artless Devices your agent to license your project through stricteq.com.  Artless Devices may sign paid license on your behalf, and those licenses will have the same legal effect as if you signed them yourself.
+
+# Paid License Terms
+
+Artless Devices may only sign paid licenses on your behalf on the terms of the current form paid license agreements published on stricteq.com at the time of each purchase, for the price you set via stricteq.com.
 
 # Pricing Changes
 
-Unless you lock your project, you may change prices for licensing and relicensing through stricteq.com.  If you change prices, Artless Devices may continue to license and relicense at the old prices with customers who began the purchase process before you made your changes, but Artless Devices agrees to use your new pricing for all new purchases.
+You may change price through stricteq.com.  When you change your price, Artless Devices may continue to sell licenses at your old price to customers who began the purchase process before you made your change. However,  Artless Devices will use your new price for new purchases going forward.
 
 # Forms Changes 
 
-Artless Devices may change the terms of the current form private licenses and relicense agreement.
+Artless Devices may change the standard deal, its form free license, and its form paid license at any time.
 
 # Commission
 
-As commission, you will pay Artless Devices one percent of the total cost of private licenses and any relicense agreement that Artless Devices sells on your behalf, calculated before payment processing fees.  Artless Devices will take its commission by instructing the payment processor to deposit commission in its own account, directly, on making each sale.  Other than payment processing fees, Artless Devices will cover its own expenses of offering private licenses and any relicense agreement.
+You will pay Artless Devices a percent of the total cost of paid licenses that Artless Devices sells on your behalf, calculated before payment processing fees, at the rate currently published on the pricing page of stricteq.com.  Artless Devices will take its commission by instructing the payment processor to deposit commission in its own account, directly, on making each sale.  Other than payment processing fees, Artless Devices will cover its own expenses of offering paid licenses.
 
 # Warranties
 
-You promise that you are legally entitled to grant private licenses and enter any relicense agreement that you offer through stricteq.com, and will be as long as the agency relationship continues.  You promise that that you are not breaching any agreement with anyone else by agreeing to these agency terms.
+You promise that you are legally entitled to grant free and paid licenses for your project, and will be as long as the agency relationship continues.  You promise that that you are not breaking any agreement with anyone else by agreeing to these terms.
 
 # Ending the Relationship
 
-Unless your project is locked, you may end the agency relationship for the project at any time, by retracting your project via stricteq.com.  Artless Devices may continue to license and relicense with customers who began the purchase process before you retracted your project.  Artless Devices may end the agency relationship at any time.
-
-# Other Relicensing
-
-You agree to retract your project through stricteq.com if you ever publicly license your project on terms other than those of the latest version of a public license published on stricteq.com as an approved public license when you offered the project, any later version published on stricteq.com, or any new public license published on stricteq.com as an approved public license.
-
-# Metadata
-
-You agree to maintain metadata in your project's manifest file as generated by the command-line interface provided by Artless Devices.
+You may end the agency relationship for the project at any time by retracting your project from sale via stricteq.com.  Artless Devices may continue to sell licenses to customers who began the purchase process before you retracted your project.  Artless Devices may also end the agency relationship at any time.
 
 # Not Exclusive
 
-You may license and relicense your project on your own, without Artless Devices, and appoint other agents to do so.  You will not owe Artless Devices commission on licensing or relicensing on your own or through other agents.
+You may license your project on your own, without Artless Devices, and appoint other agents to do so.  You will not owe Artless Devices commission on licensing on your own or through other agents.
 
 # Promotion
 
-Artless Devices may advertise and otherwise promote your project and the sale of private licenses and any relicense agreement, but these terms do not obligate Artless Devices to do so.
+Artless Devices may advertise and otherwise promote your project and the sale of paid licenses for it, but these terms do not obligate Artless Devices to do so.
 
 # Communication
 
