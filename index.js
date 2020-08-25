@@ -36,6 +36,7 @@ const runAuto = require('run-auto')
 const runParallel = require('run-parallel')
 const runParallelLimit = require('run-parallel-limit')
 const runSeries = require('run-series')
+const semver = require('semver')
 const send = require('send')
 const signatures = require('./signatures')
 const simpleConcatLimit = require('simple-concat-limit')
@@ -170,6 +171,8 @@ const staticFiles = [
   'buy.js'
 ]
 
+const terms = ['service', 'agency', 'privacy', 'free', 'paid', 'deal']
+
 // Function for http.createServer()
 module.exports = (request, response) => {
   const parsed = request.parsed = parseURL(request.url, true)
@@ -184,23 +187,11 @@ module.exports = (request, response) => {
     })
   }
   // Terms
-  if (pathname === '/service') {
-    return serveTerms(request, response, 'service')
-  }
-  if (pathname === '/agency') {
-    return serveTerms(request, response, 'agency')
-  }
-  if (pathname === '/privacy') {
-    return serveTerms(request, response, 'privacy')
-  }
-  if (pathname === '/free') {
-    return serveTerms(request, response, 'free')
-  }
-  if (pathname === '/paid') {
-    return serveTerms(request, response, 'paid')
-  }
-  if (pathname === '/deal') {
-    return serveTerms(request, response, 'deal')
+  for (let index = 0; index < terms.length; index++) {
+    const slug = terms[index]
+    if (pathname.startsWith(`/${slug}`)) {
+      return serveTerms(request, response, slug)
+    }
   }
   // Static Files
   const basename = path.basename(pathname)
@@ -420,14 +411,35 @@ function serveFile (request, response, file) {
 }
 
 function serveTerms (request, response, slug) {
-  fs.readFile(
-    path.join(__dirname, 'terms', `${slug}.md`),
-    'utf8',
-    (error, read) => {
-      if (error) return serve500(request, response, error)
-      const { content, data: { title, version, summary } } = grayMatter(read)
-      response.setHeader('Content-Type', 'text/html')
-      response.end(html`
+  fs.readdir(path.join(__dirname, 'terms', slug), (error, entries) => {
+    if (error) return serve500(request, response, error)
+    const versions = entries
+      .map(entry => path.basename(entry, '.md'))
+      .sort(semver.rcompare)
+    const latest = versions[0]
+    const split = request.pathname.split('/')
+    if (split.length > 3) {
+      return serve404(request, response)
+    }
+    if (split.length === 2) {
+      // Redirect to latest version.
+      return serve303(request, response, `/${slug}/${latest}`)
+    }
+    // Serve requested version.
+    const version = split[2]
+    fs.readFile(
+      path.join(__dirname, 'terms', slug, `${version}.md`),
+      'utf8',
+      (error, read) => {
+        if (error) {
+          if (error.code === 'ENOENT') {
+            return serve404(request, response)
+          }
+          return serve500(request, response, error)
+        }
+        const { content, data: { title, summary } } = grayMatter(read)
+        response.setHeader('Content-Type', 'text/html')
+        response.end(html`
 <!doctype html>
 <html lang=en-US>
   <head>
@@ -439,15 +451,16 @@ function serveTerms (request, response, slug) {
     ${header}
     <main role=main>
       <h1>${escapeHTML(title)}</h1>
-      ${version && `<p class=version>Version ${version}</p>`}
+      ${`<p class=version>Version ${version}</p>`}
       <article class=terms>${markdown(content)}</article>
     </main>
     ${footer}
   </body>
 </html>
-      `)
-    }
-  )
+        `)
+      }
+    )
+  })
 }
 
 // https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address

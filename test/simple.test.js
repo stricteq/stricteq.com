@@ -39,48 +39,6 @@ simple({
 })
 
 simple({
-  path: '/service',
-  status: 200,
-  mime: 'text/html',
-  content: 'Terms of Service'
-})
-
-simple({
-  path: '/agency',
-  status: 200,
-  mime: 'text/html',
-  content: 'Agency Terms'
-})
-
-simple({
-  path: '/privacy',
-  status: 200,
-  mime: 'text/html',
-  content: 'Privacy'
-})
-
-simple({
-  path: '/free',
-  status: 200,
-  mime: 'text/html',
-  content: 'Free License'
-})
-
-simple({
-  path: '/paid',
-  status: 200,
-  mime: 'text/html',
-  content: 'Paid License'
-})
-
-simple({
-  path: '/deal',
-  status: 200,
-  mime: 'text/html',
-  content: 'The Deal'
-})
-
-simple({
   path: '/buy.js',
   status: 200,
   mime: 'application/javascript; charset=UTF-8',
