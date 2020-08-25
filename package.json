@@ -59,7 +59,7 @@
     "gotchas": "! git grep tape.only test && ! git grep console.log test && ! git grep console.error test && ! git grep saveScreenshot test",
     "licenses": "licensee --errors-only",
     "lint": "standard",
-    "spelling": "mdspell --ignore-numbers --en-us -r **/*.md",
+    "spelling": "mdspell --ignore-numbers --en-us -r $(git ls-files | grep '.md$')",
     "test": "NODE_ENV=test tape test/*.test.js"
   }
 }
