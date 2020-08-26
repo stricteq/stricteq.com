@@ -952,6 +952,7 @@ function serveCreate (request, response) {
         customers: [],
         badges: {},
         category,
+        onSale: true,
         created
       }, (error, success) => {
         if (error) return done(error)
@@ -2500,6 +2501,11 @@ function serveProjectForDeveloper (request, response) {
   const title = slug
 
   const fields = {
+    onSale: {
+      displayName: 'on sale',
+      filter: e => e === 'true',
+      validate: e => e === true || e === false
+    },
     tagline: projectTaglineField,
     pitch: projectPitchField,
     urls: urlsField,
@@ -2555,6 +2561,23 @@ function serveProjectForDeveloper (request, response) {
       <form id=projectForm method=post>
         ${data.error}
         ${data.csrf}
+        <label>
+          <input
+              type=checkbox
+              name=onSale
+              ${data.onSale.value && 'checked'}
+              value=true>
+            On Sale
+        </label>
+        <label>
+          <input
+              type=checkbox
+              name=onSale
+              ${!data.onSale.value && 'checked'}
+              value=false>
+            Sales Suspended
+        </label>
+        ${data.onSale.error}
         ${projectTaglineInput({ value: data.tagline.value, autofocus: true })}
         ${data.tagline.error}
         ${projectPitchInput({ value: data.pitch.value })}
@@ -2613,6 +2636,7 @@ function serveProjectForDeveloper (request, response) {
         project.price = body.price
         project.pitch = body.pitch
         project.tagline = body.tagline
+        project.onSale = body.onSale === 'true'
       } else {
         Object.keys(fields).forEach(key => {
           project[key] = body[key]
@@ -2643,6 +2667,14 @@ function serveProjectForCustomers (request, response) {
     project.account = redactedAccount(data.account)
     project.slug = slug
     serveView(request, response, project, data => {
+      const readyToSell = (
+        data.account.stripe.connected &&
+        (
+          !request.account ||
+          request.account.handle !== data.account.handle
+        ) &&
+        data.onSale
+      )
       return html`
 <!doctype html>
 <html lang=en-US>
@@ -2669,13 +2701,7 @@ function serveProjectForCustomers (request, response) {
       <p class=created>Since ${data.created}</p>
       <article class=pitch>${markdown(data.pitch || '', { safe: true })}</article>
       ${
-        (
-          data.account.stripe.connected &&
-          (
-            !request.account ||
-            request.account.handle !== data.account.handle
-          )
-        )
+        readyToSell
           ? buyForm({
             csrf: csrf.inputs({
               action: '/buy',
@@ -2946,6 +2972,16 @@ function serveBuy (request, response) {
         done()
       },
 
+      // Make sure project is on sale.
+      done => {
+        if (!projectData.onSale) {
+          const notOnSaleError = new Error('project is not on sale')
+          notOnSaleError.statusCode = 400
+          return done(notOnSaleError)
+        }
+        done()
+      },
+
       // Create an order.
       done => {
         orderID = uuid.v4()
@@ -3161,6 +3197,7 @@ function redactedProject (project) {
     'language',
     'price',
     'project',
+    'onSale',
     'tagline',
     'urls'
   ])
