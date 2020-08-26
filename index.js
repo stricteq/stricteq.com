@@ -834,6 +834,14 @@ function serveCreate (request, response) {
     price: projectPriceField,
     language: projectLanguageField,
     category: projectCategoryField,
+    blog: {
+      displayName: 'blog post',
+      boolean: true
+    },
+    tweet: {
+      displayname: 'tweet',
+      boolean: true
+    },
     terms: {
       displayName: 'terms checkbox',
       validate: e => e === 'accepted'
@@ -925,6 +933,26 @@ function serveCreate (request, response) {
           <a href=/agency target=_blank>agency terms</a>.
         </label>
         ${data.terms.error}
+        <label>
+          <input
+            name=tweet
+            type=checkbox
+            value=true
+            ${data.tweet.value && 'checked'}>
+          Would you like
+          <a href=https://twitter.com/${constants.twitter}>@${constants.twitter}</a>
+          to tweet about your project?
+        </label>
+        ${data.tweet.error}
+        <label>
+          <input
+            name=blog
+            type=checkbox
+            value=true
+            ${data.blog.value && 'checked'}>
+          Would you like to discuss a blog post about your project?
+        </label>
+        ${data.blog.error}
         <button type=submit>${title}</button>
       </form>
     </main>
@@ -981,7 +1009,9 @@ function serveCreate (request, response) {
             `Language: ${language}`,
             `Price: $${price}`,
             `URLs: ${urls.map(u => `<${u}>`).join(', ')}`,
-            `E-Mail: ${category}`
+            `Blog?: ${body.blog}`,
+            `Tweet?: ${body.tweet}`,
+            `URL: <https://stricteq.com/${handle}/${project}`
           ].join('\n\n')
         }, error => {
           // Eat errors.
@@ -2503,8 +2533,7 @@ function serveProjectForDeveloper (request, response) {
   const fields = {
     onSale: {
       displayName: 'on sale',
-      filter: e => e === 'true',
-      validate: e => e === true || e === false
+      boolean: true
     },
     tagline: projectTaglineField,
     pitch: projectPitchField,
@@ -3586,7 +3615,10 @@ function formRoute ({
   const fieldNames = Object.keys(fields)
   fieldNames.forEach(fieldName => {
     const description = fields[fieldName]
-    if (typeof description.validate !== 'function') {
+    if (
+      !description.boolean &&
+      typeof description.validate !== 'function'
+    ) {
       throw new TypeError('missing validate function for ' + fieldName)
     }
     if (!description.displayName) {
@@ -3631,8 +3663,11 @@ function formRoute ({
       })
     } else {
       fieldNames.forEach(fieldName => {
+        const description = fields[fieldName]
         data[fieldName] = {
-          value: fields[fieldName].array ? [] : '',
+          value: description.array
+            ? []
+            : description.boolean ? false : '',
           error: false
         }
       })
@@ -3700,6 +3735,7 @@ function parseAndValidatePostBody ({
   fieldNames.forEach(name => {
     if (body[name] !== undefined) return
     if (fields[name].array) body[name] = []
+    else if (fields[name].boolean) body[name] = false
     else body[name] = ''
   })
 
@@ -3735,6 +3771,10 @@ function parseAndValidatePostBody ({
           }
           const description = fields[name]
           if (!description) return
+          if (description.boolean) {
+            body[name] = value === 'true'
+            return
+          }
           const filteredValue = description.filter
             ? description.filter(value)
             : value
@@ -3753,6 +3793,7 @@ function parseAndValidatePostBody ({
       const description = fields[fieldName]
       const value = body[fieldName]
       const isArray = description.array
+      if (description.boolean && typeof value === 'boolean') continue
       if (
         description.optional &&
         (
