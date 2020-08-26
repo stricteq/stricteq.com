@@ -514,6 +514,10 @@ function serveSignUp (request, response) {
 
   const fields = {
     name: nameField,
+    organization: {
+      displayName: 'organization',
+      boolean: true
+    },
     location: locationField,
     email: {
       displayName: 'e-mail address',
@@ -564,6 +568,17 @@ function serveSignUp (request, response) {
         ${data.csrf}
         ${nameInput({ value: data.name.value, autofocus: true })}
         ${data.name.error}
+        <label>
+          <input
+              name=organization
+              type=checkbox
+              value=true
+              ${data.organization.value && 'checked'}>
+          Check this box if this account is for a
+          company, organization, or other group,
+          rather than an individual.
+        </label>
+        ${data.organization.error}
         ${locationInput(data.location.value)}
         ${data.location.error}
         ${eMailInput({
@@ -617,7 +632,7 @@ function serveSignUp (request, response) {
   }
 
   function processBody (request, body, done) {
-    const { handle, email, password, name, location, urls } = body
+    const { handle, email, password, name, location, urls, organization } = body
     runSeries([
       // Check if e-mail already used.
       done => {
@@ -640,6 +655,7 @@ function serveSignUp (request, response) {
             done => {
               storage.account.create(handle, {
                 handle,
+                organization,
                 email,
                 passwordHash,
                 name,
@@ -717,6 +733,7 @@ function serveSignUp (request, response) {
           subject: 'Sign Up',
           text: [
             `Name: ${name}`,
+            `Organization: ${organization}`,
             `E-Mail: ${email}`,
             `Handle: ${handle}`,
             `Location: ${location} (${iso3166ToEnglish(location)})`
@@ -2424,6 +2441,7 @@ function redactedAccount (account) {
     'handle',
     'location',
     'name',
+    'organization',
     'projects',
     'urls'
   ])
@@ -2754,6 +2772,7 @@ function serveProjectForCustomers (request, response) {
 
     function accountValue (key) {
       if (!request.account) return {}
+      if (request.account.organization) return {}
       return { value: request.account[key] }
     }
   })
