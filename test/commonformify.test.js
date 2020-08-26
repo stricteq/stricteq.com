@@ -6,7 +6,7 @@ const path = require('path')
 
 tape('commonformify', test => {
   fs.readFile(
-    path.join(__dirname, '..', 'terms', 'paid.md'),
+    path.join(__dirname, '..', 'terms', 'paid', '1.0.0.md'),
     'utf8',
     (error, read) => {
       test.ifError(error, 'read error')
