@@ -38,8 +38,12 @@ const server = require('http').createServer()
 const handle = require('./')
 
 server.on('request', (request, response) => {
-  addLoggers(request, response)
-  handle(request, response)
+  try {
+    addLoggers(request, response)
+    handle(request, response)
+  } catch (error) {
+    request.log.error(error)
+  }
 })
 
 server.listen(process.env.PORT || 8080, () => {
