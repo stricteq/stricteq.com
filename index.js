@@ -164,8 +164,6 @@ const staticFiles = [
   'styles.css',
   'normalize.css',
   'credits.txt',
-  // TODO: Relaxe robots.txt.
-  'robots.txt',
   'logo.svg',
   'logo-on-white-100.png',
   'buy.js'
