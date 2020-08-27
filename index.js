@@ -823,7 +823,7 @@ const projectPitchField = (() => {
     displayName: 'pitch',
     filter: e => e.trim(),
     validate: e => e.length >= minLength && e.length <= maxLength,
-    html: 'Pitch must be ' +
+    html: 'Pitches must be ' +
       '<a href=https://commonmark.org>valid CommonMark</a>.'
   }
 })()
