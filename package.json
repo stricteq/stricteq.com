@@ -27,7 +27,7 @@
     "semver": "^7.3.2",
     "send": "^0.17.1",
     "simple-concat-limit": "^2.0.3",
-    "split2": "^3.1.1",
+    "split2": "^3.2.2",
     "stripe": "^8.88.0",
     "through2": "^4.0.2",
     "url-parse": "^1.4.7",
