@@ -22,7 +22,7 @@
     "run-auto": "^2.0.4",
     "run-parallel": "^1.1.10",
     "run-parallel-limit": "^1.0.6",
-    "run-series": "^1.1.8",
+    "run-series": "^1.1.9",
     "secure-password": "^4.0.0",
     "semver": "^7.3.2",
     "send": "^0.17.1",
