@@ -4,7 +4,7 @@
     "busboy": "^0.3.1",
     "commonform-commonmark": "^6.0.0",
     "commonform-docx": "^5.4.0",
-    "commonmark": "^0.29.1",
+    "commonmark": "^0.29.2",
     "cookie": "^0.4.1",
     "do-not-cache": "^1.0.1",
     "escape-html": "^1.0.3",
