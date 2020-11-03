@@ -184,8 +184,9 @@ function readFile (options, callback) {
       /* istanbul ignore next */
       return callback(error)
     }
+    let parsed
     try {
-      var parsed = serialization.parse(data)
+      parsed = serialization.parse(data)
     } catch (error) {
       /* istanbul ignore next */
       return callback(error)

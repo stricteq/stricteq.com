@@ -1309,7 +1309,7 @@ function loadAccountLock (request, data, done) {
   storage.account.read(handle, (error, account) => {
     if (error) return done(error)
     if (!account) {
-      var notFound = new Error('account not found')
+      const notFound = new Error('account not found')
       notFound.statusCode = 404
       return done(error)
     }
@@ -1421,7 +1421,7 @@ function errorIfAccountVerified (handle) {
     if (error) return done(error)
     if (!account) return done(new Error('no account record'))
     if (account.badges.verified) {
-      var verifiedError = new Error('verified account')
+      const verifiedError = new Error('verified account')
       verifiedError.statusCode = 400
       return done(verifiedError)
     }
@@ -1591,7 +1591,7 @@ function serveProfile (request, response) {
     storage.account.read(handle, (error, account) => {
       if (error) return done(error)
       if (!account) {
-        var notFound = new Error('account not found')
+        const notFound = new Error('account not found')
         notFound.statusCode = 404
         return done(error)
       }
@@ -2156,7 +2156,7 @@ function serveConnected (request, response) {
     let token
     return runSeries([
       done => {
-        var form = new FormData()
+        const form = new FormData()
         form.append('grant_type', 'authorization_code')
         form.append('code', code)
         form.append('client_secret', environment.STRIPE_SECRET_KEY)
@@ -2301,7 +2301,7 @@ function serveUserPage (request, response) {
     account: done => storage.account.read(handle, (error, account) => {
       if (error) return done(error)
       if (!account) {
-        var notFound = new Error('not found')
+        const notFound = new Error('not found')
         notFound.statusCode = 404
         return done(error)
       }
@@ -2573,7 +2573,7 @@ function serveProjectForDeveloper (request, response) {
     storage.project.read(slug, (error, project) => {
       if (error) return done(error)
       if (!project) {
-        var notFound = new Error('not found')
+        const notFound = new Error('not found')
         notFound.statusCode = 404
         return done(error)
       }
@@ -2779,7 +2779,7 @@ function serveProjectForCustomers (request, response) {
     return done => read(name, (error, data) => {
       if (error) return done(error)
       if (!data) {
-        var notFound = new Error(`${typeString} not found`)
+        const notFound = new Error(`${typeString} not found`)
         notFound.statusCode = 404
         return done(error)
       }
@@ -2789,7 +2789,9 @@ function serveProjectForCustomers (request, response) {
 }
 
 function customersList (project) {
-  return project.customers.length === 0 ? '' : html`
+  return project.customers.length === 0
+    ? ''
+    : html`
 <ol id=customers>
   ${project.customers.map(c => html`
   <li>
@@ -2887,7 +2889,7 @@ function buyForm (data) {
 
 function locationOptions () {
   return locations.map(function (code) {
-    var parsed = iso31662.subdivision(code)
+    const parsed = iso31662.subdivision(code)
     return html`
 <option value="${escapeHTML(code)}">
   ${escapeHTML(parsed.countryName)}:

@@ -1,4 +1,5 @@
-// Storea and Verify Passwords
+// Store and Verify Passwords
+/* eslint-disable no-var */
 
 const expired = require('./expired')
 const storage = require('./storage')

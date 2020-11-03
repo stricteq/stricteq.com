@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 document.addEventListener('DOMContentLoaded', function () {
   var form = document.getElementById('buyForm')
   var stripe = window.Stripe(window.STRIPE_PUBLISHABLE_KEY)
