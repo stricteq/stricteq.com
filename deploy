@@ -6,5 +6,5 @@ git fetch origin
 git reset --hard origin/main
 new_hash="$(shasum package-lock.json)"
 [ "$old_hash" != "$new_hash" ] && npm ci
+systemctl --user restart stricteq
 SCRIPT
-ssh root@stricteq.com "systemctl restart stricteq.service"
