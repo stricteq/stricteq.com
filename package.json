@@ -1,4 +1,5 @@
 {
+  "name": "stricteq.com",
   "private": true,
   "dependencies": {
     "busboy": "^0.3.1",
