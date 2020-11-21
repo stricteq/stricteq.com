@@ -899,6 +899,7 @@ function serveCreate (request, response) {
             required>
         ${data.project.error}
         <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
+        <p>${projects.html}</p>
         ${projectTaglineInput({ value: data.tagline.value })}
         ${data.tagline.error}
         ${projectTaglineField.html}
