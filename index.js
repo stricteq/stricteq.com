@@ -929,7 +929,7 @@ function serveCreate (request, response) {
             value="${escapeHTML(data.urls.value[2] || '')}">
         ${data.urls.error}
         <p>URLs for your project, such as its source code repository and homepage.</p>
-        <label for=price>Price</label>
+        <label for=price>Price (USD)</label>
         <input
           name=price
           type=number
@@ -1023,7 +1023,7 @@ function serveCreate (request, response) {
             `Tagline: ${tagline}`,
             `Category: ${category}`,
             `Language: ${language}`,
-            `Price: $${price}`,
+            `Price (USD): $${price}`,
             `URLs: ${urls.map(u => `<${u}>`).join(', ')}`,
             `Blog?: ${body.blog}`,
             `Tweet?: ${body.tweet}`,
@@ -2659,7 +2659,7 @@ function serveProjectForDeveloper (request, response) {
             ${data.verified && 'disabled'}
             value="${escapeHTML(data.urls.value[2] || '')}">
         ${data.urls.error}
-        <label for=price>Price</label>
+        <label for=price>Price (USD)</label>
         <input
           name=price
           type=number
