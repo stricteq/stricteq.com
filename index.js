@@ -42,6 +42,7 @@ const signatures = require('./signatures')
 const simpleConcatLimit = require('simple-concat-limit')
 const storage = require('./storage')
 const uuid = require('uuid')
+const validation = require('./validation')
 
 // Read environment variables.
 const environment = require('./environment')()
@@ -67,39 +68,9 @@ routes.set('/disconnect', serveDisconnect) // disconnect Stripe
 routes.set('/buy', serveBuy) // buy licenses
 routes.set('/pricing', servePricing)
 
-// Validation Rules for Account Names
-const handles = (() => {
-  const pattern = '[a-z0-9]{3,16}'
-  const re = new RegExp(`^${pattern}$`)
-  return {
-    pattern,
-    validate: string => re.test(string),
-    html: 'Handles must be ' +
-      'made of the characters ‘a’ through ‘z’ ' +
-      'and the digits ‘0’ through ‘9’. ' +
-      'They must be at least three characters long, ' +
-      'but no more than sixteen.'
-  }
-})()
-
-// Validation Rules for Project Names
-const projects = (() => {
-  const pattern = '[a-z0-9]{3,16}'
-  const re = new RegExp(`^${pattern}$`)
-  return {
-    pattern,
-    validate: string => re.test(string),
-    html: 'Project names must be ' +
-      'made of the characters ‘a’ through ‘z’ ' +
-      'and the digits ‘0’ through ‘9’. ' +
-      'They must be at least three characters long, ' +
-      'but no more than sixteen.'
-  }
-})()
-
 // Regular Expression For /~{handle} and /~{handle}/{project} Routing
-const userPagePathRE = new RegExp(`^/~(${handles.pattern})$`)
-const projectPagePathRE = new RegExp(`^/~(${handles.pattern})/(${projects.pattern})$`)
+const userPagePathRE = new RegExp(`^/~(${validation.handles.pattern})$`)
+const projectPagePathRE = new RegExp(`^/~(${validation.handles.pattern})/(${validation.projects.pattern})$`)
 
 // Badges for Accounts
 const accountBadges = [
@@ -466,25 +437,6 @@ const EMAIL_RE = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0
 
 const UUID_RE = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/
 
-// Validation Rules for Passwords
-const passwords = (() => {
-  const min = 8
-  const max = 64
-  const pattern = exports.pattern = `.{${min},${max}}`
-  const re = new RegExp(`^${pattern}$`)
-  return {
-    pattern,
-    validate: string => {
-      if (!re.test(string)) return false
-      const length = string.length
-      return length >= min && length <= max
-    },
-    html: 'Passwords must be ' +
-      `at least ${min} characters, ` +
-      `and no more than ${max}.`
-  }
-})()
-
 const nameField = {
   displayName: 'name',
   filter: e => e.trim(),
@@ -526,11 +478,11 @@ function serveSignUp (request, response) {
     handle: {
       displayName: 'handle',
       filter: e => e.toLowerCase().trim(),
-      validate: handles.validate
+      validate: validation.handles.validate
     },
     password: {
       display: 'password',
-      validate: passwords.validate
+      validate: validation.passwords.validate
     },
     repeat: {
       display: 'password repeat',
@@ -607,19 +559,19 @@ function serveSignUp (request, response) {
             name=handle
             type=text
             placeholder=charlie5
-            pattern="^${handles.pattern}$"
+            pattern="^${validation.handles.pattern}$"
             value="${escapeHTML(data.handle.value || '')}"
             required>
         ${data.handle.error}
         <p>Your callsign on ${constants.website}. Your profile page will be ${process.env.BASE_HREF}/~{handle}.</p>
-        <p>${handles.html}</p>
+        <p>${validation.handles.html}</p>
         <p>Please respect others who have registered a particular handle in several other places, like Twitter, GitHub, npm, and so on. In general, handles are first-come, first-served. But ${constants.website} may require changes to avoid confusion.</p>
         ${passwordInput({})}
         ${data.password.error}
         ${passwordRepeatInput()}
         ${data.repeat.error}
         <p>Please pick a strong password or passphrase just for ${constants.website}. ${constants.website} does <em>not</em> yet support two-factor authentication.</p>
-        <p>${escapeHTML(passwords.html)}</p>
+        <p>${escapeHTML(validation.passwords.html)}</p>
         <button type=submit>${title}</button>
       </form>
     </main>
@@ -841,7 +793,7 @@ function serveCreate (request, response) {
     project: {
       display: 'project name',
       filter: e => e.toLowerCase().trim(),
-      validate: projects.validate
+      validate: validation.projects.validate
     },
     tagline: projectTaglineField,
     pitch: projectPitchField,
@@ -893,13 +845,13 @@ function serveCreate (request, response) {
         <input
             name=project
             type=text
-            pattern="^${projects.pattern}$"
+            pattern="^${validation.projects.pattern}$"
             value="${escapeHTML(data.project.value || '')}"
             autofocus
             required>
         ${data.project.error}
         <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
-        <p>${projects.html}</p>
+        <p>${validation.projects.html}</p>
         ${projectTaglineInput({ value: data.tagline.value })}
         ${data.tagline.error}
         ${projectTaglineField.html}
@@ -1829,7 +1781,7 @@ function postPassword (request, response) {
       fields: {
         password: {
           displayName: 'password',
-          validate: passwords.validate
+          validate: validation.passwords.validate
         },
         repeat: {
           displayName: 'password repeat',
@@ -1843,7 +1795,7 @@ function postPassword (request, response) {
         old: {
           displayName: 'old password',
           optional: true,
-          validate: passwords.validate
+          validate: validation.passwords.validate
         }
       }
     }, (error, result) => {
@@ -1958,7 +1910,7 @@ function serveReset (request, response) {
   const fields = {
     handle: {
       displayName: 'handle',
-      validate: handles.validate
+      validate: validation.handles.validate
     }
   }
 
@@ -1991,7 +1943,7 @@ function serveReset (request, response) {
             name=handle
             type=text
             value="${escapeHTML(data.handle.value)}"
-            pattern="^${handles.pattern}$"
+            pattern="^${validation.handles.pattern}$"
             required
             autofocus
             autocomplete=off>
@@ -2909,12 +2861,12 @@ function serveBuy (request, response) {
     handle: {
       displayName: 'handle',
       filter: e => e.toLowerCase().trim(),
-      validate: handles.validate
+      validate: validation.handles.validate
     },
     project: {
       displayName: 'project',
       filter: e => e.toLowerCase().trim(),
-      validate: projects.validate
+      validate: validation.projects.validate
     },
     name: {
       displayName: 'name',
@@ -3602,7 +3554,7 @@ function passwordRepeatInput () {
 <input
     name=repeat
     type=password
-    pattern="^${passwords.pattern}$"
+    pattern="^${validation.passwords.pattern}$"
     required
     autocomplete=off>
   `
