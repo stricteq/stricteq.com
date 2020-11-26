@@ -1,32 +1,36 @@
 // Validate user inputs.
 
+const alnum = '[a-z0-9]'
+
 // Account Names
 exports.handles = (() => {
-  const pattern = '[a-z0-9]{3,16}'
+  const pattern = `${alnum}(${alnum}|[-_](?=${alnum})){0,38}`
   const re = new RegExp(`^${pattern}$`)
   return {
     pattern,
     validate: string => re.test(string),
     html: 'Handles must be ' +
-      'made of the characters ‘a’ through ‘z’ ' +
-      'and the digits ‘0’ through ‘9’. ' +
+      'made of the characters ‘a’ through ‘z’, ' +
+      'the digits ‘0’ through ‘9’, ' +
+      'hyphens, and underscores.' +
       'They must be at least three characters long, ' +
-      'but no more than sixteen.'
+      'but no more than thirty-eight.' +
+      'Handles can’t start with hypens or underscores, ' +
+      'and two hyphens or underscores can’t appear in a row.'
   }
 })()
 
 // Project Names
 exports.projects = (() => {
-  const pattern = '[a-z0-9]{3,16}'
+  const pattern = '[a-z0-9-_]{1,64}'
   const re = new RegExp(`^${pattern}$`)
   return {
     pattern,
     validate: string => re.test(string),
     html: 'Project names must be ' +
-      'made of the characters ‘a’ through ‘z’ ' +
-      'and the digits ‘0’ through ‘9’. ' +
-      'They must be at least three characters long, ' +
-      'but no more than sixteen.'
+      'made of the characters ‘a’ through ‘z’, ' +
+      'the digits ‘0’ through ‘9’, ' +
+      'hyphens, and underscores.'
   }
 })()
 

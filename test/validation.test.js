@@ -2,19 +2,61 @@ const tape = require('tape')
 const validation = require('../validation')
 
 tape('handle validation', test => {
-  test.assert(validation.handles.validate('kemitchell'))
-  test.assert(validation.handles.validate('ten10'))
+  const valid = [
+    'kemitchell',
+    'kyle_mitchell',
+    'kyle-mitchell',
+    'ten10'
+  ]
+  const invalid = [
+    'Кайл',
+    'kyle--mitchell',
+    'kyle-_mitchell'
+  ]
+  const validate = validation.handles.validate
+  valid.forEach(example => {
+    test.assert(validate(example), `"${example}" valid`)
+  })
+  invalid.forEach(example => {
+    test.assert(!validate(example), `"${example}" invalid`)
+  })
   test.end()
 })
 
 tape('project name validation', test => {
-  test.assert(validation.projects.validate('superlibrary'))
-  test.assert(validation.projects.validate('framework10'))
+  const valid = [
+    'superlibrary',
+    'framework10',
+    'test-framework',
+    'test_framework',
+    '_underscore'
+  ]
+  const invalid = [
+    '...'
+  ]
+  const validate = validation.projects.validate
+  valid.forEach(example => {
+    test.assert(validate(example), `"${example}" valid`)
+  })
+  invalid.forEach(example => {
+    test.assert(!validate(example), `"${example}" invalid`)
+  })
   test.end()
 })
 
 tape('password validation', test => {
-  test.assert(validation.passwords.validate('not a very secure one'))
-  test.assert(validation.passwords.validate('feeth~ohHie1'))
+  const valid = [
+    'not very secure'
+  ]
+  const invalid = [
+    'short'
+  ]
+  const validate = validation.passwords.validate
+  valid.forEach(example => {
+    test.assert(validate(example), `"${example}" valid`)
+  })
+  invalid.forEach(example => {
+    test.assert(!validate(example), `"${example}" invalid`)
+  })
   test.end()
 })
