@@ -11,6 +11,7 @@ const constants = require('./constants')
 const cookie = require('cookie')
 const crypto = require('crypto')
 const csrf = require('./csrf')
+const displayDate = require('./display-date')
 const doNotCache = require('do-not-cache')
 const docxToPDF = require('./docx-to-pdf')
 const escapeHTML = require('escape-html')
@@ -2739,15 +2740,6 @@ function serveProjectForCustomers (request, response) {
       done(null, data)
     })
   }
-}
-
-function displayDate (iso8601) {
-  const displayed = new Date(iso31662).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-  return html`<date datetime="${iso8601}">${displayed}</date>`
 }
 
 function customersList (project) {
