@@ -4,7 +4,7 @@ const alnum = '[a-z0-9]'
 
 // Account Names
 exports.handles = (() => {
-  const pattern = `${alnum}(${alnum}|[-_](?=${alnum})){0,38}`
+  const pattern = `${alnum}(?:${alnum}|[-_](?=${alnum})){0,38}`
   const re = new RegExp(`^${pattern}$`)
   return {
     pattern,
