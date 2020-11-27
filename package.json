@@ -48,7 +48,7 @@
     "sodium-native": "^3.2.0",
     "standard": "^16.0.3",
     "tape": "^5.0.1",
-    "webdriverio": "^6.9.1"
+    "webdriverio": "^6.10.0"
   },
   "scripts": {
     "audit": "npm audit --production | tee audit.log",
