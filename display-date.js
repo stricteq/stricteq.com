@@ -1,12 +1,8 @@
 const html = require('./html')
+const englishMonths = require('english-months')
 
-module.exports = (string) => html`
-<date datetime="${string}">${new Date(string).toLocaleDateString(
-  'en-US',
-  {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }
-)}</date>
-`
+module.exports = (string) => {
+  const date = new Date(string)
+  const displayed = `${englishMonths[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
+  return html`<date datetime="${string}">${displayed}</date>`
+}
