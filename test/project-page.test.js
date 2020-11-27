@@ -23,7 +23,7 @@ const urls = ['http://example.com']
 const price = 100
 const category = 'library'
 
-tape('project page', test => {
+tape.only('project page', test => {
   const customerName = 'Jon Doe'
   const customerEMail = 'jon@exaple.com'
   const customerLocation = 'US-CA'

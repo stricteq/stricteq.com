@@ -32,6 +32,7 @@ module.exports = (callback, port) => {
     }
     directory = tmp
     process.env.DIRECTORY = tmp
+    console.log('%s is %j', 'directory', directory)
     webServer = http.createServer((request, response) => {
       addLoggers(request, response)
       handle(request, response)
@@ -77,7 +78,7 @@ module.exports = (callback, port) => {
   function cleanup () {
     mail.events.removeAllListeners()
     if (webServer) webServer.close()
-    if (directory) rimraf(directory, () => {})
+    // if (directory) rimraf(directory, () => {})
     if (stripeCLI) stripeCLI.kill()
   }
 }

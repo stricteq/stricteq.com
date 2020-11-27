@@ -1215,7 +1215,7 @@ function serveAccount (request, response) {
     ${header}
     <main role=main>
       <h2>${title}</h2>
-      <p class=joined>Joined ${escapeHTML(account.created)}</p>
+      <p class=joined>Joined ${escapeHTML(displayDate(account.created))}</p>
       ${account.stripe.connected ? disconnectLink() : connectLink()}
       <a class=button href=/create>Create Project</a>
       <a class=button href=/password>Change Password</a>
@@ -2696,7 +2696,7 @@ function serveProjectForCustomers (request, response) {
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price}</span></p>
-      <p class=created>Since ${data.created}</p>
+      <p class=created>Since ${displayDate(data.created)}</p>
       <article class=pitch>${markdown(data.pitch || '', { safe: true })}</article>
       ${
         readyToSell
@@ -2739,6 +2739,15 @@ function serveProjectForCustomers (request, response) {
       done(null, data)
     })
   }
+}
+
+function displayDate (iso8601) {
+  const displayed = new Date(iso31662).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+  return html`<date datetime="${iso8601}">${displayed}</date>`
 }
 
 function customersList (project) {
