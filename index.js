@@ -2700,11 +2700,13 @@ function serveProjectForCustomers (request, response) {
     <main role=main>
       <h2>${data.project}</h2>
       <p class=tagline>${escapeHTML(data.tagline)}</p>
+      <p class=byline>by <a class=handle href=/~${handle}>${handle}</a></p>
       ${badgesList(data)}
-      <p class=category>${data.category}</p>
-      ${data.language && `<p class=language>${escapeHTML(data.language)}</p>`}
+      <p>
+        <span class=category>${data.category}</span>
+        ${data.language && `, <span class=language>${escapeHTML(data.language)}</span>`}
+      </p>
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
-      <p class=handle><a href=/~${handle}>${handle}</a></p>
       <p class=price><span id=price class=currency>$${data.price}</span></p>
       <p class=created>Since ${displayDate(data.created)}</p>
       <article class=pitch>${markdown(data.pitch || '', { safe: true })}</article>
