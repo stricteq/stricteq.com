@@ -2703,8 +2703,9 @@ function serveProjectForCustomers (request, response) {
       <p class=byline>by <a class=handle href=/~${handle}>${handle}</a></p>
       ${badgesList(data)}
       <p>
-        <span class=category>${data.category}</span>
-        ${data.language && `, <span class=language>${escapeHTML(data.language)}</span>`}
+        <span class=category>${data.category}</span>${
+          data.language && `, <span class=language>${escapeHTML(data.language)}</span>`
+        }
       </p>
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
       <p class=price><span id=price class=currency>$${data.price}</span></p>
