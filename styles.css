@@ -253,20 +253,28 @@ h2 {
   columns: 3;
 }
 
-.customer li {
-  display: inline-block;
+.customers ol {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-.customer li img {
+.customers li {
+  display: inline-block;
+  margin: 0.5rem;
+  padding: 0.5rem;
+}
+
+.customers li img {
   width: 100%;
 }
 
-.customer li .name {
+.customers li .name {
   text-align: center;
   width: 100%;
 }
 
-.customer li .affiliations {
+.customers li .affiliations {
   text-align: center;
   width: 100%;
 }
