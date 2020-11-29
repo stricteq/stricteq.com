@@ -3365,7 +3365,7 @@ function serveStripeWebhook (request, response) {
           // Convert .docx to .pdf.
           done => docxToPDF(docxPath, error => {
             if (error) return done(error)
-            request.log.info({ path: pdfPath }, 'wrote')
+            request.log.info({ path: pdfPath }, 'wrote .pdf')
             done()
           }),
 
