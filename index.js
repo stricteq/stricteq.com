@@ -2730,11 +2730,11 @@ function serveProjectForCustomers (request, response) {
   })
 
   function read (read, name, typeString) {
-    return done => read(name, (error, data) => {
-      if (error) return done(error)
+    return done => read(name, (readError, data) => {
+      if (readError) return done(readError)
       if (!data) {
-        const notFound = new Error(`${typeString} not found`)
-        notFound.statusCode = 404
+        const error = new Error(`${typeString} not found`)
+        error.statusCode = 404
         return done(error)
       }
       done(null, data)
