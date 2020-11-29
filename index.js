@@ -2756,7 +2756,8 @@ function customersList (project) {
   return project.customers.length === 0
     ? ''
     : html`
-<ol id=customers>
+<h2>Supporters</h2>
+<ol id=customers class=customers>
   ${project.customers.map(c => html`
   <li>
     <img

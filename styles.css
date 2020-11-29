@@ -246,3 +246,27 @@ h2 {
   border-radius: 0.25rem;
   color: #a94442;
 }
+
+/* Customers/Supporters Lists */
+
+.customers {
+  columns: 3;
+}
+
+.customer li {
+  display: inline-block;
+}
+
+.customer li img {
+  width: 100%;
+}
+
+.customer li .name {
+  text-align: center;
+  width: 100%;
+}
+
+.customer li .affiliations {
+  text-align: center;
+  width: 100%;
+}
