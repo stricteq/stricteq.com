@@ -381,12 +381,8 @@ function serveFile (request, response, file) {
 }
 
 function serveTerms (request, response, slug) {
-  fs.readdir(path.join(__dirname, 'terms', slug), (error, entries) => {
+  latestTermsVersion(slug, (error, latest) => {
     if (error) return serve500(request, response, error)
-    const versions = entries
-      .map(entry => path.basename(entry, '.md'))
-      .sort(semver.rcompare)
-    const latest = versions[0]
     const split = request.pathname.split('/')
     if (split.length > 3) {
       return serve404(request, response)
@@ -430,6 +426,16 @@ function serveTerms (request, response, slug) {
         `)
       }
     )
+  })
+}
+
+function latestTermsVersion (basename, callback) {
+  fs.readdir(path.join(__dirname, 'terms', basename), (error, entries) => {
+    if (error) return callback(error)
+    const versions = entries
+      .map(entry => path.basename(entry, '.md'))
+      .sort(semver.rcompare)
+    callback(null, versions[0])
   })
 }
 
@@ -3314,54 +3320,57 @@ function serveStripeWebhook (request, response) {
 
           // Generate license .docx.
           done => {
-            fs.readFile(
-              path.join(__dirname, 'terms', 'paid.md'),
-              'utf8',
-              (error, markup) => {
-                if (error) return done(error)
-                let parsed
-                const munged = commonformify(markup)
-                try {
-                  parsed = cfCommonMark.parse(munged)
-                } catch (error) {
-                  request.log.error(error, 'Common Form parse')
-                }
-                const blanks = {
-                  'developer name': account.name,
-                  'developer location': account.location,
-                  'developer e-mail': account.email,
-                  'agent name': 'Artless Devices LLC',
-                  'agent location': 'US-CA',
-                  'agent website': 'https://artlessdevices.com',
-                  'user name': order.name,
-                  'user location': order.location,
-                  'user e-mail': order.email,
-                  'software URL': order.projectData.urls[0],
-                  'software category': order.projectData.category,
-                  price: order.projectData.price.toString(),
-                  date,
-                  term: 'forever'
-                }
-                cfDOCX(
-                  parsed.form,
-                  cfPrepareBlanks(blanks, parsed.directions),
-                  {
-                    title: parsed.frontMatter.title,
-                    edition: parsed.frontMatter.version,
-                    numbering: outlineNumbering
+            latestTermsVersion('paid', (error, version) => {
+              if (error) return done(error)
+              fs.readFile(
+                path.join(__dirname, 'terms', 'paid', `${version}.md`),
+                'utf8',
+                (error, markup) => {
+                  if (error) return done(error)
+                  let parsed
+                  const munged = commonformify(markup)
+                  try {
+                    parsed = cfCommonMark.parse(munged)
+                  } catch (error) {
+                    request.log.error(error, 'Common Form parse')
                   }
-                )
-                  .generateAsync({ type: 'nodebuffer' })
-                  .catch(error => done(error))
-                  .then(buffer => {
-                    fs.writeFile(docxPath, buffer, error => {
-                      if (error) return done(error)
-                      request.log.info({ path: docxPath }, 'wrote .docx')
-                      done()
+                  const blanks = {
+                    'developer name': account.name,
+                    'developer location': account.location,
+                    'developer e-mail': account.email,
+                    'agent name': 'Artless Devices LLC',
+                    'agent location': 'US-CA',
+                    'agent website': 'https://artlessdevices.com',
+                    'user name': order.name,
+                    'user location': order.location,
+                    'user e-mail': order.email,
+                    'software URL': order.projectData.urls[0],
+                    'software category': order.projectData.category,
+                    price: order.projectData.price.toString(),
+                    date,
+                    term: 'forever'
+                  }
+                  cfDOCX(
+                    parsed.form,
+                    cfPrepareBlanks(blanks, parsed.directions),
+                    {
+                      title: parsed.frontMatter.title,
+                      edition: parsed.frontMatter.version,
+                      numbering: outlineNumbering
+                    }
+                  )
+                    .generateAsync({ type: 'nodebuffer' })
+                    .catch(error => done(error))
+                    .then(buffer => {
+                      fs.writeFile(docxPath, buffer, error => {
+                        if (error) return done(error)
+                        request.log.info({ path: docxPath }, 'wrote .docx')
+                        done()
+                      })
                     })
-                  })
-              }
-            )
+                }
+              )
+            })
           },
 
           // Convert .docx to .pdf.
