@@ -1216,7 +1216,7 @@ function serveAccount (request, response) {
     ${header}
     <main role=main>
       <h2>${title}</h2>
-      <p class=joined>Joined ${escapeHTML(displayDate(account.created))}</p>
+      <p class=joined>Joined ${displayDate(account.created)}</p>
       ${account.stripe.connected ? disconnectLink() : connectLink()}
       <a class=button href=/create>Create Project</a>
       <a class=button href=/password>Change Password</a>
