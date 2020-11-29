@@ -42,6 +42,7 @@ const send = require('send')
 const signatures = require('./signatures')
 const simpleConcatLimit = require('simple-concat-limit')
 const storage = require('./storage')
+const testEvents = require('./test-events')
 const uuid = require('uuid')
 const validation = require('./validation')
 
@@ -2178,6 +2179,9 @@ function serveConnected (request, response) {
       response.statusCode = 303
       response.setHeader('Location', '/account')
       response.end()
+      if (!environment.production) {
+        testEvents.emit('connected', { handle: account.handle })
+      }
     })
   }
 
@@ -3274,6 +3278,9 @@ function serveStripeWebhook (request, response) {
         request.log.info({ handle }, 'Stripe disconnected')
         response.statusCode = 200
         response.end()
+        if (!environment.production) {
+          testEvents.emit(type, { handle })
+        }
       })
 
     // Handle payment success.
@@ -3463,6 +3470,9 @@ function serveStripeWebhook (request, response) {
             return response.end()
           }
           response.end()
+          if (!environment.production) {
+            testEvents.emit(type, { orderID })
+          }
         })
       })
     }

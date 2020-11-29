@@ -4,12 +4,12 @@ const createProject = require('./create-project')
 const http = require('http')
 const login = require('./login')
 const logout = require('./logout')
-const mail = require('../mail')
 const server = require('./server')
 const setValue = require('./set-value')
 const signup = require('./signup')
 const simpleConcat = require('simple-concat')
 const tape = require('tape')
+const testEvents = require('../test-events')
 const timeout = require('./timeout')
 const webdriver = require('./webdriver')
 
@@ -93,7 +93,7 @@ tape('project page', test => {
       await Promise.all([
         // Listen for customer e-mail.
         new Promise((resolve, reject) => {
-          mail.events.on('sent', options => {
+          testEvents.on('sent', options => {
             if (options.to !== customerEMail) return
             test.equal(options.to, customerEMail, 'e-mail TO customer')
             test.equal(options.cc, email, 'e-mail CC developer')
@@ -119,10 +119,19 @@ tape('project page', test => {
         (async () => {
           // Click the buy button.
           await click(browser, '#buyForm button[type=submit]')
-          const p = await browser.$('.message')
-          await p.waitForExist({ timeout: 10000 })
-          const message = await p.getText()
-          test.assert(message.includes('Thank you', 'confirmation'))
+          await Promise.all([
+            new Promise((resolve, reject) => {
+              testEvents.once('payment_intent.succeeded', () => {
+                resolve()
+              })
+            }),
+            async () => {
+              const p = await browser.$('.message')
+              await p.waitForExist({ timeout: 10000 })
+              const message = await p.getText()
+              test.assert(message.includes('Thank you', 'confirmation'))
+            }
+          ])
         })()
       ])
       await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)

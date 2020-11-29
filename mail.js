@@ -16,9 +16,7 @@ if (environment.production) {
   })
   module.exports = transport.sendMail.bind(transport)
 } else /* in testing */ {
-  // Send messages to an EventEmitter.
-  const EventEmitter = require('events').EventEmitter
-  const emitter = new EventEmitter()
+  const emitter = require('./test-events')
   module.exports = (options, callback) => {
     // This delay prevents tests from visiting account-confirmation
     // pages before the app has time to persist the tokens.
