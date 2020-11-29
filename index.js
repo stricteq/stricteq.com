@@ -3228,7 +3228,7 @@ function redactedProject (project) {
 }
 
 function serveStripeWebhook (request, response) {
-  simpleConcatLimit(response, 32768, (error, buffer) => {
+  simpleConcatLimit(request, 32768, (error, buffer) => {
     if (error) {
       request.log.error(error)
       response.statusCode = 413
