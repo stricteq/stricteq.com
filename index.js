@@ -3229,7 +3229,11 @@ function redactedProject (project) {
 
 function serveStripeWebhook (request, response) {
   simpleConcatLimit(response, 32768, (error, buffer) => {
-    if (error) return fail(error)
+    if (error) {
+      request.log.error(error)
+      response.statusCode = 413
+      return response.end()
+    }
 
     let event
     try {
@@ -3250,11 +3254,12 @@ function serveStripeWebhook (request, response) {
 
     // Ignore test-mode events in production.
     if (environment.production && !event.testmode) {
-      return response.end()
+      return request.log.error('test mode Stripe event')
     }
 
     // Handle Stripe Connect Deauthorizations
     if (type === 'account.application.deauthorized') {
+      acceptEvent()
       const stripeID = event.account
       request.log.info({ stripeID }, 'Stripe ID')
       let handle
@@ -3273,10 +3278,8 @@ function serveStripeWebhook (request, response) {
         }, done),
         done => storage.stripeID.delete(stripeID, done)
       ], error => {
-        if (error) return fail(error)
+        if (error) return request.log.error(error)
         request.log.info({ handle }, 'Stripe disconnected')
-        response.statusCode = 200
-        response.end()
         if (!environment.production) {
           testEvents.emit(type, { handle })
         }
@@ -3284,27 +3287,15 @@ function serveStripeWebhook (request, response) {
 
     // Handle payment success.
     } else if (type === 'payment_intent.succeeded') {
+      acceptEvent()
       const intent = event.data.object
       const orderID = intent.metadata.orderID
-      if (!orderID) {
-        response.statusCode = 500
-        request.log.error('no orderID metadata')
-        return response.end()
-      }
+      if (!orderID) return request.log.error('no orderID metadata')
       request.log.info({ orderID }, 'payment succeeded')
       const date = new Date().toISOString()
       return storage.order.read(orderID, (error, order) => {
-        if (error) {
-          request.log.error(error, 'error reading order')
-          response.statusCode = 500
-          return response.end()
-        }
-        if (!order) {
-          request.log.error(error, 'error reading order')
-          response.statusCode = 500
-          return response.end()
-        }
-
+        if (error) return request.log.error(error)
+        if (!order) return request.log.error('error reading order')
         const handle = order.handle
         const project = order.project
         let account, signature
@@ -3313,10 +3304,7 @@ function serveStripeWebhook (request, response) {
         runSeries([
           // Read account.
           done => storage.account.read(handle, (error, data) => {
-            if (error) {
-              error.statusCode = 500
-              return done(error)
-            }
+            if (error) return done(error)
             account = data
             done()
           }),
@@ -3463,12 +3451,7 @@ function serveStripeWebhook (request, response) {
             done()
           })
         ], error => {
-          if (error) {
-            request.log.error(error)
-            response.statusCode = 500
-            return response.end()
-          }
-          response.end()
+          if (error) return request.log.error(error)
           if (!environment.production) {
             testEvents.emit(type, { orderID })
           }
@@ -3476,14 +3459,17 @@ function serveStripeWebhook (request, response) {
       })
     }
 
-    response.statusCode = 400
-    response.end()
+    rejectEvent()
   })
 
-  function fail (error) {
-    request.log.error(error)
-    response.statusCode = 500
-    return response.end()
+  function acceptEvent () {
+    response.statusCode = 200
+    response.end()
+  }
+
+  function rejectEvent () {
+    response.statusCode = 400
+    response.end()
   }
 }
 
