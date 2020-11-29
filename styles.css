@@ -250,17 +250,19 @@ h2 {
 /* Customers/Supporters Lists */
 
 .customers {
-  columns: 3;
-}
-
-.customers ol {
-  list-style-type: none;
-  margin: 0;
+  align-content: space-around;
+  align-items: stretch;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin: 1rem 0;
   padding: 0;
 }
 
 .customers li {
-  display: inline-block;
+  display: block;
+  flex-basis: 7rem;
   margin: 0.5rem;
   padding: 0.5rem;
 }
