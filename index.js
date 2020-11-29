@@ -3228,7 +3228,7 @@ function redactedProject (project) {
 }
 
 function serveStripeWebhook (request, response) {
-  simpleConcatLimit(request, 2048, (error, buffer) => {
+  simpleConcatLimit(response, 32768, (error, buffer) => {
     if (error) return fail(error)
 
     let event
