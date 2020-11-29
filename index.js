@@ -2701,7 +2701,6 @@ function serveProjectForCustomers (request, response) {
       <h2>${data.project}</h2>
       <p class=tagline>${escapeHTML(data.tagline)}</p>
       ${badgesList(data)}
-      ${customersList(data)}
       <p class=category>${data.category}</p>
       ${data.language && `<p class=language>${escapeHTML(data.language)}</p>`}
       <ul class=urls>${data.urls.map(url => `<li>${urlLink(url)}</li>`)}</ul>
@@ -2709,6 +2708,7 @@ function serveProjectForCustomers (request, response) {
       <p class=price><span id=price class=currency>$${data.price}</span></p>
       <p class=created>Since ${displayDate(data.created)}</p>
       <article class=pitch>${markdown(data.pitch || '', { safe: true })}</article>
+      ${customersList(data)}
       ${
         readyToSell
           ? buyForm({
