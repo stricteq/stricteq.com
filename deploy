@@ -1,4 +1,5 @@
 #!/bin/sh
+git push origin
 ssh www@stricteq.com <<'SCRIPT'
 cd /var/www/stricteq/
 old_hash="$(shasum package-lock.json)"
