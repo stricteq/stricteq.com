@@ -3245,14 +3245,13 @@ function serveStripeWebhook (request, response) {
       return response.end()
     }
 
-    request.log.info({ type: event.type }, 'Stripe webhook event')
+    const { id, type } = event
+    request.log.info({ id, type }, 'Stripe webhook event')
 
     // Ignore test-mode events in production.
     if (environment.production && !event.testmode) {
       return response.end()
     }
-
-    const type = event.type
 
     // Handle Stripe Connect Deauthorizations
     if (type === 'account.application.deauthorized') {
