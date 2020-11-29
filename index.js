@@ -590,11 +590,11 @@ function serveSignUp (request, response) {
         storage.email.read(email, (error, record) => {
           if (error) return done(error)
           if (!record) return done()
-          const hasAccount = new Error('e-mail address has an account')
-          hasAccount.hasAccount = true
-          hasAccount.statusCode = 401
-          hasAccount.fieldName = 'email'
-          done(hasAccount)
+          const hasAccountError = new Error('e-mail address has an account')
+          hasAccountError.hasAccount = true
+          hasAccountError.statusCode = 401
+          hasAccountError.fieldName = 'email'
+          done(hasAccountError)
         })
       },
 
@@ -626,10 +626,10 @@ function serveSignUp (request, response) {
               }, (error, success) => {
                 if (error) return done(error)
                 if (!success) {
-                  const error = new Error('handle taken')
-                  error.handle = handle
-                  error.statusCode = 400
-                  return done(error)
+                  const handleTakenError = new Error('handle taken')
+                  handleTakenError.handle = handle
+                  handleTakenError.statusCode = 400
+                  return done(handleTakenError)
                 }
                 done()
               })
@@ -954,9 +954,9 @@ function serveCreate (request, response) {
       }, (error, success) => {
         if (error) return done(error)
         if (!success) {
-          const error = new Error('project nmame taken')
-          error.statusCode = 400
-          return done(error)
+          const nameTakenError = new Error('project name taken')
+          nameTakenError.statusCode = 400
+          return done(nameTakenError)
         }
         done()
       }),
@@ -1263,9 +1263,9 @@ function loadAccountLock (request, data, done) {
   storage.account.read(handle, (error, account) => {
     if (error) return done(error)
     if (!account) {
-      const notFound = new Error('account not found')
-      notFound.statusCode = 404
-      return done(error)
+      const notFoundError = new Error('account not found')
+      notFoundError.statusCode = 404
+      return done(notFoundError)
     }
     if (account.badges.verified) data.verified = true
     done()
@@ -1449,10 +1449,10 @@ function serveEMail (request, response) {
       done => storage.email.read(email, (error, record) => {
         if (error) return done(error)
         if (record) {
-          const error = new Error('e-mail already has an account')
-          error.fieldName = 'email'
-          error.statusCode = 400
-          return done(error)
+          const hasAccountError = new Error('e-mail already has an account')
+          hasAccountError.fieldName = 'email'
+          hasAccountError.statusCode = 400
+          return done(hasAccountError)
         }
         done()
       }),
@@ -1545,9 +1545,9 @@ function serveProfile (request, response) {
     storage.account.read(handle, (error, account) => {
       if (error) return done(error)
       if (!account) {
-        const notFound = new Error('account not found')
-        notFound.statusCode = 404
-        return done(error)
+        const notFoundError = new Error('account not found')
+        notFoundError.statusCode = 404
+        return done(notFoundError)
       }
       if (account.badges.verified) data.verified = true
       const fields = ['name', 'location', 'affiliations']
@@ -1843,16 +1843,16 @@ function postPassword (request, response) {
     const token = body.token
     if (token) return done()
     if (!request.account) {
-      const unauthorized = new Error('unauthorized')
-      unauthorized.statusCode = 401
-      return done(unauthorized)
+      const unauthorizedError = new Error('unauthorized')
+      unauthorizedError.statusCode = 401
+      return done(unauthorizedError)
     }
     handle = request.account.handle
     passwordStorage.verify(handle, body.old, error => {
       if (error) {
-        const invalidOldPassword = new Error('invalid password')
-        invalidOldPassword.statusCode = 400
-        return done(invalidOldPassword)
+        const invalidOldPasswordError = new Error('invalid password')
+        invalidOldPasswordError.statusCode = 400
+        return done(invalidOldPasswordError)
       }
       return done()
     })
@@ -1868,9 +1868,9 @@ function postPassword (request, response) {
           tokenData.action !== 'reset password' ||
           expired.token(tokenData)
         ) {
-          const failed = new Error('invalid token')
-          failed.statusCode = 401
-          return done(failed)
+          const invalidTokenError = new Error('invalid token')
+          invalidTokenError.statusCode = 401
+          return done(invalidTokenError)
         }
         storage.token.use(token, error => {
           if (error) return done(error)
@@ -1963,9 +1963,9 @@ function serveReset (request, response) {
     storage.account.read(handle, (error, account) => {
       if (error) return done(error)
       if (!account) {
-        const invalid = new Error('invalid handle')
-        invalid.statusCode = 400
-        return done(invalid)
+        const invalidHandleError = new Error('invalid handle')
+        invalidHandleError.statusCode = 400
+        return done(invalidHandleError)
       }
       const token = uuid.v4()
       storage.token.create(token, {
@@ -2255,9 +2255,9 @@ function serveUserPage (request, response) {
     account: done => storage.account.read(handle, (error, account) => {
       if (error) return done(error)
       if (!account) {
-        const notFound = new Error('not found')
-        notFound.statusCode = 404
-        return done(error)
+        const notFoundError = new Error('not found')
+        notFoundError.statusCode = 404
+        return done(notFoundError)
       }
       done(null, redactedAccount(account))
     }),
@@ -2527,9 +2527,9 @@ function serveProjectForDeveloper (request, response) {
     storage.project.read(slug, (error, project) => {
       if (error) return done(error)
       if (!project) {
-        const notFound = new Error('not found')
-        notFound.statusCode = 404
-        return done(error)
+        const notFoundError = new Error('not found')
+        notFoundError.statusCode = 404
+        return done(notFoundError)
       }
       Object.keys(fields).forEach(key => {
         data[key] = { value: project[key] }
@@ -2733,9 +2733,9 @@ function serveProjectForCustomers (request, response) {
     return done => read(name, (readError, data) => {
       if (readError) return done(readError)
       if (!data) {
-        const error = new Error(`${typeString} not found`)
-        error.statusCode = 404
-        return done(error)
+        const notFoundError = new Error(`${typeString} not found`)
+        notFoundError.statusCode = 404
+        return done(notFoundError)
       }
       done(null, data)
     })
@@ -2934,14 +2934,14 @@ function serveBuy (request, response) {
         storage.account.read(handle, (error, data) => {
           if (error) return done(error)
           if (!data) {
-            const error = new Error('no such account')
-            error.statusCode = 400
-            return done(error)
+            const noAccountError = new Error('no such account')
+            noAccountError.statusCode = 400
+            return done(noAccountError)
           }
           if (!data.stripe.connected) {
-            const error = new Error('account not set up to sell')
-            error.statusCode = 400
-            return done(error)
+            const notSellingError = new Error('account not set up to sell')
+            notSellingError.statusCode = 400
+            return done(notSellingError)
           }
           accountData = data
           done()
@@ -2954,10 +2954,10 @@ function serveBuy (request, response) {
         storage.project.read(name, (error, data) => {
           if (error) return done(error)
           if (!data) {
-            const error = new Error('no such project')
-            error.fieldName = 'project'
-            error.statusCode = 400
-            return done(error)
+            const noSuchProjectError = new Error('no such project')
+            noSuchProjectError.fieldName = 'project'
+            noSuchProjectError.statusCode = 400
+            return done(noSuchProjectError)
           }
           projectData = redactedProject(data)
           done()
@@ -3778,9 +3778,9 @@ function parseAndValidatePostBody ({
         ? value.every(value => description.validate(value || '', body))
         : description.validate(value || '', body)
       if (valid) continue
-      const error = new Error('invalid ' + description.displayName)
-      error.statusCode = 401
-      return done(error)
+      const invalidError = new Error('invalid ' + description.displayName)
+      invalidError.statusCode = 401
+      return done(invalidError)
     }
     csrf.verify({
       action,
@@ -3893,8 +3893,8 @@ function authenticate (request, response, handler) {
       if (error) return serve500(request, response, error)
       const account = results.account
       if (!account) {
-        const error = new Error('could not load account')
-        return serve500(request, response, error)
+        const accountLoad = new Error('could not load account')
+        return serve500(request, response, accountLoad)
       }
       if (account.confirmed) request.account = account
       proceed()
