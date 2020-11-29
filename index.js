@@ -3245,7 +3245,7 @@ function serveStripeWebhook (request, response) {
       return response.end()
     }
 
-    request.log.info({ event }, 'Stripe webhook event')
+    request.log.info({ type: event.type }, 'Stripe webhook event')
 
     // Ignore test-mode events in production.
     if (environment.production && !event.testmode) {
