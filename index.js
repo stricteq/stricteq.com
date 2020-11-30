@@ -3172,9 +3172,9 @@ function servePricing (request, response) {
         section of the agency terms</a> for specifics.
       </p>
       <p>
-        Developers also pay <a href=https://stripe.com>Stripe</a>
-        for payment processing.  As of May 2020, Stripe offers
-        2.9% plus 30&cent; for new accounts.
+        Developers also pay for <a href=https://stripe.com>Stripe</a>
+        payment processing.  As of May 2020, Stripe charges
+        2.9% plus 30&cent;.
       </p>
       <p>
         Depending on the jurisdictions of the buyer and the
