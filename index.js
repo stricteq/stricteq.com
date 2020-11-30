@@ -2939,7 +2939,7 @@ function serveBuy (request, response) {
 
   function processBody (request, body, done) {
     const { handle, project, name, email, location, token, price } = body
-    let accountData, projectData
+    let accountData, redactedProjectData, unredactedProjectData
     let orderID, paymentIntent
     const date = new Date().toISOString()
     runSeries([
@@ -2973,14 +2973,15 @@ function serveBuy (request, response) {
             noSuchProjectError.statusCode = 400
             return done(noSuchProjectError)
           }
-          projectData = redactedProject(data)
+          unredactedProjectData = data
+          redactedProjectData = redactedProject(data)
           done()
         })
       },
 
       // Make sure price hasn't changed.
       done => {
-        if (projectData.price !== parseInt(price)) {
+        if (redactedProjectData.price !== parseInt(price)) {
           const priceError = new Error('price changed')
           priceError.statusCode = 400
           return done(priceError)
@@ -2990,7 +2991,7 @@ function serveBuy (request, response) {
 
       // Make sure project is on sale.
       done => {
-        if (!projectData.onSale) {
+        if (!redactedProjectData.onSale) {
           const notOnSaleError = new Error('project is not on sale')
           notOnSaleError.statusCode = 400
           return done(notOnSaleError)
@@ -3009,7 +3010,7 @@ function serveBuy (request, response) {
           name,
           email,
           location,
-          projectData: projectData,
+          redactedProjectData,
           fulfilled: false
         }, error => {
           if (error) {
@@ -3023,7 +3024,8 @@ function serveBuy (request, response) {
 
       // https://stripe.com/docs/connect/destination-charges
       done => {
-        const amount = projectData.price * 100
+        const amount = redactedProjectData.price * 100
+        request.log.info({ amount }, 'charge amount')
         const stripeID = accountData.stripe.token.stripe_user_id
         const options = {
           amount,
@@ -3038,12 +3040,20 @@ function serveBuy (request, response) {
           on_behalf_of: stripeID,
           transfer_data: { destination: stripeID }
         }
-        // Stripe will not accept application_fee_amount=0.
-        const fee = Math.floor(
-          amount * (projectData.commission / 100)
-        )
-        if (fee > 0) options.application_fee_amount = fee
-        request.log.info({ options }, 'payment intent options')
+        // Calculate application fee.
+        const stripeFee = Math.round(amount * 0.029) + 30
+        const commissionRate = unredactedProjectData.commission / 100
+        const commission = Math.round(amount * commissionRate)
+        const fee = stripeFee + commission
+        options.application_fee_amount = fee
+        request.log.info({
+          amount,
+          stripeFee,
+          commissionRate,
+          commission,
+          fee
+        }, 'payment intent calculations')
+        // Create the payment intent.
         stripe.paymentIntents.create(options, (error, data) => {
           if (error) {
             const code = error.code
@@ -3337,9 +3347,9 @@ function serveStripeWebhook (request, response) {
                     'user name': order.name,
                     'user location': order.location,
                     'user e-mail': order.email,
-                    'software URL': order.projectData.urls[0],
-                    'software category': order.projectData.category,
-                    price: order.projectData.price.toString(),
+                    'software URL': order.redactedProjectData.urls[0],
+                    'software category': order.redactedProjectData.category,
+                    price: order.redactedProjectData.price.toString(),
                     date,
                     term: 'forever'
                   }
@@ -3402,7 +3412,7 @@ function serveStripeWebhook (request, response) {
               handle,
               project,
               orderID,
-              price: order.projectData.price,
+              price: order.redactedProjectData.price,
               signature
             }, error => {
               if (error) return done(error)
