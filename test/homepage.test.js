@@ -4,9 +4,9 @@ import runSeries from 'run-series'
 import server from './server.js'
 import simpleConcat from 'simple-concat'
 import * as storage from '../storage.js'
-import tape from 'tape'
+import tap from 'tap'
 
-tape('homepage', test => {
+tap.test('homepage', test => {
   const handle = 'test'
   const project = 'test'
   server((port, close) => {

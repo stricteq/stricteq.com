@@ -1,7 +1,7 @@
-import tape from 'tape'
+import tap from 'tap'
 import { token as tokenExpired } from '../expired.js'
 
-tape('expired unknown token', test => {
+tap.test('expired unknown token', test => {
   const token = {
     action: 'invalid action',
     created: new Date().toISOString()

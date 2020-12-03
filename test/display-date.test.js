@@ -1,7 +1,7 @@
-import tape from 'tape'
+import tap from 'tap'
 import displayDate from '../display-date.js'
 
-tape('display date', test => {
+tap.test('display date', test => {
   const iso = '2020-11-27T18:04:16.354Z'
   test.equal(
     displayDate(iso),

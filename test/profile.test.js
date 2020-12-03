@@ -1,12 +1,10 @@
 import click from './click.js'
 import login from './login.js'
-import server from './server.js'
 import signup from './signup.js'
-import tape from 'tape'
 import verifyLogIn from './verify-login.js'
-import webdriver from './webdriver.js'
+import interactive from './interactive.js'
 
-tape('change profile', test => {
+interactive('change profile', async ({ browser, port, test }) => {
   const name = 'Ana Tester'
   const newName = 'Ana Test Married'
   const location = 'US-CA'
@@ -16,62 +14,51 @@ tape('change profile', test => {
   const email = 'ana@example.com'
   const affiliations = 'SomeCo, Inc.'
   const url = 'http://example.com'
-  server((port, done) => {
-    (async () => {
-      const browser = await webdriver()
 
-      // Sign up.
-      await signup({ browser, port, name, location, handle, password, email })
-      await login({ browser, port, handle, password })
-      await verifyLogIn({ browser, port, test, handle, email })
+  // Sign up.
+  await signup({ browser, port, name, location, handle, password, email })
+  await login({ browser, port, handle, password })
+  await verifyLogIn({ browser, port, test, handle, email })
 
-      // Navigate to profile-change page.
-      await browser.navigateTo('http://localhost:' + port)
-      await click(browser, '#account')
-      await click(browser, 'a=Change Profile')
+  // Navigate to profile-change page.
+  await browser.navigateTo('http://localhost:' + port)
+  await click(browser, '#account')
+  await click(browser, 'a=Change Profile')
 
-      // Input changes.
-      const nameInput = await browser.$('#profileForm input[name="name"]')
-      await nameInput.setValue(newName)
+  // Input changes.
+  const nameInput = await browser.$('#profileForm input[name="name"]')
+  await nameInput.setValue(newName)
 
-      const locationInput = await browser.$('#profileForm input[name="location"]')
-      await locationInput.setValue(newLocation)
+  const locationInput = await browser.$('#profileForm input[name="location"]')
+  await locationInput.setValue(newLocation)
 
-      const affiliationInput = await browser.$('#profileForm input[name="affiliations"]')
-      await affiliationInput.setValue(affiliations)
+  const affiliationInput = await browser.$('#profileForm input[name="affiliations"]')
+  await affiliationInput.setValue(affiliations)
 
-      const urlInput = await browser.$('#profileForm input[name="urls"]')
-      await urlInput.setValue(url)
+  const urlInput = await browser.$('#profileForm input[name="urls"]')
+  await urlInput.setValue(url)
 
-      // Submit.
-      await click(browser, '#profileForm button[type="submit"]')
+  // Submit.
+  await click(browser, '#profileForm button[type="submit"]')
 
-      // Check updated user page.
-      const displayedName = await browser.$('.name')
-      await displayedName.waitForExist()
-      const nameText = await displayedName.getText()
-      test.equal(nameText, newName, 'displays new name')
+  // Check updated user page.
+  const displayedName = await browser.$('.name')
+  await displayedName.waitForExist()
+  const nameText = await displayedName.getText()
+  test.equal(nameText, newName, 'displays new name')
 
-      const displayedLocation = await browser.$('.location')
-      await displayedLocation.waitForExist()
-      const locationText = await displayedLocation.getText()
-      test.equal(locationText, 'Texas, United States', 'displays new location')
+  const displayedLocation = await browser.$('.location')
+  await displayedLocation.waitForExist()
+  const locationText = await displayedLocation.getText()
+  test.equal(locationText, 'Texas, United States', 'displays new location')
 
-      const displayedAffiliations = await browser.$('.affiliations')
-      await displayedAffiliations.waitForExist()
-      const associationsText = await displayedAffiliations.getText()
-      test.equal(associationsText, affiliations, 'displays new affiliations')
+  const displayedAffiliations = await browser.$('.affiliations')
+  await displayedAffiliations.waitForExist()
+  const associationsText = await displayedAffiliations.getText()
+  test.equal(associationsText, affiliations, 'displays new affiliations')
 
-      const displayedURLs = await browser.$('.urls')
-      await displayedURLs.waitForExist()
-      const urlsText = await displayedURLs.getText()
-      test.equal(urlsText, 'example.com', 'displays new URL')
-    })().then(finish).catch(finish)
-
-    function finish (error) {
-      test.ifError(error)
-      test.end()
-      done()
-    }
-  })
+  const displayedURLs = await browser.$('.urls')
+  await displayedURLs.waitForExist()
+  const urlsText = await displayedURLs.getText()
+  test.equal(urlsText, 'example.com', 'displays new URL')
 })

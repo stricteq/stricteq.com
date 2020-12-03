@@ -1,8 +1,8 @@
 import * as csrf from '../csrf.js'
-import tape from 'tape'
+import tap from 'tap'
 import { v4 as uuid } from 'uuid'
 
-tape('CSRF round trip', (test) => {
+tap.test('CSRF round trip', (test) => {
   process.env.CSRF_KEY = csrf.randomKey()
   const action = '/logout'
   const sessionID = uuid()
@@ -13,7 +13,7 @@ tape('CSRF round trip', (test) => {
   })
 })
 
-tape('CSRF action mismatch', (test) => {
+tap.test('CSRF action mismatch', (test) => {
   process.env.CSRF_KEY = csrf.randomKey()
   const action = '/logout'
   const sessionID = uuid()
@@ -25,7 +25,7 @@ tape('CSRF action mismatch', (test) => {
   })
 })
 
-tape('CSRF session mismatch', (test) => {
+tap.test('CSRF session mismatch', (test) => {
   process.env.CSRF_KEY = csrf.randomKey()
   const action = '/logout'
   const sessionID = uuid()
@@ -37,7 +37,7 @@ tape('CSRF session mismatch', (test) => {
   })
 })
 
-tape('CSRF corrupted', (test) => {
+tap.test('CSRF corrupted', (test) => {
   process.env.CSRF_KEY = csrf.randomKey()
   const action = '/logout'
   const sessionID = uuid()
@@ -50,7 +50,7 @@ tape('CSRF corrupted', (test) => {
   })
 })
 
-tape('CSRF round trip', (test) => {
+tap.test('CSRF round trip', (test) => {
   process.env.CSRF_KEY = csrf.randomKey()
   const action = '/logout'
   const sessionID = uuid()

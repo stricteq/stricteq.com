@@ -1,7 +1,7 @@
-import tape from 'tape'
+import tap from 'tap'
 import * as validation from '../validation.js'
 
-tape('handle validation', test => {
+tap.test('handle validation', test => {
   const valid = [
     'kemitchell',
     'kyle_mitchell',
@@ -23,7 +23,7 @@ tape('handle validation', test => {
   test.end()
 })
 
-tape('project name validation', test => {
+tap.test('project name validation', test => {
   const valid = [
     'superlibrary',
     'framework10',
@@ -44,7 +44,7 @@ tape('project name validation', test => {
   test.end()
 })
 
-tape('password validation', test => {
+tap.test('password validation', test => {
   const valid = [
     'not very secure'
   ]

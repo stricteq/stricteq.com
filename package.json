@@ -49,8 +49,13 @@
     "simple-concat": "^1.0.1",
     "sodium-native": "^3.2.0",
     "standard": "^16.0.3",
-    "tape": "^5.0.1",
+    "tap": "^14.11.0",
     "webdriverio": "^6.10.2"
+  },
+  "tap": {
+    "no-esm": true,
+    "no-timeout": true,
+    "reporter": "tap"
   },
   "scripts": {
     "audit": "npm audit --production | tee audit.log",
@@ -65,6 +70,6 @@
     "licenses": "licensee --errors-only",
     "lint": "standard",
     "spelling": "mdspell --ignore-numbers --en-us -r $(git ls-files | grep '.md$')",
-    "test": "NODE_ENV=test bash -c 'for test in test/*.test.js; do node \"$test\"; done'"
+    "test": "NODE_ENV=test tap test/*.test.js"
   }
 }

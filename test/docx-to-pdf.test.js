@@ -4,9 +4,9 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import rimraf from 'rimraf'
-import tape from 'tape'
+import tap from 'tap'
 
-tape('DOCX to PDF', test => {
+tap.test('DOCX to PDF', test => {
   fs.mkdtemp(path.join(os.tmpdir(), constants.website.toLowerCase() + '-'), (error, tmp) => {
     test.ifError(error, 'no mkdtemp error')
     const fixture = path.join('test', 'test.docx')

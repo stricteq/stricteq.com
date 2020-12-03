@@ -1,7 +1,7 @@
 import http from 'http'
 import runSeries from 'run-series'
 import server from './server.js'
-import tape from 'tape'
+import tap from 'tap'
 
 const terms = [
   ['service', ['1.0.0']],
@@ -15,7 +15,7 @@ const terms = [
 terms.forEach(testTerms)
 
 function testTerms ([slug, versions]) {
-  tape(slug, test => {
+  tap.test(slug, test => {
     server((port, close) => {
       runSeries(
         versions

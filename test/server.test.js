@@ -5,9 +5,9 @@ import rimraf from 'rimraf'
 import runSeries from 'run-series'
 import signatures from '../signatures.js'
 import { spawn } from 'child_process'
-import tape from 'tape'
+import tap from 'tap'
 
-tape('server', test => {
+tap.test('server', test => {
   fs.mkdtemp('/tmp/', (_, directory) => {
     let server, curl
     const serverPort = 8080

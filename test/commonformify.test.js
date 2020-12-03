@@ -1,10 +1,10 @@
 import cfCommonMark from 'commonform-commonmark'
 import commonformify from '../commonformify.js'
 import fs from 'fs'
-import tape from 'tape'
+import tap from 'tap'
 import path from 'path'
 
-tape('commonformify', test => {
+tap.test('commonformify', test => {
   fs.readFile(
     path.join('terms', 'paid', '1.0.0.md'),
     'utf8',

@@ -8,7 +8,7 @@ import pino from 'pino'
 import pinoHTTP from 'pino-http'
 import rimraf from 'rimraf'
 import simpleConcat from 'simple-concat'
-import tape from 'tape'
+import tap from 'tap'
 
 simple({
   path: '/',
@@ -101,7 +101,7 @@ function simple ({
   mime,
   content
 }) {
-  tape(`${method} ${path}`, test => {
+  tap.test(`${method} ${path}`, test => {
     server((port, close) => {
       http.request({ auth, method, port, path })
         .once('response', response => {
