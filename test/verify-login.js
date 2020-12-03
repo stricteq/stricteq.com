@@ -1,6 +1,6 @@
-const assert = require('assert')
+import assert from 'assert'
 
-module.exports = options => {
+export default options => {
   assert(options.browser)
   assert(options.test)
   assert(Number.isSafeInteger(options.port))

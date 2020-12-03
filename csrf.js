@@ -1,10 +1,10 @@
 // Cross-Site Request Forgery Token Generation and Verification
 
-const assert = require('assert')
-const expired = require('./expired')
-const sodium = require('sodium-native')
+import assert from 'assert'
+import { csrfToken as csrfTokenExpired } from './expired.js'
+import sodium from 'sodium-native'
 
-exports.generate = ({ action, sessionID, date }) => {
+export const generate = ({ action, sessionID, date }) => {
   assert(typeof action === 'string')
   assert(typeof sessionID === 'string')
   date = date || new Date().toISOString()
@@ -23,18 +23,18 @@ exports.generate = ({ action, sessionID, date }) => {
   }
 }
 
-exports.inputs = ({ action, sessionID }) => {
+export const inputs = ({ action, sessionID }) => {
   assert(typeof action === 'string')
   assert(typeof sessionID === 'string')
 
-  const generated = exports.generate({ action, sessionID })
+  const generated = generate({ action, sessionID })
   return `
     <input type=hidden name=csrftoken value="${generated.token}">
     <input type=hidden name=csrfnonce value="${generated.nonce}">
   `
 }
 
-exports.verify = ({ action, sessionID, token, nonce }, callback) => {
+export const verify = ({ action, sessionID, token, nonce }, callback) => {
   assert(typeof action === 'string')
   assert(typeof sessionID === 'string')
   assert(typeof token === 'string')
@@ -64,7 +64,7 @@ exports.verify = ({ action, sessionID, token, nonce }, callback) => {
     error.received = encryptedSessionID
     return callback(error)
   }
-  if (expired.csrfToken(date)) {
+  if (csrfTokenExpired(date)) {
     const error = new Error('expired')
     error.field = 'date'
     error.date = date
@@ -73,7 +73,7 @@ exports.verify = ({ action, sessionID, token, nonce }, callback) => {
   callback()
 }
 
-exports.randomKey = () => {
+export const randomKey = () => {
   const key = sodium.sodium_malloc(sodium.crypto_secretbox_KEYBYTES)
   sodium.randombytes_buf(key)
   return key.toString('hex')

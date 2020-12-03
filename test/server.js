@@ -1,26 +1,27 @@
-const assert = require('assert')
-const constants = require('../constants')
-const csrf = require('../csrf')
-const fs = require('fs')
-const handle = require('../')
-const http = require('http')
-const mail = require('../mail')
-const os = require('os')
-const path = require('path')
-const pino = require('pino')
-const pinoHTTP = require('pino-http')
-const rimraf = require('rimraf')
-const runSeries = require('run-series')
-const signatures = require('../signatures')
-const simpleConcat = require('simple-concat')
-const spawn = require('child_process').spawn
+import assert from 'assert'
+import checkEnvironment from '../environment.js'
+import constants from '../constants.js'
+import { randomKey as randomCSRFKey } from '../csrf.js'
+import fs from 'fs'
+import handle from '../index.js'
+import http from 'http'
+import os from 'os'
+import path from 'path'
+import pino from 'pino'
+import pinoHTTP from 'pino-http'
+import rimraf from 'rimraf'
+import runSeries from 'run-series'
+import signatures from '../signatures.js'
+import simpleConcat from 'simple-concat'
+import { spawn } from 'child_process'
+import testEvents from '../test-events.js'
 
-module.exports = (callback, port) => {
+export default (callback, port) => {
   assert(typeof callback === 'function')
   port = port === undefined ? 0 : port
   const logger = pino({}, fs.createWriteStream('test-server.log'))
   const addLoggers = pinoHTTP({ logger })
-  process.env.CSRF_KEY = csrf.randomKey()
+  process.env.CSRF_KEY = randomCSRFKey()
   const keys = signatures.keys()
   process.env.PUBLIC_KEY = keys.publicKey
   process.env.PRIVATE_KEY = keys.privateKey
@@ -44,7 +45,7 @@ module.exports = (callback, port) => {
       process.env.ADMIN_EMAIL = 'admin@example.com'
       process.env.NOTIFICATIONS_EMAIL = 'notifications@mail.stricteq.com'
       process.env.MINIMUM_COMMISSION = '5'
-      const environment = require('../environment')()
+      const environment = checkEnvironment()
       if (environment.missingVariables.length !== 0) {
         cleanup()
         environment.missingVariables.forEach(missing => {
@@ -102,7 +103,7 @@ module.exports = (callback, port) => {
   })
 
   function cleanup () {
-    mail.events.removeAllListeners()
+    testEvents.removeAllListeners()
     if (webServer) webServer.close()
     if (directory) rimraf(directory, () => {})
     if (stripeListen) stripeListen.kill()

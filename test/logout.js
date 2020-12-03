@@ -1,6 +1,6 @@
-const click = require('./click')
+import click from './click.js'
 
-module.exports = ({ browser, port }, callback) => {
+export default ({ browser, port }, callback) => {
   return browser.navigateTo('http://localhost:' + port + '/')
     .then(() => click(browser, '#logout'))
     .catch(callback)

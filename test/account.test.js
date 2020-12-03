@@ -1,10 +1,10 @@
-const http = require('http')
-const server = require('./server')
-const login = require('./login')
-const signup = require('./signup')
-const tape = require('tape')
-const verifyLogIn = require('./verify-login')
-const webdriver = require('./webdriver')
+import http from 'http'
+import server from './server.js'
+import login from './login.js'
+import signup from './signup.js'
+import tape from 'tape'
+import verifyLogIn from './verify-login.js'
+import webdriver from './webdriver.js'
 
 const path = '/account'
 

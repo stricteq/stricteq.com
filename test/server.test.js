@@ -1,11 +1,11 @@
-const constants = require('../constants')
-const csrf = require('../csrf')
-const fs = require('fs')
-const rimraf = require('rimraf')
-const runSeries = require('run-series')
-const signatures = require('../signatures')
-const spawn = require('child_process').spawn
-const tape = require('tape')
+import constants from '../constants.js'
+import { randomKey as randomCSRFKey } from '../csrf.js'
+import fs from 'fs'
+import rimraf from 'rimraf'
+import runSeries from 'run-series'
+import signatures from '../signatures.js'
+import { spawn } from 'child_process'
+import tape from 'tape'
 
 tape('server', test => {
   fs.mkdtemp('/tmp/', (_, directory) => {
@@ -19,7 +19,7 @@ tape('server', test => {
             PORT: serverPort,
             NODE_ENV: 'test',
             BASE_HREF: 'http://localhost:' + serverPort + '/',
-            CSRF_KEY: csrf.randomKey(),
+            CSRF_KEY: randomCSRFKey(),
             PUBLIC_KEY: keys.publicKey,
             PRIVATE_KEY: keys.privateKey,
             MINIMUM_COMMISSION: 5,

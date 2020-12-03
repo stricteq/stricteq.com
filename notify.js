@@ -1,12 +1,12 @@
 // Send E-Mail Nofications
 
-const constants = require('./constants')
-const fs = require('fs')
-const mail = require('./mail')
-const markdown = require('./markdown')
-const storage = require('./storage')
+import constants from './constants.js'
+import fs from 'fs'
+import mail from './mail.js'
+import markdown from './markdown.js'
+import * as storage from './storage.js'
 
-exports.confirmEMail = ({ to, handle, url }, callback) => {
+export const confirmEMail = ({ to, handle, url }, callback) => {
   send({
     to,
     subject: `Confirm ${constants.website} Account`,
@@ -18,7 +18,7 @@ Follow this link to confirm your ${constants.website} account:
   }, callback)
 }
 
-exports.passwordReset = ({ to, handle, url }, callback) => {
+export const passwordReset = ({ to, handle, url }, callback) => {
   send({
     to,
     subject: `Reset ${constants.website} Password`,
@@ -30,7 +30,7 @@ To reset the password for your ${constants.website} account, follow this link:
   }, callback)
 }
 
-exports.passwordChanged = ({ to }, callback) => {
+export const passwordChanged = ({ to }, callback) => {
   send({
     to,
     subject: `${constants.website} Password Change`,
@@ -40,7 +40,7 @@ The password for your ${constants.website} account on was changed.
   }, callback)
 }
 
-exports.handleReminder = ({ to, handle }, callback) => {
+export const handleReminder = ({ to, handle }, callback) => {
   send({
     to,
     subject: `Your ${constants.website} Handle`,
@@ -48,7 +48,7 @@ exports.handleReminder = ({ to, handle }, callback) => {
   }, callback)
 }
 
-exports.changeEMail = ({ to, url }, callback) => {
+export const changeEMail = ({ to, url }, callback) => {
   send({
     to,
     subject: `Confirm ${constants.website} E-Mail Change`,
@@ -60,7 +60,7 @@ To confirm the new e-mail address for your ${constants.website} account, follow 
   }, callback)
 }
 
-exports.connectedStripe = ({ to }, callback) => {
+export const connectedStripe = ({ to }, callback) => {
   send({
     to,
     subject: `Stripe Account Connected to ${constants.website}`,
@@ -70,7 +70,7 @@ You've successfully connected your Stripe account to your ${constants.website} a
   }, callback)
 }
 
-exports.license = ({
+export const license = ({
   to,
   cc,
   bcc,

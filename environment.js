@@ -1,6 +1,6 @@
 // Environment Variable Parsing and Validation
 
-const spawnSync = require('child_process').spawnSync
+import { spawnSync } from 'child_process'
 
 const variables = [
   { name: 'PUBLIC_KEY', required: true },
@@ -17,7 +17,7 @@ const variables = [
 
 const programs = ['pandoc', 'pdflatex']
 
-module.exports = () => {
+export default () => {
   // Environment Variables
   const returned = { missingVariables: [], missingPrograms: [] }
   variables.forEach(variable => {
@@ -40,8 +40,4 @@ module.exports = () => {
   })
 
   return returned
-}
-
-if (!module.parent) {
-  module.exports()
 }

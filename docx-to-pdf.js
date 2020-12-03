@@ -1,7 +1,7 @@
-const path = require('path')
-const spawn = require('child_process').spawn
+import path from 'path'
+import { spawn } from 'child_process'
 
-module.exports = function (source, callback) {
+export default function (source, callback) {
   const basename = path.basename(source, '.docx')
   const target = path.join(path.dirname(source), basename + '.pdf')
   spawn('pandoc', ['-o', target, source])

@@ -1,12 +1,12 @@
-const addValue = require('./add-value')
-const click = require('./click')
-const login = require('./login')
-const mail = require('../mail').events
-const server = require('./server')
-const signup = require('./signup')
-const tape = require('tape')
-const verifyLogIn = require('./verify-login')
-const webdriver = require('./webdriver')
+import addValue from './add-value.js'
+import click from './click.js'
+import login from './login.js'
+import testEvents from '../test-events.js'
+import server from './server.js'
+import signup from './signup.js'
+import tape from 'tape'
+import verifyLogIn from './verify-login.js'
+import webdriver from './webdriver.js'
 
 tape('change e-mail', test => {
   const name = 'Ana Tester'
@@ -31,7 +31,7 @@ tape('change e-mail', test => {
       await emailInput.addValue(newEMail)
       await Promise.all([
         new Promise((resolve, reject) => {
-          mail.once('sent', options => {
+          testEvents.once('sent', options => {
             (async () => {
               test.equal(options.to, newEMail, 'TO: new email')
               test.assert(options.subject.includes('Confirm'), 'Confirm')

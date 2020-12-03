@@ -1,9 +1,9 @@
-const addValue = require('./add-value')
-const assert = require('assert')
-const click = require('./click')
-const mail = require('../mail')
+import addValue from './add-value.js'
+import assert from 'assert'
+import click from './click.js'
+import testEvents from '../test-events.js'
 
-module.exports = async ({
+export default async ({
   name,
   location,
   urls,
@@ -40,7 +40,7 @@ module.exports = async ({
   )
   let url
   await Promise.all([
-    new Promise((resolve, reject) => mail.events.once('sent', options => {
+    new Promise((resolve, reject) => testEvents.once('sent', options => {
       if (!options.subject.includes('Confirm')) {
         return reject(new Error('no confirmation e-mail'))
       }
@@ -51,12 +51,3 @@ module.exports = async ({
   ])
   await browser.navigateTo(url)
 }
-// TODO: Test admin notification of signup.
-/*
-mail.once('sent', options => {
-  test.equal(options.subject, 'Sign Up', 'admin notification')
-  test.assert(options.text.includes(handle), 'includes handle')
-  test.assert(options.text.includes(email), 'includes email')
-  resolve()
-})
-*/

@@ -1,15 +1,15 @@
-const constants = require('../constants')
-const docxToPDF = require('../docx-to-pdf')
-const fs = require('fs')
-const os = require('os')
-const path = require('path')
-const rimraf = require('rimraf')
-const tape = require('tape')
+import constants from '../constants.js'
+import docxToPDF from '../docx-to-pdf.js'
+import fs from 'fs'
+import os from 'os'
+import path from 'path'
+import rimraf from 'rimraf'
+import tape from 'tape'
 
 tape('DOCX to PDF', test => {
   fs.mkdtemp(path.join(os.tmpdir(), constants.website.toLowerCase() + '-'), (error, tmp) => {
     test.ifError(error, 'no mkdtemp error')
-    const fixture = path.join(__dirname, 'test.docx')
+    const fixture = path.join('test', 'test.docx')
     const docx = path.join(tmp, 'test.docx')
     const pdf = path.join(tmp, 'test.pdf')
     fs.copyFile(fixture, docx, error => {

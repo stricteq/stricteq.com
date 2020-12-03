@@ -1,10 +1,10 @@
-const http = require('http')
-const parse5 = require('parse5')
-const runSeries = require('run-series')
-const server = require('./server')
-const simpleConcat = require('simple-concat')
-const storage = require('../storage')
-const tape = require('tape')
+import http from 'http'
+import parse5 from 'parse5'
+import runSeries from 'run-series'
+import server from './server.js'
+import simpleConcat from 'simple-concat'
+import * as storage from '../storage.js'
+import tape from 'tape'
 
 tape('homepage', test => {
   const handle = 'test'

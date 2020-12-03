@@ -1,11 +1,11 @@
-const click = require('./click')
-const connectStripe = require('./connect-stripe')
-const login = require('./login')
-const server = require('./server')
-const signup = require('./signup')
-const tape = require('tape')
-const timeout = require('./timeout')
-const webdriver = require('./webdriver')
+import click from './click.js'
+import connectStripe from './connect-stripe.js'
+import login from './login.js'
+import server from './server.js'
+import signup from './signup.js'
+import tape from 'tape'
+import timeout from './timeout.js'
+import webdriver from './webdriver.js'
 
 tape('Stripe Connect', test => {
   const name = 'Ana Tester'

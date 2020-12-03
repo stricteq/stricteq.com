@@ -3,7 +3,7 @@
 const alnum = '[a-z0-9]'
 
 // Account Names
-exports.handles = (() => {
+export const handles = (() => {
   const pattern = `${alnum}(?:${alnum}|[-_](?=${alnum})){0,38}`
   const re = new RegExp(`^${pattern}$`)
   return {
@@ -21,7 +21,7 @@ exports.handles = (() => {
 })()
 
 // Project Names
-exports.projects = (() => {
+export const projects = (() => {
   const pattern = '[a-z0-9-_]{1,64}'
   const re = new RegExp(`^${pattern}$`)
   return {
@@ -35,10 +35,10 @@ exports.projects = (() => {
 })()
 
 // Passwords
-exports.passwords = (() => {
+export const passwords = (() => {
   const min = 8
   const max = 64
-  const pattern = exports.pattern = `.{${min},${max}}`
+  const pattern = `.{${min},${max}}`
   const re = new RegExp(`^${pattern}$`)
   return {
     pattern,

@@ -1,11 +1,11 @@
-const addValue = require('./add-value')
-const click = require('./click')
-const http = require('http')
-const mail = require('../mail').events
-const server = require('./server')
-const signup = require('./signup')
-const tape = require('tape')
-const webdriver = require('./webdriver')
+import addValue from './add-value.js'
+import click from './click.js'
+import http from 'http'
+import testEvents from '../test-events.js'
+import server from './server.js'
+import signup from './signup.js'
+import tape from 'tape'
+import webdriver from './webdriver.js'
 
 const path = '/handle'
 
@@ -34,7 +34,7 @@ tape('discover handle', test => {
       await signup({ browser, port, name, location, handle, password, email })
       await Promise.all([
         new Promise((resolve, reject) => {
-          mail.once('sent', options => {
+          testEvents.once('sent', options => {
             test.equal(options.to, email, 'sent mail')
             test.assert(options.text.includes(handle), 'mailed handle')
             resolve()

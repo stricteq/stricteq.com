@@ -1,13 +1,13 @@
-const addValue = require('./add-value')
-const click = require('./click')
-const login = require('./login')
-const logout = require('./logout')
-const mail = require('../mail').events
-const server = require('./server')
-const signup = require('./signup')
-const tape = require('tape')
-const verifyLogIn = require('./verify-login')
-const webdriver = require('./webdriver')
+import addValue from './add-value.js'
+import click from './click.js'
+import login from './login.js'
+import logout from './logout.js'
+import testEvents from '../test-events.js'
+import server from './server.js'
+import signup from './signup.js'
+import tape from 'tape'
+import verifyLogIn from './verify-login.js'
+import webdriver from './webdriver.js'
 
 tape('change password', test => {
   const name = 'Ana Tester'
@@ -31,7 +31,7 @@ tape('change password', test => {
       await addValue(browser, '#passwordForm input[name="old"]', oldPassword)
       await addValue(browser, '#passwordForm input[name="password"]', newPassword)
       await addValue(browser, '#passwordForm input[name="repeat"]', newPassword)
-      mail.once('sent', options => {
+      testEvents.once('sent', options => {
         test.equal(options.to, email, 'email')
         test.assert(options.subject.includes('Password'), 'Password')
       })

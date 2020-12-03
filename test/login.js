@@ -1,8 +1,8 @@
-const addValue = require('./add-value')
-const assert = require('assert')
-const click = require('./click')
+import addValue from './add-value.js'
+import assert from 'assert'
+import click from './click.js'
 
-module.exports = (options, callback) => {
+export default (options, callback) => {
   assert(options.browser)
   assert(Number.isSafeInteger(options.port))
   assert(typeof options.handle === 'string')

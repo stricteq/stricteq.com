@@ -1,11 +1,16 @@
 // Send E-Mail
 
-const environment = require('./environment')()
+import checkEnvironment from './environment.js'
+import testEvents from './test-events.js'
+import nodemailer from 'nodemailer'
+
+const environment = checkEnvironment()
+
+let transport
 
 /* istanbul ignore if */
 if (environment.production) {
-  const nodemailer = require('nodemailer')
-  const transport = nodemailer.createTransport({
+  transport = nodemailer.createTransport({
     pool: true,
     host: process.env.SMTP_HOST || 'localhost',
     port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587,
@@ -14,16 +19,18 @@ if (environment.production) {
       pass: process.env.SMTP_PASSWORD
     }
   })
-  module.exports = transport.sendMail.bind(transport)
-} else /* in testing */ {
-  const emitter = require('./test-events')
-  module.exports = (options, callback) => {
+}
+
+export default (options, callback) => {
+  /* istanbul ignore if */
+  if (transport) {
+    transport.sendMail(options, callback)
+  } else {
     // This delay prevents tests from visiting account-confirmation
     // pages before the app has time to persist the tokens.
     setTimeout(() => {
-      emitter.emit('sent', options)
+      testEvents.emit('sent', options)
       callback()
     }, 1000)
   }
-  module.exports.events = emitter
 }

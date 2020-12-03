@@ -1,10 +1,10 @@
 // Wrap an implementation of Ed25519 in our own API,
 // which expects and returns hex-encoded strings.
 
-const assert = require('assert')
-const sodium = require('sodium-native')
+import assert from 'assert'
+import sodium from 'sodium-native'
 
-module.exports = { keys, sign, verify }
+export default { keys, sign, verify }
 
 function keys () {
   const publicKey = Buffer.alloc(32)

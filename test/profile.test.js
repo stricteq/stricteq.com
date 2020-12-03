@@ -1,10 +1,10 @@
-const click = require('./click')
-const login = require('./login')
-const server = require('./server')
-const signup = require('./signup')
-const tape = require('tape')
-const verifyLogIn = require('./verify-login')
-const webdriver = require('./webdriver')
+import click from './click.js'
+import login from './login.js'
+import server from './server.js'
+import signup from './signup.js'
+import tape from 'tape'
+import verifyLogIn from './verify-login.js'
+import webdriver from './webdriver.js'
 
 tape('change profile', test => {
   const name = 'Ana Tester'

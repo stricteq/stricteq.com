@@ -1,5 +1,5 @@
-const tape = require('tape')
-const displayDate = require('../display-date')
+import tape from 'tape'
+import displayDate from '../display-date.js'
 
 tape('display date', test => {
   const iso = '2020-11-27T18:04:16.354Z'

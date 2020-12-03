@@ -8,7 +8,7 @@
 //
 // These make it much more convenient do achieve conditional markup
 // using boolean expressions, without control structures.
-module.exports = function html (/* strings, values... */) {
+export default function html (/* strings, values... */) {
   const strings = arguments[0]
   const values = Array.prototype.slice.call(arguments, 1)
   let result = ''

@@ -1,13 +1,13 @@
 // Store and Verify Passwords
 /* eslint-disable no-var */
 
-const expired = require('./expired')
-const storage = require('./storage')
-const securePassword = require('secure-password')
+import { accountLock as accountLockExpired } from './expired.js'
+import * as storage from './storage.js'
+import securePassword from 'secure-password'
 
 const passwordHashing = securePassword()
 
-exports.hash = (password, callback) => {
+export const hash = (password, callback) => {
   const passwordBuffer = Buffer.from(password)
   passwordHashing.hash(passwordBuffer, (error, hashBuffer) => {
     /* istanbul ignore if */
@@ -16,7 +16,7 @@ exports.hash = (password, callback) => {
   })
 }
 
-exports.verify = (handle, password, callback) => {
+export const verify = (handle, password, callback) => {
   const file = storage.account.filePath(handle)
   storage.lock(file, unlock => {
     callback = unlock(callback)
@@ -32,7 +32,7 @@ exports.verify = (handle, password, callback) => {
         return callback(invalid, account)
       }
       const locked = account.locked
-      if (locked && !expired.accountLock(locked)) {
+      if (locked && !accountLockExpired(locked)) {
         const locked = new Error('account locked')
         locked.statusCode = 401
         return callback(locked, account)

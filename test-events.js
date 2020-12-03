@@ -1,1 +1,3 @@
-module.exports = new (require('events').EventEmitter)()
+import { EventEmitter } from 'events'
+
+export default new EventEmitter()

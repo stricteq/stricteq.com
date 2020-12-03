@@ -1,4 +1,4 @@
-module.exports = async (browser, selector, value) => {
+export default async (browser, selector, value) => {
   const element = await browser.$(selector)
   await element.waitForExist()
   await element.setValue(value)

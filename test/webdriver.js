@@ -1,6 +1,6 @@
-const spawn = require('child_process').spawn
-const tape = require('tape')
-const webdriverio = require('webdriverio')
+import { spawn } from 'child_process'
+import tape from 'tape'
+import webdriverio from 'webdriverio'
 
 // See: https://webdriver.io/docs/runprogrammatically.html
 
@@ -8,7 +8,7 @@ const driver = spawn('geckodriver')
 
 let remote
 
-module.exports = function () {
+export default function () {
   if (!remote) {
     remote = webdriverio.remote({
       logLevel: 'error',

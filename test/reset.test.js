@@ -1,11 +1,11 @@
-const click = require('./click')
-const http = require('http')
-const mail = require('../mail')
-const server = require('./server')
-const signup = require('./signup')
-const tape = require('tape')
-const verifyLogIn = require('./verify-login')
-const webdriver = require('./webdriver')
+import click from './click.js'
+import http from 'http'
+import mail from '../mail.js'
+import server from './server.js'
+import signup from './signup.js'
+import tape from 'tape'
+import verifyLogIn from './verify-login.js'
+import webdriver from './webdriver.js'
 
 const path = '/reset'
 

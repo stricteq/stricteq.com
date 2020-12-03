@@ -1,65 +1,63 @@
 // Store Data
 
-const fs = require('fs')
-const lock = require('lock').Lock()
-const path = require('path')
-const pump = require('pump')
-const split2 = require('split2')
-const through2 = require('through2')
+import fs from 'fs'
+import locks from 'lock'
+import path from 'path'
+import pump from 'pump'
+import split2 from 'split2'
+import through2 from 'through2'
 
-module.exports = {
-  account: simpleFiles('accounts'),
-  order: simpleFiles('orders'),
-  license: {
-    mkdirp: done => fs.mkdir(
-      path.join(process.env.DIRECTORY, 'licenses'),
-      { recursive: true },
-      done
-    ),
-    path: id => path.join(process.env.DIRECTORY, 'licenses', id)
-  },
-  project: simpleFiles('projects'),
-  email: simpleFiles('emails'),
-  token: simpleFiles('tokens'),
-  session: simpleFiles('sessions'),
-  showcase: simpleFiles('showcases'),
-  stripeID: simpleFiles('stripeIDs'),
-  signature: {
-    record: ({ date, signature, orderID }, callback) => {
-      lock('signatures', unlock => {
-        callback = unlock(callback)
-        fs.appendFile(
-          path.join(process.env.DIRECTORY, 'sigantures.csv'),
-          [date, signature, orderID].join(','),
-          callback
-        )
-      })
-    },
-    createReadStream: () => {
-      return pump(
-        fs.createReadStream(
-          path.join(process.env.DIRECTORY, 'sigantures.csv'),
-          'utf8'
-        ),
-        split2(),
-        through2.obj((chunk, _, done) => {
-          const [date, signature, orderID] = chunk.split(',')
-          done(null, { date, signature, orderID })
-        })
-      )
-    }
-  },
-  lock
+export const lock = locks.Lock()
+
+export const account = simpleFiles('accounts')
+export const order = simpleFiles('orders')
+
+export const license = {
+  mkdirp: done => fs.mkdir(
+    path.join(process.env.DIRECTORY, 'licenses'),
+    { recursive: true },
+    done
+  ),
+  path: id => path.join(process.env.DIRECTORY, 'licenses', id)
 }
 
-const account = module.exports.account
+export const project = simpleFiles('projects')
+export const email = simpleFiles('emails')
+export const token = simpleFiles('tokens')
+export const session = simpleFiles('sessions')
+export const showcase = simpleFiles('showcases')
+export const stripeID = simpleFiles('stripeIDs')
+
+export const signature = {
+  record: ({ date, signature, orderID }, callback) => {
+    lock('signatures', unlock => {
+      callback = unlock(callback)
+      fs.appendFile(
+        path.join(process.env.DIRECTORY, 'sigantures.csv'),
+        [date, signature, orderID].join(','),
+        callback
+      )
+    })
+  },
+  createReadStream: () => {
+    return pump(
+      fs.createReadStream(
+        path.join(process.env.DIRECTORY, 'sigantures.csv'),
+        'utf8'
+      ),
+      split2(),
+      through2.obj((chunk, _, done) => {
+        const [date, signature, orderID] = chunk.split(',')
+        done(null, { date, signature, orderID })
+      })
+    )
+  }
+}
 
 account.confirm = (handle, callback) => {
   const properties = { confirmed: new Date().toISOString() }
   account.update(handle, properties, callback)
 }
-
-const token = module.exports.token
 
 token.use = (id, callback) => {
   const file = token.filePath(id)

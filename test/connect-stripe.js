@@ -1,7 +1,7 @@
-const click = require('./click')
-const testEvents = require('../test-events')
+import click from './click.js'
+import testEvents from '../test-events.js'
 
-module.exports = async ({ browser, port }) => {
+export default async ({ browser, port }) => {
   await browser.navigateTo(`http://localhost:${port}/`)
   await click(browser, '#account')
   await click(browser, '#connect')

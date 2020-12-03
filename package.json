@@ -1,11 +1,12 @@
 {
   "name": "stricteq.com",
   "private": true,
+  "type": "module",
   "dependencies": {
     "busboy": "^0.3.1",
     "commonform-commonmark": "^6.0.0",
     "commonform-docx": "^5.4.0",
-    "commonmark": "^0.29.2",
+    "commonmark": "^0.28.0",
     "cookie": "^0.4.1",
     "do-not-cache": "^1.0.1",
     "english-months": "^1.0.3",
@@ -64,6 +65,6 @@
     "licenses": "licensee --errors-only",
     "lint": "standard",
     "spelling": "mdspell --ignore-numbers --en-us -r $(git ls-files | grep '.md$')",
-    "test": "NODE_ENV=test tape test/*.test.js"
+    "test": "NODE_ENV=test bash -c 'for test in test/*.test.js; do node \"$test\"; done'"
   }
 }

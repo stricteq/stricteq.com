@@ -1,57 +1,60 @@
 // HTTP Server Request Handler
 
-const Busboy = require('busboy')
-const FormData = require('form-data')
-const URLRegEx = require('url-regex')
-const cfCommonMark = require('commonform-commonmark')
-const cfDOCX = require('commonform-docx')
-const cfPrepareBlanks = require('commonform-prepare-blanks')
-const commonformify = require('./commonformify')
-const constants = require('./constants')
-const cookie = require('cookie')
-const crypto = require('crypto')
-const csrf = require('./csrf')
-const displayDate = require('./display-date')
-const doNotCache = require('do-not-cache')
-const docxToPDF = require('./docx-to-pdf')
-const escapeHTML = require('escape-html')
-const expired = require('./expired')
-const fs = require('fs')
-const gravatar = require('gravatar')
-const grayMatter = require('gray-matter')
-const html = require('./html')
-const https = require('https')
-const iso31662 = require('iso-3166-2')
-const locations = require('./locations')
-const mail = require('./mail')
-const markdown = require('./markdown')
-const notify = require('./notify')
-const outlineNumbering = require('outline-numbering')
-const parseJSON = require('json-parse-errback')
-const parseURL = require('url-parse')
-const passwordStorage = require('./password-storage')
-const path = require('path')
-const programmingLanguages = require('./programming-languages')
-const querystring = require('querystring')
-const runAuto = require('run-auto')
-const runParallel = require('run-parallel')
-const runParallelLimit = require('run-parallel-limit')
-const runSeries = require('run-series')
-const semver = require('semver')
-const send = require('send')
-const signatures = require('./signatures')
-const simpleConcatLimit = require('simple-concat-limit')
-const storage = require('./storage')
-const testEvents = require('./test-events')
-const uuid = require('uuid')
-const validation = require('./validation')
+import Busboy from 'busboy'
+import FormData from 'form-data'
+import Stripe from 'stripe'
+import URLRegEx from 'url-regex'
+import cfCommonMark from 'commonform-commonmark'
+import cfDOCX from 'commonform-docx'
+import cfPrepareBlanks from 'commonform-prepare-blanks'
+import checkEnvironment from './environment.js'
+import commonformify from './commonformify.js'
+import constants from './constants.js'
+import cookie from 'cookie'
+import crypto from 'crypto'
+import displayDate from './display-date.js'
+import { inputs as csrfInputs, verify as verifyCSRF } from './csrf.js'
+import doNotCache from 'do-not-cache'
+import docxToPDF from './docx-to-pdf.js'
+import escapeHTML from 'escape-html'
+import { token as tokenExpired } from './expired.js'
+import fs from 'fs'
+import gravatar from 'gravatar'
+import grayMatter from 'gray-matter'
+import html from './html.js'
+import httpHash from 'http-hash'
+import https from 'https'
+import iso31662 from 'iso-3166-2'
+import locations from './locations.js'
+import mail from './mail.js'
+import markdown from './markdown.js'
+import * as notify from './notify.js'
+import outlineNumbering from 'outline-numbering'
+import parseJSON from 'json-parse-errback'
+import parseURL from 'url-parse'
+import { hash as hashPassword, verify as verifyPassword } from './password-storage.js'
+import path from 'path'
+import programmingLanguages from './programming-languages.js'
+import querystring from 'querystring'
+import runAuto from 'run-auto'
+import runParallel from 'run-parallel'
+import runParallelLimit from 'run-parallel-limit'
+import runSeries from 'run-series'
+import semver from 'semver'
+import send from 'send'
+import signatures from './signatures.js'
+import simpleConcatLimit from 'simple-concat-limit'
+import * as storage from './storage.js'
+import testEvents from './test-events.js'
+import { v4 as uuid } from 'uuid'
+import { handles as validHandles, projects as validProjects, passwords as validPasswords } from './validation.js'
 
 // Read environment variables.
-const environment = require('./environment')()
-const stripe = require('stripe')(environment.STRIPE_SECRET_KEY)
+const environment = checkEnvironment()
+const stripe = new Stripe(environment.STRIPE_SECRET_KEY)
 
 // Router for a Few Authenticated Endpoints
-const routes = require('http-hash')()
+const routes = httpHash()
 routes.set('/', serveHomepage)
 routes.set('/signup', serveSignUp)
 routes.set('/login', serveLogIn)
@@ -71,8 +74,8 @@ routes.set('/buy', serveBuy) // buy licenses
 routes.set('/pricing', servePricing)
 
 // Regular Expression For /~{handle} and /~{handle}/{project} Routing
-const userPagePathRE = new RegExp(`^/~(${validation.handles.pattern})$`)
-const projectPagePathRE = new RegExp(`^/~(${validation.handles.pattern})/(${validation.projects.pattern})$`)
+const userPagePathRE = new RegExp(`^/~(${validHandles.pattern})$`)
+const projectPagePathRE = new RegExp(`^/~(${validHandles.pattern})/(${validProjects.pattern})$`)
 
 // Badges for Accounts
 const accountBadges = [
@@ -145,7 +148,7 @@ const staticFiles = [
 const terms = ['service', 'agency', 'privacy', 'free', 'paid', 'deal']
 
 // Function for http.createServer()
-module.exports = (request, response) => {
+export default (request, response) => {
   const parsed = request.parsed = parseURL(request.url, true)
   const pathname = request.pathname = parsed.pathname
   request.query = parsed.query
@@ -294,17 +297,13 @@ function nav (request) {
 }
 
 function logoutButton (request) {
-  const csrfInputs = csrf.inputs({
-    action: '/logout',
-    sessionID: request.session.id
-  })
   return html`
 <form
     id=logoutForm
     class=buttonWrapper
     action=/logout
     method=post>
-  ${csrfInputs}
+  ${csrfInputs({ action: '/logout', sessionID: request.session.id })}
   <button id=logout type=submit>Log Out</button>
 </form>
   `
@@ -378,7 +377,7 @@ function serveHomepage (request, response) {
 }
 
 function serveFile (request, response, file) {
-  send(request, path.join(__dirname, file)).pipe(response)
+  send(request, file).pipe(response)
 }
 
 function serveTerms (request, response, slug) {
@@ -395,7 +394,7 @@ function serveTerms (request, response, slug) {
     // Serve requested version.
     const version = split[2]
     fs.readFile(
-      path.join(__dirname, 'terms', slug, `${version}.md`),
+      path.join('terms', slug, `${version}.md`),
       'utf8',
       (error, read) => {
         if (error) {
@@ -431,7 +430,7 @@ function serveTerms (request, response, slug) {
 }
 
 function latestTermsVersion (basename, callback) {
-  fs.readdir(path.join(__dirname, 'terms', basename), (error, entries) => {
+  fs.readdir(path.join('terms', basename), (error, entries) => {
     if (error) return callback(error)
     const versions = entries
       .map(entry => path.basename(entry, '.md'))
@@ -486,11 +485,11 @@ function serveSignUp (request, response) {
     handle: {
       displayName: 'handle',
       filter: e => e.toLowerCase().trim(),
-      validate: validation.handles.validate
+      validate: validHandles.validate
     },
     password: {
       display: 'password',
-      validate: validation.passwords.validate
+      validate: validPasswords.validate
     },
     repeat: {
       display: 'password repeat',
@@ -567,19 +566,19 @@ function serveSignUp (request, response) {
             name=handle
             type=text
             placeholder=charlie5
-            pattern="^${validation.handles.pattern}$"
+            pattern="^${validHandles.pattern}$"
             value="${escapeHTML(data.handle.value || '')}"
             required>
         ${data.handle.error}
         <p>Your callsign on ${constants.website}. Your profile page will be ${process.env.BASE_HREF}/~{handle}.</p>
-        <p>${validation.handles.html}</p>
+        <p>${validHandles.html}</p>
         <p>Please respect others who have registered a particular handle in several other places, like Twitter, GitHub, npm, and so on. In general, handles are first-come, first-served. But ${constants.website} may require changes to avoid confusion.</p>
         ${passwordInput({})}
         ${data.password.error}
         ${passwordRepeatInput()}
         ${data.repeat.error}
         <p>Please pick a strong password or passphrase just for ${constants.website}. ${constants.website} does <em>not</em> yet support two-factor authentication.</p>
-        <p>${escapeHTML(validation.passwords.html)}</p>
+        <p>${escapeHTML(validPasswords.html)}</p>
         <button type=submit>${title}</button>
       </form>
     </main>
@@ -607,7 +606,7 @@ function serveSignUp (request, response) {
 
       // Write the account record.
       done => {
-        passwordStorage.hash(password, (error, passwordHash) => {
+        hashPassword(password, (error, passwordHash) => {
           if (error) return done(error)
           runSeries([
             done => {
@@ -662,7 +661,7 @@ function serveSignUp (request, response) {
 
       // Create an e-mail confirmation token.
       done => {
-        const token = uuid.v4()
+        const token = uuid()
         storage.token.create(token, {
           action: 'confirm e-mail',
           created: new Date().toISOString(),
@@ -801,7 +800,7 @@ function serveCreate (request, response) {
     project: {
       display: 'project name',
       filter: e => e.toLowerCase().trim(),
-      validate: validation.projects.validate
+      validate: validProjects.validate
     },
     tagline: projectTaglineField,
     pitch: projectPitchField,
@@ -853,13 +852,13 @@ function serveCreate (request, response) {
         <input
             name=project
             type=text
-            pattern="^${validation.projects.pattern}$"
+            pattern="^${validProjects.pattern}$"
             value="${escapeHTML(data.project.value || '')}"
             autofocus
             required>
         ${data.project.error}
         <p>Your project’s page will be ${process.env.BASE_HREF}/~${request.account.handle}/{name}.</p>
-        <p>${validation.projects.html}</p>
+        <p>${validProjects.html}</p>
         ${projectTaglineInput({ value: data.tagline.value })}
         ${data.tagline.error}
         ${projectTaglineField.html}
@@ -1134,7 +1133,7 @@ function serveLogIn (request, response) {
     })
 
     function authenticate (done) {
-      passwordStorage.verify(handle, password, (verifyError, account) => {
+      verifyPassword(handle, password, (verifyError, account) => {
         if (verifyError) {
           const statusCode = verifyError.statusCode
           if (statusCode === 500) return done(verifyError)
@@ -1164,7 +1163,7 @@ function serveLogIn (request, response) {
     }
 
     function createSession (done) {
-      sessionID = uuid.v4()
+      sessionID = uuid()
       storage.session.create(sessionID, {
         id: sessionID,
         handle,
@@ -1237,16 +1236,13 @@ function serveAccount (request, response) {
 
   function disconnectLink () {
     const action = '/disconnect'
-    const csrfInputs = csrf.inputs({
-      action, sessionID: request.session.id
-    })
     return html`
 <form
     id=disconnectForm
     class=buttonWrapper
     action=${action}
     method=post>
-  ${csrfInputs}
+  ${csrfInputs({ action, sessionID: request.session.id })}
   <button id=disconnect type=submit>Disconnect Stripe Account</button>
 </form>
     `
@@ -1465,7 +1461,7 @@ function serveEMail (request, response) {
       }),
       // Create and issue e-mail change token.
       done => {
-        const token = uuid.v4()
+        const token = uuid()
         storage.token.create(token, {
           action: 'change e-mail',
           created: new Date().toISOString(),
@@ -1684,7 +1680,7 @@ function getAuthenticated (request, response) {
       <h2>${title}</h2>
       ${messageParagraph}
       <form id=passwordForm method=post>
-        ${csrf.inputs({
+        ${csrfInputs({
           action: '/password',
           sessionID: request.session.id
         })}
@@ -1711,7 +1707,7 @@ function getWithToken (request, response) {
     if (!tokenData) return invalidToken(request, response)
     if (
       tokenData.action !== 'reset password' ||
-      expired.token(tokenData)
+      tokenExpired(tokenData)
     ) {
       response.statusCode = 400
       return response.end()
@@ -1736,7 +1732,7 @@ function getWithToken (request, response) {
       <h2>${title}</h2>
       ${messageParagraph}
       <form id=passwordForm method=post>
-        ${csrf.inputs({
+        ${csrfInputs({
           action: '/password',
           sessionID: request.session.id
         })}
@@ -1789,7 +1785,7 @@ function postPassword (request, response) {
       fields: {
         password: {
           displayName: 'password',
-          validate: validation.passwords.validate
+          validate: validPasswords.validate
         },
         repeat: {
           displayName: 'password repeat',
@@ -1803,7 +1799,7 @@ function postPassword (request, response) {
         old: {
           displayName: 'old password',
           optional: true,
-          validate: validation.passwords.validate
+          validate: validPasswords.validate
         }
       }
     }, (error, result) => {
@@ -1855,7 +1851,7 @@ function postPassword (request, response) {
       return done(unauthorizedError)
     }
     handle = request.account.handle
-    passwordStorage.verify(handle, body.old, error => {
+    verifyPassword(handle, body.old, error => {
       if (error) {
         const invalidOldPasswordError = new Error('invalid password')
         invalidOldPasswordError.statusCode = 400
@@ -1873,7 +1869,7 @@ function postPassword (request, response) {
         if (
           !tokenData ||
           tokenData.action !== 'reset password' ||
-          expired.token(tokenData)
+          tokenExpired(tokenData)
         ) {
           const invalidTokenError = new Error('invalid token')
           invalidTokenError.statusCode = 401
@@ -1890,7 +1886,7 @@ function postPassword (request, response) {
     recordChange()
 
     function recordChange () {
-      passwordStorage.hash(body.password, (error, passwordHash) => {
+      hashPassword(body.password, (error, passwordHash) => {
         if (error) return done(error)
         storage.account.update(handle, { passwordHash }, done)
       })
@@ -1918,7 +1914,7 @@ function serveReset (request, response) {
   const fields = {
     handle: {
       displayName: 'handle',
-      validate: validation.handles.validate
+      validate: validHandles.validate
     }
   }
 
@@ -1951,7 +1947,7 @@ function serveReset (request, response) {
             name=handle
             type=text
             value="${escapeHTML(data.handle.value)}"
-            pattern="^${validation.handles.pattern}$"
+            pattern="^${validHandles.pattern}$"
             required
             autofocus
             autocomplete=off>
@@ -1974,7 +1970,7 @@ function serveReset (request, response) {
         invalidHandleError.statusCode = 400
         return done(invalidHandleError)
       }
-      const token = uuid.v4()
+      const token = uuid()
       storage.token.create(token, {
         action: 'reset password',
         created: new Date().toISOString(),
@@ -2026,7 +2022,7 @@ function serveConfirm (request, response) {
   // Read the provided token.
   storage.token.read(token, (error, tokenData) => {
     if (error) return serve500(request, response, error)
-    if (!tokenData || expired.token(tokenData)) {
+    if (!tokenData || tokenExpired(tokenData)) {
       return invalidToken(request, response)
     }
     // Use the token.
@@ -2715,7 +2711,7 @@ function serveProjectForCustomers (request, response) {
       ${
         readyToSell
           ? buyForm({
-            csrf: csrf.inputs({
+            csrf: csrfInputs({
               action: '/buy',
               sessionID: request.session.id
             }),
@@ -2876,12 +2872,12 @@ function serveBuy (request, response) {
     handle: {
       displayName: 'handle',
       filter: e => e.toLowerCase().trim(),
-      validate: validation.handles.validate
+      validate: validHandles.validate
     },
     project: {
       displayName: 'project',
       filter: e => e.toLowerCase().trim(),
-      validate: validation.projects.validate
+      validate: validProjects.validate
     },
     name: {
       displayName: 'name',
@@ -3001,7 +2997,7 @@ function serveBuy (request, response) {
 
       // Create an order.
       done => {
-        orderID = uuid.v4()
+        orderID = uuid()
         storage.order.create(orderID, {
           orderID,
           date,
@@ -3326,7 +3322,7 @@ function serveStripeWebhook (request, response) {
             latestTermsVersion('paid', (error, version) => {
               if (error) return done(error)
               fs.readFile(
-                path.join(__dirname, 'terms', 'paid', `${version}.md`),
+                path.join('terms', 'paid', `${version}.md`),
                 'utf8',
                 (error, markup) => {
                   if (error) return done(error)
@@ -3568,7 +3564,7 @@ function passwordRepeatInput () {
 <input
     name=repeat
     type=password
-    pattern="^${validation.passwords.pattern}$"
+    pattern="^${validPasswords.pattern}$"
     required
     autocomplete=off>
   `
@@ -3661,7 +3657,7 @@ function formRoute ({
     if (error && !error.fieldName) {
       data.error = `<p class=error>${escapeHTML(error.message)}</p>`
     }
-    data.csrf = csrf.inputs({
+    data.csrf = csrfInputs({
       action,
       sessionID: request.session.id
     })
@@ -3795,7 +3791,7 @@ function parseAndValidatePostBody ({
       invalidError.statusCode = 401
       return done(invalidError)
     }
-    csrf.verify({
+    verifyCSRF({
       action,
       sessionID: request.session.id,
       token: body.csrftoken,
@@ -3919,7 +3915,7 @@ function authenticate (request, response, handler) {
   }
 
   function createGuestSession () {
-    const id = uuid.v4()
+    const id = uuid()
     const expires = new Date(
       Date.now() + (30 * 24 * 60 * 60 * 1000)
     )

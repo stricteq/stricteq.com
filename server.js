@@ -1,13 +1,19 @@
 // `npm start` runs this script by npm convention.
 
+import checkEnvironment from './environment.js'
+import requestHandler from './index.js'
+import http from 'http'
+import pino from 'pino'
+import pinoHTTP from 'pino-http'
+
 // Logging
 
-const logger = require('pino')()
-const addLoggers = require('pino-http')({ logger })
+const logger = pino()
+const addLoggers = pinoHTTP({ logger })
 
 // Environment
 
-const environment = require('./environment')()
+const environment = checkEnvironment()
 if (environment.missingVariables.length !== 0) {
   environment.missingVariables.forEach(missing => {
     logger.error({ variable: missing }, 'missing environment variable')
@@ -34,13 +40,12 @@ process
 
 // HTTP Server
 
-const server = require('http').createServer()
-const handle = require('./')
+const server = http.createServer()
 
 server.on('request', (request, response) => {
   try {
     addLoggers(request, response)
-    handle(request, response)
+    requestHandler(request, response)
   } catch (error) {
     request.log.error(error)
   }

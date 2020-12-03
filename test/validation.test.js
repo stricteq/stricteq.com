@@ -1,5 +1,5 @@
-const tape = require('tape')
-const validation = require('../validation')
+import tape from 'tape'
+import * as validation from '../validation.js'
 
 tape('handle validation', test => {
   const valid = [

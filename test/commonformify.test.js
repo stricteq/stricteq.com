@@ -1,12 +1,12 @@
-const cfCommonMark = require('commonform-commonmark')
-const commonformify = require('../commonformify')
-const fs = require('fs')
-const tape = require('tape')
-const path = require('path')
+import cfCommonMark from 'commonform-commonmark'
+import commonformify from '../commonformify.js'
+import fs from 'fs'
+import tape from 'tape'
+import path from 'path'
 
 tape('commonformify', test => {
   fs.readFile(
-    path.join(__dirname, '..', 'terms', 'paid', '1.0.0.md'),
+    path.join('terms', 'paid', '1.0.0.md'),
     'utf8',
     (error, read) => {
       test.ifError(error, 'read error')

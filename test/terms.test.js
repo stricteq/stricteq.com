@@ -1,7 +1,7 @@
-const http = require('http')
-const runSeries = require('run-series')
-const server = require('./server')
-const tape = require('tape')
+import http from 'http'
+import runSeries from 'run-series'
+import server from './server.js'
+import tape from 'tape'
 
 const terms = [
   ['service', ['1.0.0']],
