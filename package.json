@@ -28,7 +28,7 @@
     "run-parallel-limit": "^1.0.6",
     "run-series": "^1.1.9",
     "secure-password": "^4.0.0",
-    "semver": "^7.3.2",
+    "semver": "^7.3.4",
     "send": "^0.17.1",
     "simple-concat-limit": "^2.0.3",
     "split2": "^3.2.2",
