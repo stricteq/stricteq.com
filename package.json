@@ -50,7 +50,7 @@
     "sodium-native": "^3.2.0",
     "standard": "^16.0.3",
     "tap": "^14.11.0",
-    "webdriverio": "^6.10.2"
+    "webdriverio": "^6.10.5"
   },
   "tap": {
     "no-esm": true,
