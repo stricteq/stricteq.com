@@ -63,7 +63,6 @@ interactive('declined cards', async ({ page, port, test }) => {
   }
 }, 8080)
 
-/*
 interactive('3D Secure card', async ({ page, port, test }) => {
   const customerName = 'Jon Doe'
   const customerEMail = 'jon@exaple.com'
@@ -93,4 +92,3 @@ interactive('3D Secure card', async ({ page, port, test }) => {
   const messageText = await page.textContent('.message')
   test.assert(messageText.includes('Thank you', 'confirmation'))
 }, 8080)
-*/
