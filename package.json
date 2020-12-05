@@ -9,7 +9,6 @@
     "commonmark": "^0.28.0",
     "cookie": "^0.4.1",
     "do-not-cache": "^1.0.1",
-    "english-months": "^1.0.3",
     "escape-html": "^1.0.3",
     "form-data": "^3.0.0",
     "gravatar": "^1.8.1",
