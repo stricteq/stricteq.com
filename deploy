@@ -6,6 +6,6 @@ old_hash="$(shasum package-lock.json)"
 git fetch origin
 git reset --hard origin/main
 new_hash="$(shasum package-lock.json)"
-[ "$old_hash" != "$new_hash" ] && npm ci
+[ "$old_hash" != "$new_hash" ] && npm ci --production
 systemctl --user restart stricteq
 SCRIPT
