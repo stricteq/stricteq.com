@@ -1,5 +1,3 @@
-import addValue from './add-value.js'
-import click from './click.js'
 import http from 'http'
 import interactive from './interactive.js'
 import server from './server.js'
@@ -27,8 +25,8 @@ tap.test('GET ' + path, test => {
   })
 })
 
-interactive('discover handle', async ({ browser, port, test }) => {
-  await signup({ browser, port, name, location, handle, password, email })
+interactive('discover handle', async ({ page, port, test }) => {
+  await signup({ page, port, name, location, handle, password, email })
   await Promise.all([
     new Promise((resolve, reject) => {
       testEvents.once('sent', options => {
@@ -38,11 +36,11 @@ interactive('discover handle', async ({ browser, port, test }) => {
       })
     }),
     (async () => {
-      await browser.navigateTo('http://localhost:' + port)
-      await click(browser, '#login')
-      await click(browser, 'a=Forgot Handle')
-      await addValue(browser, '#handleForm input[name="email"]', email)
-      await click(browser, '#handleForm button[type="submit"]')
+      await page.goto('http://localhost:' + port)
+      await page.click('#login')
+      await page.click('"Forgot Handle"')
+      await page.fill('#handleForm input[name="email"]', email)
+      await page.click('#handleForm button[type="submit"]')
     })()
   ])
 })

@@ -1,14 +1,15 @@
-import click from './click.js'
 import testEvents from '../test-events.js'
+import timeout from './timeout.js'
 
-export default async ({ browser, port }) => {
-  await browser.navigateTo(`http://localhost:${port}/`)
-  await click(browser, '#account')
-  await click(browser, '#connect')
+export default async ({ page, port }) => {
+  await page.goto(`http://localhost:${port}/`)
+  await page.click('#account')
+  await page.click('#connect')
+  await timeout(1000)
   await Promise.all([
     new Promise((resolve, reject) => {
       testEvents.once('connected', () => resolve())
     }),
-    await click(browser, '=Skip this account form')
+    page.click('#skip-account-app')
   ])
 }

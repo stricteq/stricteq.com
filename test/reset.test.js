@@ -1,10 +1,9 @@
-import click from './click.js'
 import http from 'http'
 import interactive from './interactive.js'
-import mail from '../mail.js'
 import server from './server.js'
 import signup from './signup.js'
 import tap from 'tap'
+import testEvents from '../test-events.js'
 import verifyLogIn from './verify-login.js'
 
 const path = '/reset'
@@ -21,44 +20,39 @@ tap.test('GET ' + path, test => {
   })
 })
 
-interactive('reset password', async ({ browser, port, test }) => {
+interactive('reset password', async ({ page, port, test }) => {
   const name = 'Ana Tester'
   const location = 'US-CA'
   const handle = 'tester'
   const password = 'test password'
   const email = 'tester@example.com'
-  await signup({ browser, port, name, location, handle, password, email })
-  await browser.navigateTo('http://localhost:' + port)
-  await click(browser, '#login')
-  await click(browser, 'a=Reset Password')
-  const handleInput = await browser.$('#resetForm input[name="handle"]')
-  await handleInput.addValue(handle)
+  await signup({ page, port, name, location, handle, password, email })
+  await page.goto('http://localhost:' + port)
+  await page.click('#login')
+  await page.click('"Reset Password"')
+  await page.fill('#resetForm input[name="handle"]', handle)
   let url
   await Promise.all([
     new Promise((resolve, reject) => {
-      mail.events.once('sent', options => {
+      testEvents.once('sent', options => {
         test.equal(options.to, email, 'sent mail')
         test.assert(options.subject.includes('Reset'), 'reset')
         url = /<(http:\/\/[^ ]+)>/.exec(options.text)[1]
         resolve()
       })
     }),
-    click(browser, '#resetForm button[type="submit"]')
+    page.click('#resetForm button[type="submit"]')
   ])
-  await browser.navigateTo(url)
+  await page.goto(url)
   // Fill reset form.
-  const passwordInput = await browser.$('#passwordForm input[name="password"]')
-  await passwordInput.addValue(password)
-  const repeatInput = await browser.$('#passwordForm input[name="repeat"]')
-  await repeatInput.addValue(password)
-  await click(browser, '#passwordForm button[type="submit"]')
+  await page.fill('#passwordForm input[name="password"]', password)
+  await page.fill('#passwordForm input[name="repeat"]', password)
+  await page.click('#passwordForm button[type="submit"]')
   // Navigate to log-in form.
-  await click(browser, '#login')
+  await page.click('#login')
   // Fill log-in form.
-  const loginHandleInput = await browser.$('#loginForm input[name="handle"]')
-  await loginHandleInput.addValue(handle)
-  const loginPasswordInput = await browser.$('#loginForm input[name="password"]')
-  await loginPasswordInput.addValue(password)
-  await click(browser, '#loginForm button[type="submit"]')
-  await verifyLogIn({ browser, port, test, handle, email })
+  await page.fill('#loginForm input[name="handle"]', handle)
+  await page.fill('#loginForm input[name="password"]', password)
+  await page.click('#loginForm button[type="submit"]')
+  await verifyLogIn({ page, port, test, handle, email })
 })

@@ -1,10 +1,9 @@
-import click from './click.js'
 import login from './login.js'
 import signup from './signup.js'
 import verifyLogIn from './verify-login.js'
 import interactive from './interactive.js'
 
-interactive('change profile', async ({ browser, port, test }) => {
+interactive('change profile', async ({ page, port, test }) => {
   const name = 'Ana Tester'
   const newName = 'Ana Test Married'
   const location = 'US-CA'
@@ -16,49 +15,35 @@ interactive('change profile', async ({ browser, port, test }) => {
   const url = 'http://example.com'
 
   // Sign up.
-  await signup({ browser, port, name, location, handle, password, email })
-  await login({ browser, port, handle, password })
-  await verifyLogIn({ browser, port, test, handle, email })
+  await signup({ page, port, name, location, handle, password, email })
+  await login({ page, port, handle, password })
+  await verifyLogIn({ page, port, test, handle, email })
 
   // Navigate to profile-change page.
-  await browser.navigateTo('http://localhost:' + port)
-  await click(browser, '#account')
-  await click(browser, 'a=Change Profile')
+  await page.goto('http://localhost:' + port)
+  await page.click('#account')
+  await page.click('"Change Profile"')
 
   // Input changes.
-  const nameInput = await browser.$('#profileForm input[name="name"]')
-  await nameInput.setValue(newName)
-
-  const locationInput = await browser.$('#profileForm input[name="location"]')
-  await locationInput.setValue(newLocation)
-
-  const affiliationInput = await browser.$('#profileForm input[name="affiliations"]')
-  await affiliationInput.setValue(affiliations)
-
-  const urlInput = await browser.$('#profileForm input[name="urls"]')
-  await urlInput.setValue(url)
+  const profileForm = '#profileForm'
+  await page.fill(`${profileForm} input[name="name"]`, newName)
+  await page.fill(`${profileForm} input[name="location"]`, newLocation)
+  await page.fill(`${profileForm} input[name="affiliations"]`, affiliations)
+  await page.fill(`${profileForm} input[name="urls"]`, url)
 
   // Submit.
-  await click(browser, '#profileForm button[type="submit"]')
+  await page.click(`${profileForm} button[type="submit"]`)
 
   // Check updated user page.
-  const displayedName = await browser.$('.name')
-  await displayedName.waitForExist()
-  const nameText = await displayedName.getText()
+  const nameText = await page.textContent('.name')
   test.equal(nameText, newName, 'displays new name')
 
-  const displayedLocation = await browser.$('.location')
-  await displayedLocation.waitForExist()
-  const locationText = await displayedLocation.getText()
+  const locationText = await page.textContent('.location')
   test.equal(locationText, 'Texas, United States', 'displays new location')
 
-  const displayedAffiliations = await browser.$('.affiliations')
-  await displayedAffiliations.waitForExist()
-  const associationsText = await displayedAffiliations.getText()
-  test.equal(associationsText, affiliations, 'displays new affiliations')
+  const affiliationsText = await page.textContent('.affiliations')
+  test.equal(affiliationsText, affiliations, 'displays new affiliations')
 
-  const displayedURLs = await browser.$('.urls')
-  await displayedURLs.waitForExist()
-  const urlsText = await displayedURLs.getText()
+  const urlsText = await page.textContent('.urls')
   test.equal(urlsText, 'example.com', 'displays new URL')
 })

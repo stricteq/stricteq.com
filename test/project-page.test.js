@@ -1,17 +1,13 @@
-import click from './click.js'
 import connectStripe from './connect-stripe.js'
 import createProject from './create-project.js'
 import http from 'http'
 import interactive from './interactive.js'
 import login from './login.js'
 import logout from './logout.js'
-import server from './server.js'
-import setValue from './set-value.js'
+import pay from './pay.js'
 import signup from './signup.js'
 import simpleConcat from 'simple-concat'
-import tap from 'tap'
 import testEvents from '../test-events.js'
-import timeout from './timeout.js'
 
 const name = 'Ana Tester'
 const location = 'US-CA'
@@ -23,99 +19,56 @@ const urls = ['http://example.com']
 const price = 100
 const category = 'library'
 
-interactive('project page', async ({ browser, port, test }) => {
+interactive('project page', async ({ page, port, test }) => {
   const customerName = 'Jon Doe'
   const customerEMail = 'jon@exaple.com'
   const customerLocation = 'US-CA'
-  await signup({ browser, port, name, location, handle, password, email })
-  await login({ browser, port, handle, password })
-  await connectStripe({ browser, port })
+  await signup({ page, port, name, location, handle, password, email })
+  await login({ page, port, handle, password })
+  await connectStripe({ page, port })
   // Confirm connected.
-  const disconnectButton = await browser.$('#disconnect')
-  await disconnectButton.waitForExist()
-  const disconnectText = await disconnectButton.getText()
+  const disconnectText = await page.textContent('#disconnect')
   test.equal(disconnectText, 'Disconnect Stripe Account', 'connected')
   // Create project.
-  await createProject({ browser, port, project, urls, price, category })
-  await logout({ browser, port })
-  await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
-  const h2 = await browser.$('h2')
-  const h2Text = await h2.getText()
+  await createProject({ page, port, project, urls, price, category })
+  await logout({ page, port })
+  await page.goto(`http://localhost:${port}/~${handle}/${project}`)
+  const h2Text = await page.textContent('h2')
   test.equal(h2Text, project, 'project page')
-  const projectLink = await browser.$(`a[href="${urls[0]}"]`)
-  await projectLink.waitForExist()
+  await page.waitForSelector(`a[href="${urls[0]}"]`)
   test.pass('URL')
-  const priceElement = await browser.$('#price')
-  const priceText = await priceElement.getText()
+  const priceText = await page.textContent('#price')
   test.equal(priceText, `$${price}`, 'price')
-  const categoryElement = await browser.$('.category')
-  const categoryPrice = await categoryElement.getText()
-  test.equal(categoryPrice, category, 'category')
+  const categoryText = await page.textContent('.category')
+  test.equal(categoryText, category, 'category')
   // Buy a license.
   // Fill in customer details.
-  const nameInput = await browser.$('#buyForm input[name=name]')
-  await nameInput.addValue(customerName)
-  const emailInput = await browser.$('#buyForm input[name=email]')
-  await emailInput.addValue(customerEMail)
-  const locationInput = await browser.$('#buyForm input[name=location]')
-  await locationInput.addValue(customerLocation)
+  const buyForm = '#buyForm'
+  await page.fill(`${buyForm} input[name=name]`, customerName)
+  await page.fill(`${buyForm} input[name=location]`, customerLocation)
+  await page.fill(`${buyForm} input[name=email]`, customerEMail)
   // Enter credit card information.
-  const frame = await browser.$('iframe')
-  await browser.switchToFrame(frame)
-  const cardInput = await browser.$('input[name="cardnumber"]')
-  await cardInput.addValue('42')
-  await timeout(200)
-  await cardInput.addValue('42')
-  await timeout(200)
-  await cardInput.addValue('42')
-  await timeout(200)
-  await cardInput.addValue('42')
-  await timeout(200)
-  await cardInput.addValue('42')
-  await timeout(200)
-  await cardInput.addValue('42')
-  await timeout(200)
-  await cardInput.addValue('42')
-  await timeout(200)
-  await cardInput.addValue('42')
-  const expirationInput = await browser.$('input[name="exp-date"]')
-  await expirationInput.setValue('10 / 31')
-  const cvcInput = await browser.$('input[name="cvc"]')
-  await cvcInput.setValue('123')
-  const postInput = await browser.$('input[name="postal"]')
-  await postInput.setValue('12345')
-  await browser.switchToParentFrame()
+  await pay({ page })
   // Accept terms.
-  await click(browser, '#buyForm input[name=terms]')
+  await page.check(`${buyForm} input[name=terms]`)
+  // Submit.
   await Promise.all([
     // Listen for customer e-mail.
     new Promise((resolve, reject) => {
-      testEvents.on('sent', options => {
-        if (options.to !== customerEMail) return
-        test.equal(options.to, customerEMail, 'e-mail TO customer')
-        test.equal(options.cc, email, 'e-mail CC developer')
-        test.assert(
-          options.text.includes(`$${price}`),
-          'e-mail includes price'
-        )
-        test.assert(
-          options.attachments.length > 0,
-          'e-mail has attachment'
-        )
-        test.assert(
-          /Order ID: `[a-f0-9-]+`/.test(options.text),
-          'e-mail has order ID'
-        )
-        test.assert(
-          /Signature: `[a-f0-9]+`/.test(options.text),
-          'e-mail has signature'
-        )
+      testEvents.on('sent', ({ to, cc, subject, text, attachments }) => {
+        if (to !== customerEMail) return
+        test.equal(to, customerEMail, 'e-mail TO customer')
+        test.equal(cc, email, 'e-mail CC developer')
+        test.assert(text.includes(`$${price}`), 'e-mail includes price')
+        test.assert(attachments.length > 0, 'e-mail has attachment')
+        test.assert(/Order ID: `[a-f0-9-]+`/.test(text), 'e-mail has order ID')
+        test.assert(/Signature: `[a-f0-9]+`/.test(text), 'e-mail has signature')
         resolve()
       })
     }),
     (async () => {
       // Click the buy button.
-      await click(browser, '#buyForm button[type=submit]')
+      await page.click('#buyForm button[type=submit]')
       await Promise.all([
         new Promise((resolve, reject) => {
           testEvents.once('payment_intent.succeeded', () => {
@@ -123,58 +76,49 @@ interactive('project page', async ({ browser, port, test }) => {
           })
         }),
         async () => {
-          const p = await browser.$('.message')
-          await p.waitForExist({ timeout: 10000 })
-          const message = await p.getText()
+          const message = await page.textContent('.message')
           test.assert(message.includes('Thank you', 'confirmation'))
         }
       ])
     })()
   ])
-  await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
-  const img = await browser.$('#customers li img')
-  const alt = await img.getAttribute('alt')
+  await page.goto(`http://localhost:${port}/~${handle}/${project}`)
+  const alt = await page.getAttribute('#customers li img', 'alt')
   test.equal(alt, customerName, 'Gravatar on project page')
 }, 8080)
 
-interactive('project edit form', async ({ browser, port, test }) => {
+interactive('project edit form', async ({ page, port, test }) => {
   const newPrice = 123
   const newURL = 'http://changed.com'
   const newCategory = 'application'
-  await signup({ browser, port, name, location, handle, password, email })
-  await login({ browser, port, handle, password })
-  await createProject({ browser, port, project, urls, price, category })
+  await signup({ page, port, name, location, handle, password, email })
+  await login({ page, port, handle, password })
+  await createProject({ page, port, project, urls, price, category })
   // Change url.
-  await setValue(browser, '#projectForm input[name=urls]', newURL)
+  await page.fill('#projectForm input[name=urls]', newURL)
   // Change category.
-  const categorySelect = await browser.$('#projectForm select[name="category"]')
-  await categorySelect.selectByVisibleText(newCategory)
+  await page.selectOption('#projectForm select[name="category"]', newCategory)
   // Change price.
-  await setValue(browser, '#projectForm input[name=price]', newPrice)
-  await click(browser, '#projectForm button[type=submit]')
+  await page.fill('#projectForm input[name=price]', newPrice.toString())
+  await page.click('#projectForm button[type=submit]')
   // Log out and visit project page as customer.
-  await logout({ browser, port })
-  await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
+  await logout({ page, port })
+  await page.goto(`http://localhost:${port}/~${handle}/${project}`)
   // Verify price updated.
-  const priceElement = await browser.$('#price')
-  const priceText = await priceElement.getText()
+  const priceText = await page.textContent('#price')
   test.equal(priceText, `$${newPrice}`, 'price')
   // Verify new URL.
-  const updatedLink = await browser.$(`a[href="${newURL}"]`)
-  await updatedLink.waitForExist()
+  await page.waitForSelector(`a[href="${newURL}"]`)
   test.pass('URL')
   // Verify new category.
-  const categoryElement = await browser.$('.category')
-  const categoryPrice = await categoryElement.getText()
-  test.equal(categoryPrice, newCategory, 'category')
+  const categoryText = await page.textContent('.category')
+  test.equal(categoryText, newCategory, 'category')
 }, 8080)
 
-interactive('project JSON', async ({ browser, port, test }) => {
-  await signup({
-    browser, port, name, location, handle, password, email
-  })
-  await login({ browser, port, handle, password })
-  await createProject({ browser, port, project, urls, price, category })
+interactive('project JSON', async ({ page, port, test }) => {
+  await signup({ page, port, name, location, handle, password, email })
+  await login({ page, port, handle, password })
+  await createProject({ page, port, project, urls, price, category })
   await new Promise((resolve, reject) => {
     http.request({
       port,

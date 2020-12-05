@@ -1,7 +1,4 @@
-import click from './click.js'
-
-export default ({ browser, port }, callback) => {
-  return browser.navigateTo('http://localhost:' + port + '/')
-    .then(() => click(browser, '#logout'))
-    .catch(callback)
+export default async ({ page, port }) => {
+  await page.goto('http://localhost:' + port + '/')
+  await page.click('#logout')
 }

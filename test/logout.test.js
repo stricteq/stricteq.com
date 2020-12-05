@@ -1,4 +1,3 @@
-import click from './click.js'
 import http from 'http'
 import interactive from './interactive.js'
 import login from './login.js'
@@ -22,23 +21,22 @@ tap.test('GET ' + path, test => {
   })
 })
 
-interactive('log out', async ({ browser, port, test }) => {
+interactive('log out', async ({ page, port, test }) => {
   const name = 'Ana Tester'
   const location = 'US-CA'
   const handle = 'ana'
   const password = 'test password'
   const email = 'ana@example.com'
-  await signup({ browser, port, name, location, handle, password, email })
-  await login({ browser, port, handle, password })
-  await verifyLogIn({ browser, port, test, handle, email })
-  await click(browser, '#logout')
-  await browser.navigateTo('http://localhost:' + port)
-  const loginButton = await browser.$('#login')
-  const buttonText = await loginButton.getText()
+  await signup({ page, port, name, location, handle, password, email })
+  await login({ page, port, handle, password })
+  await verifyLogIn({ page, port, test, handle, email })
+  await page.click('#logout')
+  await page.goto('http://localhost:' + port)
+  const buttonText = await page.textContent('#login')
   test.equal(buttonText, 'Log In', 'Log In')
 })
 
-interactive('log in as ana, log in as bob', async ({ browser, port, test }) => {
+interactive('log in as ana, log in as bob', async ({ page, port, test }) => {
   const ana = {
     name: 'Ana Tester',
     location: 'US-CA',
@@ -54,7 +52,7 @@ interactive('log in as ana, log in as bob', async ({ browser, port, test }) => {
     email: 'bob@example.com'
   }
   await signup({
-    browser,
+    page,
     port,
     name: ana.name,
     location: ana.location,
@@ -63,7 +61,7 @@ interactive('log in as ana, log in as bob', async ({ browser, port, test }) => {
     email: ana.email
   })
   await signup({
-    browser,
+    page,
     port,
     name: bob.name,
     location: bob.location,
@@ -71,9 +69,9 @@ interactive('log in as ana, log in as bob', async ({ browser, port, test }) => {
     password: bob.password,
     email: bob.email
   })
-  await login({ browser, port, handle: ana.handle, password: ana.password })
-  await verifyLogIn({ browser, port, test, handle: ana.handle, email: ana.email })
-  await logout({ browser, port })
-  await login({ browser, port, handle: bob.handle, password: bob.password })
-  await verifyLogIn({ browser, port, test, handle: bob.handle, email: bob.email })
+  await login({ page, port, handle: ana.handle, password: ana.password })
+  await verifyLogIn({ page, port, test, handle: ana.handle, email: ana.email })
+  await logout({ page, port })
+  await login({ page, port, handle: bob.handle, password: bob.password })
+  await verifyLogIn({ page, port, test, handle: bob.handle, email: bob.email })
 })

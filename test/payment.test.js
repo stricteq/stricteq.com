@@ -1,12 +1,10 @@
-import addValue from './add-value.js'
-import click from './click.js'
 import connectStripe from './connect-stripe.js'
 import createProject from './create-project.js'
 import interactive from './interactive.js'
 import login from './login.js'
 import logout from './logout.js'
+import pay from './pay.js'
 import signup from './signup.js'
-import timeout from './timeout.js'
 
 const name = 'Ana Tester'
 const location = 'US-CA'
@@ -31,101 +29,68 @@ const testNumbers = {
   // 4242424242424241: { client: true, code: 'incorrect_number' }
 }
 
-interactive('declined cards', async ({ browser, port, test }) => {
+interactive('declined cards', async ({ page, port, test }) => {
   const customerName = 'Jon Doe'
   const customerEMail = 'jon@exaple.com'
   const customerLocation = 'US-CA'
-  await signup({
-    browser, port, name, location, handle, password, email
-  })
-  await login({ browser, port, handle, password })
-  await connectStripe({ browser, port })
+  await signup({ page, port, name, location, handle, password, email })
+  await login({ page, port, handle, password })
+  await connectStripe({ page, port })
   // Confirm connected.
-  const disconnect = await browser.$('#disconnect')
-  const disconnectText = await disconnect.getText()
+  const disconnectText = await page.textContent('#disconnect')
   test.equal(disconnectText, 'Disconnect Stripe Account', 'connected')
-  await createProject({ browser, port, project, url, price, category })
-  await logout({ browser, port })
+  await createProject({ page, port, project, urls: [url], price, category, test })
+  test.pass('created project')
+  await logout({ page, port })
+  test.pass('logged out')
   // Buy licenses.
+  const buyForm = '#buyForm'
   for await (const number of Object.keys(testNumbers)) {
-    const groups = number.match(/.{2}/g)
-    await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
+    await page.goto(`http://localhost:${port}/~${handle}/${project}`)
     // Fill in customer details.
-    await addValue(browser, '#buyForm input[name=name]', customerName)
-    await addValue(browser, '#buyForm input[name=email]', customerEMail)
-    await addValue(browser, '#buyForm input[name=location]', customerLocation)
+    await page.fill(`${buyForm} input[name=name]`, customerName)
+    await page.fill(`${buyForm} input[name=email]`, customerEMail)
+    await page.fill(`${buyForm} input[name=location]`, customerLocation)
     // Enter credit card information.
-    const iframe = await browser.$('iframe')
-    await browser.switchToFrame(iframe)
-    const cardNumber = await browser.$('input[name="cardnumber"]')
-    for await (const group of groups) {
-      await cardNumber.addValue(group)
-      await timeout(200)
-    }
-    const expiration = await browser.$('input[name="exp-date"]')
-    await expiration.setValue('10 / 31')
-    const cvc = await browser.$('input[name="cvc"]')
-    await cvc.setValue('123')
-    const postal = await browser.$('input[name="postal"]')
-    await postal.setValue('12345')
-    await browser.switchToParentFrame()
+    await pay({ page, number })
     // Accept terms.
-    await click(browser, '#buyForm input[name=terms]')
+    await page.click(`${buyForm} input[name=terms]`)
     // Click the buy button.
-    await click(browser, '#buyForm button[type=submit]')
-    const error = await browser.$('.error')
-    await error.waitForExist({ timeout: 10000 })
-    const errorText = await error.getText()
+    await page.click(`${buyForm} button[type=submit]`)
+    const errorText = await page.textContent('.error')
     const watchWord = testNumbers[number]
     test.assert(errorText.includes(watchWord), `declined: ${watchWord}`)
   }
 }, 8080)
 
-interactive('3D Secure card', async ({ browser, port, test }) => {
+/*
+interactive('3D Secure card', async ({ page, port, test }) => {
   const customerName = 'Jon Doe'
   const customerEMail = 'jon@exaple.com'
   const customerLocation = 'US-CA'
-  await signup({
-    browser, port, name, location, handle, password, email
-  })
-  await login({ browser, port, handle, password })
-  await connectStripe({ browser, port })
+  await signup({ page, port, name, location, handle, password, email })
+  await login({ page, port, handle, password })
+  await connectStripe({ page, port })
   // Confirm connected.
-  const disconnect = await browser.$('#disconnect')
-  await disconnect.waitForExist({ timeout: 5000 })
-  const disconnectText = await disconnect.getText()
+  const disconnectText = await page.textContent('#disconnect')
   test.equal(disconnectText, 'Disconnect Stripe Account', 'connected')
-  await createProject({ browser, port, project, url, price, category })
-  await logout({ browser, port })
+  await createProject({ page, port, project, urls: [url], price, category })
+  await logout({ page, port })
   // Buy licenses.
   const number = '4000000000003220'
-  const groups = number.match(/.{2}/g)
-  await browser.navigateTo(`http://localhost:${port}/~${handle}/${project}`)
+  await page.goto(`http://localhost:${port}/~${handle}/${project}`)
   // Fill in customer details.
-  await addValue(browser, '#buyForm input[name=name]', customerName)
-  await addValue(browser, '#buyForm input[name=email]', customerEMail)
-  await addValue(browser, '#buyForm input[name=location]', customerLocation)
+  const buyForm = '#buyForm'
+  await page.fill(`${buyForm} input[name="name"]`, customerName)
+  await page.fill(`${buyForm} input[name="email"]`, customerEMail)
+  await page.fill(`${buyForm} input[name="location"]`, customerLocation)
   // Enter credit card information.
-  const iframe = await browser.$('iframe')
-  await browser.switchToFrame(iframe)
-  const cardNumber = await browser.$('input[name="cardnumber"]')
-  for await (const group of groups) {
-    await cardNumber.addValue(group)
-    await timeout(200)
-  }
-  const expiration = await browser.$('input[name="exp-date"]')
-  await expiration.setValue('10 / 31')
-  const cvc = await browser.$('input[name="cvc"]')
-  await cvc.setValue('123')
-  const postal = await browser.$('input[name="postal"]')
-  await postal.setValue('12345')
-  await browser.switchToParentFrame()
+  await pay({ page, number })
   // Accept terms.
-  await click(browser, '#buyForm input[name=terms]')
+  await page.click(`${buyForm} input[name="terms"]`)
   // Click the buy button.
-  await click(browser, '#buyForm button[type=submit]')
-  const message = await browser.$('.message')
-  await message.waitForExist({ timeout: 10000 })
-  const messageText = await message.getText()
+  await page.click(`${buyForm} button[type="submit"]`)
+  const messageText = await page.textContent('.message')
   test.assert(messageText.includes('Thank you', 'confirmation'))
 }, 8080)
+*/

@@ -1,18 +1,17 @@
 import assert from 'assert'
 
-export default options => {
-  assert(options.browser)
-  assert(options.test)
-  assert(Number.isSafeInteger(options.port))
-  assert(typeof options.handle === 'string')
-  const browser = options.browser
-  const test = options.test
-  const port = options.port
-  const handle = options.handle
-  return browser.navigateTo('http://localhost:' + port)
-    .then(() => browser.$('#profile'))
-    .then(a => a.waitForExist())
-    .then(() => browser.$('#profile'))
-    .then(a => a.getText())
-    .then(text => test.equal(text, handle, 'shows handle'))
+export default async ({
+  page,
+  test,
+  port,
+  handle
+}) => {
+  assert(page)
+  assert(test)
+  assert(Number.isSafeInteger(port))
+  assert(typeof handle === 'string')
+  await page.goto('http://localhost:' + port)
+  await page.waitForSelector('#profile')
+  const text = await page.textContent('#profile')
+  test.equal(text, handle, 'shows handle')
 }

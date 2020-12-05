@@ -1,15 +1,11 @@
-import addValue from './add-value.js'
-import click from './click.js'
 import interactive from './interactive.js'
 import login from './login.js'
 import logout from './logout.js'
-import server from './server.js'
 import signup from './signup.js'
-import tap from 'tap'
 import testEvents from '../test-events.js'
 import verifyLogIn from './verify-login.js'
 
-interactive('change password', async ({ browser, port, test }) => {
+interactive('change password', async ({ page, port, test }) => {
   const name = 'Ana Tester'
   const location = 'US-CA'
   const handle = 'tester'
@@ -17,26 +13,25 @@ interactive('change password', async ({ browser, port, test }) => {
   const newPassword = 'new password'
   const email = 'tester@example.com'
   await signup({
-    browser, port, name, location, handle, password: oldPassword, email
+    page, port, name, location, handle, password: oldPassword, email
   })
-  await browser.navigateTo('http://localhost:' + port)
-  await login({ browser, port, handle, password: oldPassword })
+  await page.goto('http://localhost:' + port)
+  await login({ page, port, handle, password: oldPassword })
   // Navigate to password-change page.
-  await click(browser, '#account')
-  await click(browser, 'a=Change Password')
+  await page.click('#account')
+  await page.click('"Change Password"')
   // Submit password-change form.
-  await addValue(browser, '#passwordForm input[name="old"]', oldPassword)
-  await addValue(browser, '#passwordForm input[name="password"]', newPassword)
-  await addValue(browser, '#passwordForm input[name="repeat"]', newPassword)
-  testEvents.once('sent', options => {
-    test.equal(options.to, email, 'email')
-    test.assert(options.subject.includes('Password'), 'Password')
+  await page.fill('#passwordForm input[name="old"]', oldPassword)
+  await page.fill('#passwordForm input[name="password"]', newPassword)
+  await page.fill('#passwordForm input[name="repeat"]', newPassword)
+  testEvents.once('sent', ({ to, subject }) => {
+    test.equal(to, email, 'email')
+    test.assert(subject.includes('Password'), 'Password')
   })
-  await click(browser, '#passwordForm button[type="submit"]')
-  const p = await browser.$('p.message')
-  const message = await p.getText()
+  await page.click('#passwordForm button[type="submit"]')
+  const message = await page.textContent('p.message')
   test.assert(message.includes('changed'), 'changed')
-  await logout({ browser, port })
-  await login({ browser, port, handle, password: newPassword })
-  await verifyLogIn({ browser, test, port, handle, email })
+  await logout({ page, port })
+  await login({ page, port, handle, password: newPassword })
+  await verifyLogIn({ page, test, port, handle, email })
 })

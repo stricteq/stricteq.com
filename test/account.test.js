@@ -21,13 +21,13 @@ tap.test('GET ' + path, test => {
   })
 })
 
-interactive('browse ' + path, async ({ browser, port, test }) => {
+interactive('browse ' + path, async ({ page, port, test }) => {
   const name = 'Ana Tester'
   const location = 'US-CA'
   const handle = 'ana'
   const password = 'ana password'
   const email = 'ana@example.com'
-  await signup({ browser, port, name, location, handle, password, email })
-  await login({ browser, port, handle, password })
-  await verifyLogIn({ browser, test, port, email, handle })
+  await signup({ page, port, name, location, handle, password, email })
+  await login({ page, port, handle, password })
+  await verifyLogIn({ page, test, port, email, handle })
 })

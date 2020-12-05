@@ -1,6 +1,6 @@
 import server from './server.js'
 import tap from 'tap'
-import webdriver from 'webdriverio'
+import playwright from 'playwright'
 
 export default (label, logic, port = 0) => {
   tap.test(label, test => {
@@ -9,17 +9,17 @@ export default (label, logic, port = 0) => {
       ;(async () => {
         let browser
         try {
-          browser = await webdriver.remote({
-            logLevel: 'error',
-            path: '/',
-            capabilities: { browserName: 'firefox' }
+          browser = await playwright.chromium.launch({
+            headless: !process.env.HEADFUL
           })
-          await logic({ test, browser, port })
+          const context = await browser.newContext()
+          const page = await context.newPage()
+          await logic({ test, page, port })
         } catch (error) {
           test.ifError(error)
         } finally {
           if (browser) {
-            browser.deleteSession().finally(() => test.end())
+            browser.close().finally(() => test.end())
           } else {
             test.end()
           }
