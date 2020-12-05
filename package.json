@@ -7,7 +7,7 @@
     "commonform-commonmark": "^6.0.0",
     "commonform-docx": "^5.4.0",
     "commonform-prepare-blanks": "^1.0.2",
-    "commonmark": "^0.28.0",
+    "commonmark": "^0.29.3",
     "cookie": "^0.4.1",
     "creditstxt": "^1.0.2",
     "do-not-cache": "^1.0.1",
