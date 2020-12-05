@@ -12,8 +12,7 @@ export default async ({
     `http://example.com/${project}`
   ],
   price,
-  category = 'library',
-  test
+  category = 'library'
 }) => {
   assert(page)
   assert(Number.isSafeInteger(port))

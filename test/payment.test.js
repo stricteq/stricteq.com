@@ -39,7 +39,7 @@ interactive('declined cards', async ({ page, port, test }) => {
   // Confirm connected.
   const disconnectText = await page.textContent('#disconnect')
   test.equal(disconnectText, 'Disconnect Stripe Account', 'connected')
-  await createProject({ page, port, project, urls: [url], price, category, test })
+  await createProject({ page, port, project, urls: [url], price, category })
   test.pass('created project')
   await logout({ page, port })
   test.pass('logged out')
