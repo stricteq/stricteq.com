@@ -10,7 +10,7 @@ import tap from 'tap'
 tap.test('server', test => {
   fs.mkdtemp('/tmp/', (_, directory) => {
     let server, curl
-    const serverPort = 8080
+    const serverPort = 8989
     runSeries([
       done => {
         const keys = signatures.keys()
