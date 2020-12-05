@@ -1,5 +1,6 @@
 import connectStripe from './connect-stripe.js'
 import createProject from './create-project.js'
+import buy from './buy.js'
 import http from 'http'
 import interactive from './interactive.js'
 import login from './login.js'

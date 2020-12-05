@@ -1,9 +1,9 @@
+import buy from './buy.js'
 import connectStripe from './connect-stripe.js'
 import createProject from './create-project.js'
 import interactive from './interactive.js'
 import login from './login.js'
 import logout from './logout.js'
-import pay from './pay.js'
 import signup from './signup.js'
 
 const name = 'Ana Tester'
@@ -44,19 +44,18 @@ interactive('declined cards', async ({ page, port, test }) => {
   await logout({ page, port })
   test.pass('logged out')
   // Buy licenses.
-  const buyForm = '#buyForm'
   for await (const number of Object.keys(testNumbers)) {
-    await page.goto(`http://localhost:${port}/~${handle}/${project}`)
-    // Fill in customer details.
-    await page.fill(`${buyForm} input[name=name]`, customerName)
-    await page.fill(`${buyForm} input[name=email]`, customerEMail)
-    await page.fill(`${buyForm} input[name=location]`, customerLocation)
-    // Enter credit card information.
-    await pay({ page, number })
-    // Accept terms.
-    await page.click(`${buyForm} input[name=terms]`)
-    // Click the buy button.
-    await page.click(`${buyForm} button[type=submit]`)
+    await buy({
+      page,
+      port,
+      handle,
+      project,
+      name: customerName,
+      email: customerEMail,
+      location: customerLocation,
+      number,
+      confirm: false
+    })
     const errorText = await page.textContent('.error')
     const watchWord = testNumbers[number]
     test.assert(errorText.includes(watchWord), `declined: ${watchWord}`)
@@ -76,19 +75,16 @@ interactive('3D Secure card', async ({ page, port, test }) => {
   await createProject({ page, port, project, urls: [url], price, category })
   await logout({ page, port })
   // Buy licenses.
-  const number = '4000000000003220'
-  await page.goto(`http://localhost:${port}/~${handle}/${project}`)
-  // Fill in customer details.
-  const buyForm = '#buyForm'
-  await page.fill(`${buyForm} input[name="name"]`, customerName)
-  await page.fill(`${buyForm} input[name="email"]`, customerEMail)
-  await page.fill(`${buyForm} input[name="location"]`, customerLocation)
-  // Enter credit card information.
-  await pay({ page, number })
-  // Accept terms.
-  await page.click(`${buyForm} input[name="terms"]`)
-  // Click the buy button.
-  await page.click(`${buyForm} button[type="submit"]`)
+  await buy({
+    page,
+    port,
+    handle,
+    project,
+    name: customerName,
+    email: customerEMail,
+    location: customerLocation,
+    number: '4000000000003220'
+  })
   const messageText = await page.textContent('.message')
   test.assert(messageText.includes('Thank you', 'confirmation'))
 }, 8080)

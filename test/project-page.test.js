@@ -1,10 +1,10 @@
+import buy from './buy.js'
 import connectStripe from './connect-stripe.js'
 import createProject from './create-project.js'
 import http from 'http'
 import interactive from './interactive.js'
 import login from './login.js'
 import logout from './logout.js'
-import pay from './pay.js'
 import signup from './signup.js'
 import simpleConcat from 'simple-concat'
 import testEvents from '../test-events.js'
@@ -42,17 +42,16 @@ interactive('project page', async ({ page, port, test }) => {
   const categoryText = await page.textContent('.category')
   test.equal(categoryText, category, 'category')
   // Buy a license.
-  // Fill in customer details.
-  const buyForm = '#buyForm'
-  await page.fill(`${buyForm} input[name=name]`, customerName)
-  await page.fill(`${buyForm} input[name=location]`, customerLocation)
-  await page.fill(`${buyForm} input[name=email]`, customerEMail)
-  // Enter credit card information.
-  await pay({ page })
-  // Accept terms.
-  await page.check(`${buyForm} input[name=terms]`)
-  // Submit.
   await Promise.all([
+    buy({
+      page,
+      port,
+      handle,
+      project,
+      name: customerName,
+      email: customerEMail,
+      location: customerLocation
+    }),
     // Listen for customer e-mail.
     new Promise((resolve, reject) => {
       testEvents.on('sent', ({ to, cc, subject, text, attachments }) => {
@@ -66,21 +65,17 @@ interactive('project page', async ({ page, port, test }) => {
         resolve()
       })
     }),
-    (async () => {
-      // Click the buy button.
-      await page.click('#buyForm button[type=submit]')
-      await Promise.all([
-        new Promise((resolve, reject) => {
-          testEvents.once('payment_intent.succeeded', () => {
-            resolve()
-          })
-        }),
-        async () => {
-          const message = await page.textContent('.message')
-          test.assert(message.includes('Thank you', 'confirmation'))
-        }
-      ])
-    })()
+    Promise.all([
+      new Promise((resolve, reject) => {
+        testEvents.once('payment_intent.succeeded', () => {
+          resolve()
+        })
+      }),
+      async () => {
+        const message = await page.textContent('.message')
+        test.assert(message.includes('Thank you', 'confirmation'))
+      }
+    ])
   ])
   await page.goto(`http://localhost:${port}/~${handle}/${project}`)
   const alt = await page.getAttribute('#customers li img', 'alt')
