@@ -66,7 +66,7 @@
     "credits": "cp credits.txt.header credits.txt ; creditstxt >> credits.txt",
     "check": "npm run lint && npm run spelling && npm run gotchas",
     "coverage": "nyc --reporter=lcov --reporter=text npm run test",
-    "deps": "depcheck",
+    "deps": "depcheck --ignore pino-papertrail",
     "fix": "standard --fix",
     "gotchas": "! git grep tape.only test && ! git grep console.log test && ! git grep console.error test && ! git grep saveScreenshot test",
     "licenses": "licensee --errors-only",
