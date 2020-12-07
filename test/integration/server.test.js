@@ -1,15 +1,17 @@
 import constants from '../../constants.js'
 import { randomKey as randomCSRFKey } from '../../csrf.js'
 import fs from 'fs'
+import http from 'http'
 import rimraf from 'rimraf'
 import runSeries from 'run-series'
 import signatures from '../../signatures.js'
+import simpleConcat from 'simple-concat'
 import { spawn } from 'child_process'
 import tap from 'tap'
 
 tap.test('server', test => {
   fs.mkdtemp('/tmp/', (_, directory) => {
-    let server, curl
+    let server
     const serverPort = 8989
     runSeries([
       done => {
@@ -37,21 +39,20 @@ tap.test('server', test => {
       }
     ], error => {
       test.ifError(error, 'no error')
-      curl = spawn('curl', ['http://localhost:' + serverPort])
-      const chunks = []
-      curl.stdout
-        .on('data', chunk => { chunks.push(chunk) })
-        .once('end', () => {
-          const output = Buffer.concat(chunks).toString()
-          test.assert(
-            output.includes(`<h1>${constants.website}</h1>`),
-            `output includes <h1>${constants.website}</h1>`
-          )
-          server.kill(9)
-          curl.kill(9)
-          rimraf.sync(directory)
-          test.end()
+      http.request(`http://localhost:${serverPort}`)
+        .once('response', response => {
+          simpleConcat(response, (error, buffer) => {
+            test.ifError(error, 'no concat error')
+            test.assert(
+              buffer.toString().includes(`<h1>${constants.website}</h1>`),
+              `output includes <h1>${constants.website}</h1>`
+            )
+            server.kill(9)
+            rimraf.sync(directory)
+            test.end()
+          })
         })
+        .end()
     })
   })
 })
