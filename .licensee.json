@@ -6,7 +6,9 @@
     ]
   },
   "packages": {
-    "css-value": "0.0.1"
+    "css-value": "0.0.1",
+    "precond": "0.2.3",
+    "scss-parser": "1.0.4"
   },
   "corrections": true
 }
