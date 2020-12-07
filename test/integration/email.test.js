@@ -1,5 +1,5 @@
 import login from './login.js'
-import testEvents from '../test-events.js'
+import testEvents from '../../test-events.js'
 import signup from './signup.js'
 import verifyLogIn from './verify-login.js'
 import interactive from './interactive.js'

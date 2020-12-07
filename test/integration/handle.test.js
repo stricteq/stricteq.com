@@ -3,7 +3,7 @@ import interactive from './interactive.js'
 import server from './server.js'
 import signup from './signup.js'
 import tap from 'tap'
-import testEvents from '../test-events.js'
+import testEvents from '../../test-events.js'
 
 const path = '/handle'
 

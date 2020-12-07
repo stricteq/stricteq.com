@@ -2,7 +2,7 @@ import interactive from './interactive.js'
 import login from './login.js'
 import logout from './logout.js'
 import signup from './signup.js'
-import testEvents from '../test-events.js'
+import testEvents from '../../test-events.js'
 import verifyLogIn from './verify-login.js'
 
 interactive('change password', async ({ page, port, test }) => {

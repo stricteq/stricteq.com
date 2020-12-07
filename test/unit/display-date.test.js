@@ -1,5 +1,5 @@
 import tap from 'tap'
-import displayDate from '../display-date.js'
+import displayDate from '../../display-date.js'
 
 tap.test('display date', test => {
   const iso = '2020-11-27T18:04:16.354Z'

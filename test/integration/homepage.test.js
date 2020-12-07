@@ -3,7 +3,7 @@ import parse5 from 'parse5'
 import runSeries from 'run-series'
 import server from './server.js'
 import simpleConcat from 'simple-concat'
-import * as storage from '../storage.js'
+import * as storage from '../../storage.js'
 import tap from 'tap'
 
 tap.test('homepage', test => {

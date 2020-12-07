@@ -1,4 +1,4 @@
-import testEvents from '../test-events.js'
+import testEvents from '../../test-events.js'
 import timeout from './timeout.js'
 
 export default async ({ page, port }) => {

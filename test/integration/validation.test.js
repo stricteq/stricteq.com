@@ -1,5 +1,5 @@
 import tap from 'tap'
-import * as validation from '../validation.js'
+import * as validation from '../../validation.js'
 
 tap.test('handle validation', test => {
   const valid = [

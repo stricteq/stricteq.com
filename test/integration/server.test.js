@@ -1,9 +1,9 @@
-import constants from '../constants.js'
-import { randomKey as randomCSRFKey } from '../csrf.js'
+import constants from '../../constants.js'
+import { randomKey as randomCSRFKey } from '../../csrf.js'
 import fs from 'fs'
 import rimraf from 'rimraf'
 import runSeries from 'run-series'
-import signatures from '../signatures.js'
+import signatures from '../../signatures.js'
 import { spawn } from 'child_process'
 import tap from 'tap'
 

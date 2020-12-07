@@ -1,5 +1,5 @@
 import cfCommonMark from 'commonform-commonmark'
-import commonformify from '../commonformify.js'
+import commonformify from '../../commonformify.js'
 import fs from 'fs'
 import tap from 'tap'
 import path from 'path'

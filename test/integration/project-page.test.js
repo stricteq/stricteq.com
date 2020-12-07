@@ -7,7 +7,7 @@ import login from './login.js'
 import logout from './logout.js'
 import signup from './signup.js'
 import simpleConcat from 'simple-concat'
-import testEvents from '../test-events.js'
+import testEvents from '../../test-events.js'
 
 const name = 'Ana Tester'
 const location = 'US-CA'

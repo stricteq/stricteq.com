@@ -1,5 +1,5 @@
 import assert from 'assert'
-import testEvents from '../test-events.js'
+import testEvents from '../../test-events.js'
 
 export default async ({
   name,

@@ -1,5 +1,5 @@
 import tap from 'tap'
-import { token as tokenExpired } from '../expired.js'
+import { token as tokenExpired } from '../../expired.js'
 
 tap.test('expired unknown token', test => {
   const token = {

@@ -1,4 +1,4 @@
-import * as csrf from '../csrf.js'
+import * as csrf from '../../csrf.js'
 import tap from 'tap'
 import { v4 as uuid } from 'uuid'
 
