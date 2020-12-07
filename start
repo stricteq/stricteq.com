@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 if [ -z "$PAPERTRAIL_HOST" ]; then
   node server.js
 else
