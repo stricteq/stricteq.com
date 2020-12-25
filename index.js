@@ -342,7 +342,7 @@ function serveHomepage (request, response) {
     ${header}
     <main role=main>
       <p>
-        ${constants.website} is a simple, open catalog of user-supported software.
+        ${constants.website} is a simple, open catalog of user-supported public software.
       </p>
       <p>
         All ${constants.website} software is available under a <a href=/deal>standard deal</a>.
