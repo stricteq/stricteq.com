@@ -1,6 +1,4 @@
-# strictEq
-
-next evolution of [License Zero](https://licensezero.com)
+# griffarins.com
 
 ## Architecture
 

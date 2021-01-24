@@ -1,7 +1,7 @@
 // Global Constants
 
 export default {
-  website: 'strictEq',
-  slogan: 'the code you depend on depends on you',
-  twitter: 'stricteq'
+  website: 'Griffarins Catalog',
+  slogan: 'user-supported public software catalog',
+  twitter: 'griffarins'
 }
