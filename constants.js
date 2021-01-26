@@ -1,7 +1,7 @@
 // Global Constants
 
 export default {
-  website: 'Griffarins Catalog',
-  slogan: 'user-supported public software catalog',
+  website: 'Griffarin’s',
+  slogan: 'craft-made, user-supported public software',
   twitter: 'griffarins'
 }
