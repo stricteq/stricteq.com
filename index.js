@@ -147,6 +147,8 @@ const staticFiles = [
 
 const terms = ['service', 'agency', 'privacy', 'free', 'paid', 'deal']
 
+const staticPages = ['about']
+
 // Function for http.createServer()
 export default (request, response) => {
   const parsed = request.parsed = parseURL(request.url, true)
@@ -165,6 +167,13 @@ export default (request, response) => {
     const slug = terms[index]
     if (pathname.startsWith(`/${slug}`)) {
       return serveTerms(request, response, slug)
+    }
+  }
+  // Static Pages
+  for (let index = 0; index < staticPages.length; index++) {
+    const slug = staticPages[index]
+    if (pathname.startsWith(`/${slug}`)) {
+      return serveStatic(request, response, slug)
     }
   }
   // Static Files
@@ -264,8 +273,8 @@ const header = `
 
 const footer = `
 <footer role=contentinfo>
+  <a class=spaced href=/about>About</a>
   <a class=spaced href=/deal>Standard Deal</a>
-  <a class=spaced href=https://artlessdevices.com>Company</a>
   <a class=spaced href=/pricing>Pricing</a>
   <a class=spaced href=/service>Terms of Service</a>
   <a class=spaced href=/agency>Agency Terms</a>
@@ -378,6 +387,41 @@ function serveHomepage (request, response) {
 
 function serveFile (request, response, file) {
   send(request, file).pipe(response)
+}
+
+function serveStatic (request, response, slug) {
+  fs.readFile(
+    path.join('pages', `${slug}.md`),
+    'utf8',
+    (error, read) => {
+      if (error) {
+        if (error.code === 'ENOENT') {
+          return serve404(request, response)
+        }
+        return serve500(request, response, error)
+      }
+      const { content, data: { title, summary } } = grayMatter(read)
+      response.setHeader('Content-Type', 'text/html')
+      response.end(html`
+<!doctype html>
+<html lang=en-US>
+  <head>
+    ${meta({ title, description: summary })}
+    <title>${escapeHTML(title)}</title>
+  </head>
+  <body>
+    ${nav(request)}
+    ${header}
+    <main role=main>
+      <h1>${escapeHTML(title)}</h1>
+      ${markdown(content)}
+    </main>
+    ${footer}
+  </body>
+</html>
+      `)
+    }
+  )
 }
 
 function serveTerms (request, response, slug) {
