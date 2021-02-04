@@ -18,6 +18,7 @@ function headerIDs (remarkable) {
     const slug = text
       .toLowerCase()
       .replace(/ /g, '-')
+      .replace(/-+/g, '-')
       .replace(/[^a-z0-9-]/g, '')
     return `<h${level} id="${slug}">`
   }
