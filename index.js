@@ -3478,7 +3478,7 @@ function serveStripeWebhook (request, response) {
   }
 }
 
-const cookieName = constants.website.toLowerCase()
+const cookieName = constants.cookie
 
 function setCookie (response, value, expires) {
   response.setHeader(
