@@ -1,11 +1,11 @@
 #!/bin/sh
 git push origin
-ssh www@stricteq.com <<'SCRIPT'
-cd /var/www/stricteq/
+ssh www@toolwrights.com <<'SCRIPT'
+cd /var/www/toolwrights/
 old_hash="$(shasum package-lock.json)"
 git fetch origin
 git reset --hard origin/main
 new_hash="$(shasum package-lock.json)"
 [ "$old_hash" != "$new_hash" ] && npm ci --production
-systemctl --user restart stricteq
+systemctl --user restart toolwrights
 SCRIPT

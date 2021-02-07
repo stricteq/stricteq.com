@@ -1,6 +1,6 @@
-# strictEq
+# Toolwrights
 
-next evolution of [License Zero](https://licensezero.com)
+craft-made, user-supported public software
 
 ## Architecture
 
