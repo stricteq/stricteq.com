@@ -18,6 +18,13 @@ simple({
 })
 
 simple({
+  path: '/about',
+  status: 200,
+  mime: 'text/html',
+  content: '<!doctype html>'
+})
+
+simple({
   path: '/styles.css',
   status: 200,
   mime: 'text/css; charset=UTF-8',
