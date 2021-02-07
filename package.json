@@ -34,7 +34,7 @@
     "send": "^0.17.1",
     "simple-concat-limit": "^2.0.3",
     "split2": "^3.2.2",
-    "stripe": "^8.132.0",
+    "stripe": "^8.134.0",
     "through2": "^4.0.2",
     "url-parse": "^1.4.7",
     "url-regex": "^5.0.0",
