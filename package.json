@@ -72,7 +72,7 @@
     "licenses": "licensee --errors-only",
     "lint": "standard",
     "spelling": "mdspell --ignore-numbers --en-us -r $(git ls-files | grep '.md$')",
-    "test": "NODE_ENV=test tap test/*.test.js",
+    "test": "NODE_ENV=test tap test/**.test.js",
     "test:unit": "NODE_ENV=test tap test/unit/*.test.js",
     "test:integration": "NODE_ENV=test tap test/integration/*.test.js"
   }
