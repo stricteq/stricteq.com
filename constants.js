@@ -1,8 +1,10 @@
 // Global Constants
 
 export default {
-  website: 'strictEq',
-  slogan: 'the code you depend on depends on you',
-  cookie: 'stricteq',
-  twitter: 'stricteq'
+  website: 'Indie Code Catalog',
+  slogan: 'user supported public software',
+  support: 'support@indiecc.com',
+  base: 'https://indiecc.com',
+  cookie: 'indiecc',
+  twitter: 'indiecc'
 }

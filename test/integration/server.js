@@ -43,7 +43,7 @@ export default (callback, port) => {
       const port = this.address().port
       process.env.BASE_HREF = 'http://localhost:' + port
       process.env.ADMIN_EMAIL = 'admin@example.com'
-      process.env.NOTIFICATIONS_EMAIL = 'notifications@mail.stricteq.com'
+      process.env.NOTIFICATIONS_EMAIL = 'notifications@mail.indiecc.com'
       process.env.MINIMUM_COMMISSION = '5'
       const environment = checkEnvironment()
       if (environment.missingVariables.length !== 0) {

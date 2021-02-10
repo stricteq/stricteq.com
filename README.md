@@ -1,6 +1,6 @@
-# strictEq
+# Indie Code Catalog
 
-next evolution of [License Zero](https://licensezero.com)
+user-supported public software
 
 ## Architecture
 

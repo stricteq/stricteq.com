@@ -279,9 +279,9 @@ const footer = `
   <a class=spaced href=/service>Terms of Service</a>
   <a class=spaced href=/agency>Agency Terms</a>
   <a class=spaced href=/privacy>Privacy</a>
-  <a class=spaced href=mailto:support@stricteq.com>Support</a>
+  <a class=spaced href=mailto:support@indiecc.com>Support</a>
   <a class=spaced href=https://twitter.com/${constants.twitter}>Twitter</a>
-  <p>Built on <a href=/credits.txt>open code</a>. Source <a href=https://github.com/stricteq/stricteq.com>on GitHub</a>.</p>
+  <p>Built on <a href=/credits.txt>open code</a>. Source <a href=https://github.com/indiecc/indiecc.com>on GitHub</a>.</p>
   <p>
     Icons by <a href=https://fontawesome.com>Font Awesome</a>
     under <a href=https://creativecommons.org/licenses/by/4.0/>CC-BY-4.0</a>.
@@ -554,7 +554,7 @@ function serveSignUp (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'sign up for strictEq' })}
+    ${meta({ title, description: 'sign up' })}
     <title>${title}</title>
   </head>
   <body>
@@ -880,7 +880,7 @@ function serveCreate (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'register a new strictEq project' })}
+    ${meta({ title, description: 'register a new project' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1029,7 +1029,7 @@ function serveCreate (request, response) {
             `URLs: ${urls.map(u => `<${u}>`).join(', ')}`,
             `Blog?: ${body.blog}`,
             `Tweet?: ${body.tweet}`,
-            `URL: <https://stricteq.com/${handle}/${project}`
+            `URL: <${constants.base}/${handle}/${project}`
           ].join('\n\n')
         }, error => {
           // Eat errors.
@@ -1135,7 +1135,7 @@ function serveLogIn (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'log into stricteq.com' })}
+    ${meta({ title, description: 'log in' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1342,7 +1342,7 @@ function serveHandle (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'find your strictEq handle' })}
+    ${meta({ title, description: 'find your handle' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1558,7 +1558,7 @@ const affiliations = (() => {
 const verifiedLockExplanation = `
 <p>
   Your profile information is locked because your account is verified.
-  Please <a href=mailto:support@stricteq.com>e-mail us</a> about the changes you’d like to make.
+  Please <a href=mailto:${constants.support}>e-mail us</a> about the changes you’d like to make.
 </p>
 `
 
@@ -1765,7 +1765,7 @@ function getWithToken (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'change your strictEq password' })}
+    ${meta({ title, description: 'change your password' })}
     <title>${title}</title>
   </head>
   <body>
@@ -1974,7 +1974,7 @@ function serveReset (request, response) {
 <!doctype html>
 <html lang=en-US>
   <head>
-    ${meta({ title, description: 'reset your strictEq password' })}
+    ${meta({ title, description: 'reset your password' })}
     <title>${title}</title>
   </head>
   <body>
@@ -3885,7 +3885,7 @@ function serve500 (request, response, error) {
       <p>The server ran into an error.</p>
       <p>
         If you'd like, you can
-        <a href=mailto:support@stricteq.com>e-mail support</a>,
+        <a href=mailto:${constants.support}>e-mail support</a>,
         pasting in this unique support number:
         <code>${escapeHTML(request.id)}</code>
       </p>
