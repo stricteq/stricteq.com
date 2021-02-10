@@ -176,7 +176,7 @@ export default (request, response) => {
   }
   // Static Pages
   for (let index = 0; index < staticPages.length; index++) {
-    let slug = staticPages[index]
+    const slug = staticPages[index]
     if (pathname.startsWith(`/${slug}`)) {
       return serveStaticPage(request, response, slug)
     }
